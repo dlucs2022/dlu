@@ -1,5 +1,5 @@
 {
-  "name": "vue-cli-days14",
+  "name": "dlu",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,7 +9,8 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
-    "vue": "^2.6.11",
+    "element-ui": "^2.15.10",
+    "vue": "^2.7.10",
     "vue-router": "^3.2.0"
   },
   "devDependencies": {
@@ -24,6 +25,6 @@
     "prettier": "^2.2.1",
     "sass": "^1.26.5",
     "sass-loader": "^8.0.2",
-    "vue-template-compiler": "^2.6.11"
+    "vue-template-compiler": "^2.7.10"
   }
 }
