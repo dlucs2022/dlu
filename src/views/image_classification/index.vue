@@ -131,7 +131,7 @@
                                
                                 <el-radio v-model="current_label.label_f_current" size="small" border @change="radio1Change" style="margin-left:0px;margin-right:0px"
                                     v-for="(item,index) in label_f" :key="index" :label="item">
-                                </el-radio>
+                                </el-radio> 
                                 
                             </el-collapse-item>
                             <el-collapse-item  name="2" style="position:relative">
