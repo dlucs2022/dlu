@@ -2,7 +2,7 @@
     <div class="all">
         <!-- :before-close="handleClose" -->
         <el-dialog
-            title="提示"
+            title="绑定按键"
             :visible.sync="dialogVisible_setting"
             width="35%"    
             >
@@ -16,9 +16,12 @@
                 width="120">
                 </el-table-column>
                 <el-table-column
-                prop="children"
                 label="子标签"
-                width="120">
+                width="120"
+                >
+                    <template slot-scope="scope">
+                        <el-tag size="medium">{{ scope.row.children }}</el-tag>
+                    </template>
                 </el-table-column>
                 <el-table-column
                     fixed="right"
@@ -26,10 +29,38 @@
                     width="120"
                     prop="keyValue">
                     <template slot-scope="scope">
-                        <input type="text" v-model="keyVl"  @keyup.enter.native="updateKeyCode(scope.$index, label_c)">
+                        <!-- @keyup.enter.native="updateKeyCode(scope.$index, label_c)":按回车后执行该方法并传值 -->
+                        <!-- <input  v-model="scope.row.keyValue" style="width:50px" @focus="keyDownReview()" @blur="keyDown()"
+                            type="number" :min="0" :max="9" 
+                        > -->
+                        <el-select v-model="scope.row.keyValue" placeholder="请选择">
+                            <el-option
+                                v-for="item in available_key_value" 
+                                :disabled="item.val"
+                                :key="item.index"
+                                :label="item.index"        
+                                :value="item.index">
+                                <!-- ==''?'清空':item -->
+                            </el-option>
+                        </el-select>
                     </template>
                 </el-table-column>
                 <el-table-column
+                    fixed="right"
+                    label="释放"
+                    width="80"
+                    >
+                    <template slot-scope="scope">
+                        <el-button
+                        type="text"
+                        size="small"
+                        :disabled="scope.row.keyValue.toString()==''?true:false"
+                        @click="empty(scope.$index,scope.row.keyValue, label_c)">
+                        清空
+                        </el-button>
+                    </template>
+                </el-table-column>
+                <!-- <el-table-column
                     fixed="right"
                     label="操作"
                     width="80">
@@ -41,11 +72,11 @@
                         移除
                         </el-button>
                     </template>
-                </el-table-column>
+                </el-table-column> -->
             </el-table>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogVisible_setting = false">取 消</el-button>
-                <el-button type="primary" @click="dialogVisible_setting = false">确 定</el-button>
+                <!-- <el-button type="primary" @click="dialogVisible_setting = false">确 定</el-button> -->
             </span>
         </el-dialog>
         <div class="image_classification">
@@ -84,7 +115,7 @@
                            
                         </el-carousel-item>
                     </el-carousel>
-                    <!-- 底部翻页组件     -->
+                   <!-- 描述列表 -->
                     <el-descriptions v-if="imgList[current-1].file != 'empty' " class="margin-top"  :column="3" size="small" border>
                         <el-descriptions-item label="图片名">{{imgList[current-1].file.name}}</el-descriptions-item>
                         <el-descriptions-item label="大小">{{Math.round(imgList[current-1].file.size/1024)+"K"}}</el-descriptions-item>
@@ -93,6 +124,7 @@
                             <el-tag size="small" v-for="(tag,index2) in imgList[current-1].info" :key="index2">{{tag.fir_label}}({{tag.sec_label}})</el-tag>
                         </el-descriptions-item>
                     </el-descriptions>
+                     <!-- 底部翻页组件     -->
                     <div class="image_classification_left_bottom">
                         <el-button type="primary" icon="el-icon-caret-left" size="small" @click="prev"></el-button>
                         <el-progress style="width:50%" :text-inside="true" :stroke-width="24" :percentage="percentage" status="success"></el-progress>
@@ -137,6 +169,7 @@
                             <el-collapse-item  name="2" style="position:relative">
                                 <template slot="title">
                                     二级标签 
+                                    <!-- 三个小按钮 -->
                                     <div class="el-collapse-item-buttons">
                                         <el-button type="text" size="medium" @click.stop.prevent=setting_Sec_Label() @click="dialogVisible_setting = true"
                                         icon="el-icon-setting"  class="el-collapse-item-button"> </el-button>
@@ -148,15 +181,17 @@
                                     </div>
                                 </template>
                                 <div>
-                                    <el-radio v-model="current_label.label_c_current" size="small" border @change="radio1Change" style="margin-left:0px;margin-right:0px"
-                                   v-for="(item,index) in label_c" :key="index" :label="item.children">
-                                   {{item.children}}{{(item.keyValue==''||item.keyValue==null)?'':'('+item.keyValue+')'}}
+                                    <el-radio v-model="current_label.label_c_current" size="small" border @change="radio1Change" 
+                                    style="margin-left:0px;margin-right:0px" v-for="(item,index) in label_c" :key="index"
+                                     :label="item.children">
+                                   {{item.children}} <span style="color:#4DB39E">{{(item.keyValue==''||item.keyValue==null)?'':'['+item.keyValue+']'}}</span>
                                 </el-radio>
                                 </div>
                                 
                             </el-collapse-item>
                         </el-collapse>
                     </el-card>
+                    <!-- 新增标签的卡片 -->
                     <el-card class="box-card" shadow="hover" style="margin:10px 0px 10px 0px" body-style="padding:10px 10px 10px 10px">
                         <el-input placeholder="输入二级标签" v-model="add_label.add_label_c"
                             class="input-with-select add_label_c_input" 
@@ -198,8 +233,9 @@
                             </el-popover>
                         </el-input>
                     </el-card>
-                    <div class="card_right_bottom">
-                        <el-card class="box-card" shadow="hover" body-style="padding:0px 10px 0px 10px" style="margin:10px 0px 10px 0px"> 
+                    <!-- 底部行为等卡片 -->
+                    <div class="card_right_bottom" >
+                        <el-card class="box-card" shadow="hover" body-style="padding:0px 10px 0px 10px" style="margin:10px 0px 10px 0px" > 
                             <el-collapse v-model="activeNames_individual_attributes">
                                 <el-collapse-item title="个体属性" name="1">
                                     <div style="margin-bottom:8px">
@@ -270,10 +306,12 @@ export default {
             percentage:0,//进度条
             keyUpValue:'',
             keyMap:[],
-
             
+            available_key_value:[{index:0,val:false},{index:1,val:false},{index:2,val:false},{index:3,val:false},{index:4,val:false},{index:5,value:false},
+                                {index:6,val:false},{index:7,val:false},{index:8,val:false},{index:9,val:false}],
+            keyArray:[false,false,false,false,false,false,false,false,false,false],        // 表示从0-9的按键是否已被占用
             label_f:['兽类','鸟类','猫类','犬类'],
-            label_c:[],
+            label_c:[],     // 格式：[{father:‘鸟类’,children:‘小小鸟’,keyValue:''},{},{}...]
             label_age:['未知','幼年','青年','成年'],
             label_sex:['未知','雄性','雌性'],
             inputVisible: false,//添加新行为时的new tag是否可见
@@ -289,16 +327,23 @@ export default {
         this.keyDownReview()
     },
     methods: {
-        deleteRow(index, rows) {    //删除一个二级标签
+        // 清空一个按键绑定
+        empty(index,keyValue,rows){
+            rows[index].keyValue = ""
+            this.available_key_value[keyValue].val = false
+        },
+        //删除一个二级标签
+        deleteRow(index, rows) {    
             rows.splice(index, 1);
         },
+        // 删除一个行为的活跃标签
         delete_action_tag(tag) {
             console.log(tag);
             //splice(index,howmany) ——> 删除从index位置开始的数，howmany为删除的个数 若 howmany 小于等于 0，则不删除
             this.current_label.label_action_current.splice(this.current_label.label_action_current.indexOf(tag), 1);
             console.log(this.current_label.label_action_current);
         },
-
+        // 显示出输入框
         showInput() {
             this.keyDownReview()
             this.inputVisible = true;
@@ -306,7 +351,7 @@ export default {
                 this.$refs.saveTagInput.$refs.input.focus();
             });
         },
-
+        //
         handleInputConfirm() {
 
             let inputValue = this.inputValue;
@@ -316,9 +361,11 @@ export default {
             this.inputVisible = false;
             this.inputValue = '';
         },
+        // 点击了二级标题的设置按钮后函数 （主要作用是防止向下传播  也就是防止在点击按钮的同时把折叠菜单也展开了）
         setting_Sec_Label(){
             console.log('点击了设置按钮');
         },
+        // 关闭设置的对话框的事件
         handleClose(done) {
             // this.$confirm('确认关闭？').then(_ => {done();}).catch(_ => {});
             // done();
@@ -387,7 +434,7 @@ export default {
         },
         // 键盘监听事件失效
         keyDownReview(){
-            console.log("取消监听");
+            // console.log("取消监听");
             document.onkeydown = function (event) {
                 var e = event || window.event;
                 e.returnValue = true;
@@ -395,7 +442,7 @@ export default {
         },
         //按钮监听键盘
         keyDown(){
-            console.log("开始监听");
+            // console.log("开始监听");
             //监听键盘按钮
             let that = this
             document.onkeydown = function (event) {
@@ -423,6 +470,30 @@ export default {
                 window.event.returnValue = false;
                 }
             }
+        },
+        
+    },
+    watch:{
+        label_c:{
+            handler(new_val,old_val){
+                var key_vlaues = new_val.map(a => a.keyValue)   //将所有二级标签的keyvalue都赋值给key——values
+                console.log(typeof(key_vlaues[0]));
+                key_vlaues = key_vlaues.filter(function (s) {      //过滤器 过滤“” 和 null
+                    s = s.toString()
+                    return s && s.trim(); 
+                });
+                console.log(key_vlaues);
+
+                this.available_key_value.forEach((item) => {
+                    if(key_vlaues.indexOf(item.index)!=-1){
+                        console.log(item.index);
+                        this.available_key_value[item.index].val = true // 将已赋值过的二级标签按键从选择器的options中删除
+                    }
+                })
+                console.log(this.available_key_value);
+                //还要在腾出来键值时再把它加上
+            },
+            deep:true
         },
         
     },
@@ -463,8 +534,6 @@ export default {
 </script>
 
 <style>
-
-
     .el-tag + .el-tag { 
         margin-left: 0px;
     }
@@ -494,12 +563,13 @@ export default {
         height: 100%;
     }
     .carouse {
-        width: 90%;
+        width: 89%;
     }
     .tool_left{
         width: 10%;
         display: flex;
         flex-direction: column;
+        margin-right: 5px;
     }
     
     .tool_left .el-button{
@@ -523,9 +593,6 @@ export default {
         display: flex;
         flex-direction:column;
         justify-content: space-between;
-    }
-    .margin-top{
-        width: 100%;
     }
     .image_classification_left_bottom{
         display: flex;
