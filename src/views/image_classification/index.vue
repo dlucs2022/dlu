@@ -1,15 +1,19 @@
 <template>
     <div class="all">
         <!-- :before-close="handleClose" -->
+        <!-- 设置按钮弹出对话框 -->
         <el-dialog
             title="绑定按键"
-            :visible.sync="dialogVisible_setting"
+            :visible.sync="dialogVisible_setting_bind"
             width="35%"    
             >
             <el-table
                 :data="label_c"
                 style="width: 100%"
-                max-height="250">
+                max-height="250"
+                empty-text="还未添加标签，请添加！"
+                :stripe=true  :highlight-current-row=true
+                size="small">
                 <el-table-column
                 prop="father"
                 label="父标签"
@@ -29,10 +33,7 @@
                     width="120"
                     prop="keyValue">
                     <template slot-scope="scope">
-                        <!-- @keyup.enter.native="updateKeyCode(scope.$index, label_c)":按回车后执行该方法并传值 -->
-                        <!-- <input  v-model="scope.row.keyValue" style="width:50px" @focus="keyDownReview()" @blur="keyDown()"
-                            type="number" :min="0" :max="9" 
-                        > -->
+                         <!-- @change="keyValue_change(scope.row.keyValue,scope.$index,$event)" -->
                         <el-select v-model="scope.row.keyValue" placeholder="请选择">
                             <el-option
                                 v-for="item in available_key_value" 
@@ -75,8 +76,108 @@
                 </el-table-column> -->
             </el-table>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisible_setting = false">取 消</el-button>
+                <el-button @click="dialogVisible_setting_bind = false">关 闭</el-button>
                 <!-- <el-button type="primary" @click="dialogVisible_setting = false">确 定</el-button> -->
+            </span>
+        </el-dialog>
+        <!-- 删除按钮弹出的对话框 -->
+        <el-dialog
+            title="删除标签"
+            :visible.sync="dialogVisible_setting_del"
+            width="22%"    
+            >
+            <el-tabs v-model="del_tab_activeName" type="card" @tab-click="handleClick">
+                <el-tab-pane label="一级标题" name="first">
+                    <el-table
+                    :data="label_f"
+                    style="width: 100%"
+                    max-height="250"
+                    @selection-change="handleSelectionChange"
+                    >
+                        <el-table-column
+                            type="selection"
+                            width="55"
+                        >
+                        </el-table-column>
+                        <el-table-column
+                        label="父标签"
+                        width="80"
+                        align="center">
+                        <template slot-scope="scope">
+                            <el-tag size="medium">{{scope.row}}</el-tag>
+                        </template>
+                        </el-table-column>
+                        <el-table-column
+                            fixed="right"
+                            label="操作"
+                            width="80">
+                            <template slot-scope="scope">
+                                <el-button
+                                @click.native.prevent="delete_f_Row(scope.$index, label_f)"
+                                type="text"
+                                size="small">
+                                移除
+                                </el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                    <el-button 
+                        type="danger" 
+                        icon="el-icon-delete" style="float:right;margin-top:10px"
+                        @click="delAll(label_f)"  
+                        :disabled="multipleSelection_f.length === 0"   
+                        >
+                        删除所选
+                    </el-button>
+                </el-tab-pane>
+                <el-tab-pane label="二级标题" name="second">
+                    <el-table
+                    :data="label_c"
+                    style="width: 100%"
+                    max-height="250"
+                    @selection-change="handleSelectionChange"
+                    >
+                        <el-table-column
+                            type="selection"
+                            width="55"
+                        >
+                        </el-table-column>
+                        <el-table-column
+                        label="标签"
+                        width="120"
+                        align="center"
+                        >
+                        <template slot-scope="scope">
+                            {{scope.row.children}}
+                            <el-tag size="mini">{{scope.row.father}}</el-tag>
+                        </template>
+                        </el-table-column>
+                        <el-table-column
+                            fixed="right"
+                            label="操作"
+                            width="80">
+                            <template slot-scope="scope">
+                                <el-button
+                                @click.native.prevent="deleteRow(scope.$index, label_c)"
+                                type="text"
+                                size="small">
+                                移除
+                                </el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                    <el-button 
+                        type="danger" 
+                        icon="el-icon-delete" style="float:right;margin-top:10px"
+                        @click="delAll(label_c)"  
+                        :disabled="multipleSelection_c.length === 0"   
+                        >
+                        删除所选
+                    </el-button>
+                </el-tab-pane>
+            </el-tabs>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisible_setting_del = false">取 消</el-button>                
             </span>
         </el-dialog>
         <div class="image_classification">
@@ -159,35 +260,55 @@
                     <!-- 两个标题选择卡片 -->
                     <el-card class="box-card" shadow="hover" body-style="padding:0px 10px 0px 10px" style="margin:10px 0px 10px 0px">
                         <el-collapse v-model="activeNames_f_and_c_labels" >
-                            <el-collapse-item title="一级标题" name="1">
-                               
+                            <el-collapse-item  name="1">
+                                <template slot="title">
+                                    一级标题 
+                                    <div class="el-collapse-item-buttons_f">
+                                        <el-button type="text" size="medium" @click.stop.prevent=downLoad_Sec_Label() 
+                                            icon="el-icon-cloudy"  class="el-collapse-item-button">
+                                        </el-button>
+                                    </div> 
+                                    <el-popover
+                                        placement="top-start"
+                                        title="提示"
+                                        width="200"
+                                        trigger="hover"
+                                        content="再次点击后取消当前一级标签的选择">
+                                        <i slot="reference" class="el-icon-warning"></i>
+                                    </el-popover>                               
+                                </template>
+                                <!-- 一级标题的按钮组-->
                                 <el-radio v-model="current_label.label_f_current" size="small" border @change="radio1Change" style="margin-left:0px;margin-right:0px"
-                                    v-for="(item,index) in label_f" :key="index" :label="item">
+                                    v-for="(item,index) in label_f" :key="index" :label="item"  @click.native.prevent="handleRadioClick_f(item)" >   
                                 </el-radio> 
                                 
                             </el-collapse-item>
                             <el-collapse-item  name="2" style="position:relative">
-                                <template slot="title">
+                                <template slot="title"> 
                                     二级标签 
                                     <!-- 三个小按钮 -->
                                     <div class="el-collapse-item-buttons">
-                                        <el-button type="text" size="medium" @click.stop.prevent=setting_Sec_Label() @click="dialogVisible_setting = true"
+                                        <el-button type="text" size="medium" @click.stop.prevent=setting_Sec_Label() @click="dialogVisible_setting_bind = true"
                                         icon="el-icon-setting"  class="el-collapse-item-button"> </el-button>
-                                        <el-button type="text" size="medium" @click.stop.prevent=setting_Sec_Label()
-                                         icon="el-icon-cloudy"  class="el-collapse-item-button">
-                                        </el-button>
-                                        <el-button type="text" size="medium" @click.stop.prevent=setting_Sec_Label() 
+                                        <el-button type="text" size="medium" @click.stop.prevent=setting_Sec_Label() @click="dialogVisible_setting_del = true"
                                         icon="el-icon-delete"  class="el-collapse-item-button"></el-button>
                                     </div>
+                                    <el-popover
+                                        placement="top-start"
+                                        title="提示"
+                                        width="200"
+                                        trigger="hover"
+                                        content="选择二级标签后会自动选择一级标签">
+                                        <i slot="reference" class="el-icon-warning"></i>
+                                    </el-popover> 
                                 </template>
                                 <div>
-                                    <el-radio v-model="current_label.label_c_current" size="small" border @change="radio1Change" 
-                                    style="margin-left:0px;margin-right:0px" v-for="(item,index) in label_c" :key="index"
-                                     :label="item.children">
-                                   {{item.children}} <span style="color:#4DB39E">{{(item.keyValue==''||item.keyValue==null)?'':'['+item.keyValue+']'}}</span>
-                                </el-radio>
+                                    <el-radio v-model="current_label.label_c_current" size="small" border 
+                                        style="margin-left:0px;margin-right:0px" v-for="(item,index) in label_c" :key="index" @change="radio_c_change" 
+                                        :label="item.children" :disabled="judge_disabled(item)" >
+                                    {{item.children}} <span style="color:white;background-color: #409EFF;">{{(item.keyValue.toString()==''||item.keyValue.toString()==null)?'':'['+item.keyValue+']'}}</span>
+                                    </el-radio>
                                 </div>
-                                
                             </el-collapse-item>
                         </el-collapse>
                     </el-card>
@@ -267,7 +388,7 @@
                                             @blur="handleInputConfirm"
                                             >
                                         </el-input>
-                                        <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
+                                        <el-button v-else class="button-new-tag" size="small" @click="showInput">+新增</el-button>
                                     </div>
                                 </el-collapse-item>      
                             </el-collapse>
@@ -295,23 +416,27 @@ export default {
                 label_sex_current:'',//当前选中得性别
                 label_action_current:[]//当前的行为列表
             },
-            dialogVisible_setting:false,//设置 的对话框
+            multipleSelection_c:'',//多选二级标题时的数组
+            multipleSelection_f:'',//多选一级标题时的数组
+            del_tab_activeName: 'first', //  删除标题组对话框中tab切换
+            dialogVisible_setting_del:false,// 删除按钮的对话框
+            dialogVisible_setting_bind:false,//设置 的对话框
             activeNames_f_and_c_labels: ['1','2'],    //一二级标签得折叠面板的活跃索引
             activeNames_individual_attributes:['1'],//个体行为得折叠面板的活跃索引
             imgList:[{file:"empty",src:require('../../assets/emptyImg.png'),info:[]}],// info:[{一级标签：‘犬类’，二级标签：‘金毛’，行为：‘睡觉’},{一级标签：‘犬类’，二级标签：‘金毛’，行为：‘睡觉’}]
             list:[],
             fileList:[],
-            urlList:[],
             current:1,//当前图片索引
             percentage:0,//进度条
             keyUpValue:'',
             keyMap:[],
             
+            // Tip: 按键与键盘对照表数值差96   如 0的keycode=96  2的keycode=98
             available_key_value:[{index:0,val:false},{index:1,val:false},{index:2,val:false},{index:3,val:false},{index:4,val:false},{index:5,value:false},
                                 {index:6,val:false},{index:7,val:false},{index:8,val:false},{index:9,val:false}],
             keyArray:[false,false,false,false,false,false,false,false,false,false],        // 表示从0-9的按键是否已被占用
             label_f:['兽类','鸟类','猫类','犬类'],
-            label_c:[],     // 格式：[{father:‘鸟类’,children:‘小小鸟’,keyValue:''},{},{}...]
+            label_c:[{father:'鸟类',children:'小小鸟',keyValue:''},{father:'兽类',children:'老虎',keyValue:''}],     // 格式：[{father:‘鸟类’,children:‘小小鸟’,keyValue:''},{},{}...]
             label_age:['未知','幼年','青年','成年'],
             label_sex:['未知','雄性','雌性'],
             inputVisible: false,//添加新行为时的new tag是否可见
@@ -327,21 +452,113 @@ export default {
         this.keyDownReview()
     },
     methods: {
+        
+        //点击删除标题的复选框触发
+        handleSelectionChange(val) {
+            if(this.del_tab_activeName == 'first'){
+                this.multipleSelection_f = val;
+            }else{
+                this.multipleSelection_c = val;
+            }
+            
+        },
+        // 点击批量删除(标题数组)
+        delAll(labels){
+            var arr=[]
+            //遍历点击选择的对象集合，拿到每一个对象的id添加到新的集合中
+            if(this.del_tab_activeName == 'first'){
+                arr = this.label_c.filter(a => this.multipleSelection_f.indexOf(a.father)!=-1)
+                this.$confirm('确定删除吗？这将会导致删除该标题下的所有子标题！', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning',
+                    callback: action => {
+                        if (action === 'confirm') {
+                            this.multipleSelection_f.forEach(row => {
+                                labels.splice(labels.indexOf(row), 1)   //删除父标题
+                                arr.forEach(a => {      //遍历的去删除这些子元素  
+                                    var index = this.label_c.indexOf(a) 
+                                    this.label_c.splice(index,1)        //删除子元素  
+                                    // if(a.keyValue != ""){
+                                    //     this.empty(index,a.keyValue.toString(),this.label_c)   //清空按键绑定
+                                    // }                                       
+                                })
+                            })
+                            this.$message({
+                                message: '删除成功！',
+                                type: 'success'
+                            });
+                        }
+                    }
+                })
+            }
+            // 如果是二级标签的批量删除
+            else{
+                this.$confirm('确定删除这些标签吗？', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning',
+                    callback: action => {
+                        if (action === 'confirm') {
+                            this.multipleSelection_c.forEach(a => {
+                                var index = this.label_c.indexOf(a)
+                                this.label_c.splice(index,1)        //删除子元素  
+                                if(a.keyValue != ""){
+                                    this.empty(index,a.keyValue.toString(),this.label_c)   //清空按键绑定
+                                }                                       
+                            })                        
+                        }
+                    }
+                })
+            }
+            
+        } ,
+        // 对删除标题组中切换不同的tab事件
+        handleClick(tab, event) {
+            console.log(tab, event);
+            // console.log(this.del_tab_activeName);
+        },
         // 清空一个按键绑定
         empty(index,keyValue,rows){
             rows[index].keyValue = ""
             this.available_key_value[keyValue].val = false
+            this.$message({
+                message: '清空成功！',
+                type: 'success'
+            });
         },
         //删除一个二级标签
         deleteRow(index, rows) {    
             rows.splice(index, 1);
         },
+        //删除一个一级标签
+        delete_f_Row(index, rows) { 
+            this.$confirm('确定删除吗？这将会导致删除该标题下的所有子标题！', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning',
+                    callback: action => {
+                        if (action === 'confirm') {
+                            var f_label = rows[index]  // 得到要删除的父标签名字
+                            rows.splice(index, 1)  // 删除父元素
+                            this.label_c.forEach((item,index) => {
+                                if(item.father == f_label){
+                                    this.label_c.splice(index,1)  
+                                    console.log(item,index);   
+                                }
+                            })
+                            this.$message({
+                                message: '删除成功！',
+                                type: 'success'
+                            });
+                        }
+                    }
+                })   
+        },
         // 删除一个行为的活跃标签
         delete_action_tag(tag) {
-            console.log(tag);
             //splice(index,howmany) ——> 删除从index位置开始的数，howmany为删除的个数 若 howmany 小于等于 0，则不删除
             this.current_label.label_action_current.splice(this.current_label.label_action_current.indexOf(tag), 1);
-            console.log(this.current_label.label_action_current);
         },
         // 显示出输入框
         showInput() {
@@ -365,11 +582,17 @@ export default {
         setting_Sec_Label(){
             console.log('点击了设置按钮');
         },
+        downLoad_Sec_Label(){
+            this.$message({
+                message: '云端导入功能将在后续版本开放，敬请期待！',
+                type: 'warning'
+            })
+        },
         // 关闭设置的对话框的事件
         handleClose(done) {
             // this.$confirm('确认关闭？').then(_ => {done();}).catch(_ => {});
             // done();
-            // this.dialogVisible_setting=false
+            // this.dialogVisible_setting_bind=false
         },
         //  添加一个二级标签（同时可能添加一级标签）
         add_a_label_c(){
@@ -379,12 +602,30 @@ export default {
                     type: 'warning'
                 });
             }else {
-                this.label_c.push({father:this.add_label.add_label_f,children:this.add_label.add_label_c,keyValue:''})
-                this.$message({
-                    message: '二级标签添加成功！',
-                    type: 'success'
-                });
+                // 如果新添的二级标签和一级标签都已经存在（注意是正好搭配存在）
+                if(this.label_c.find(a => a.children == this.add_label.add_label_c) && this.label_c.find(a => a.father == this.add_label.add_label_f)){
+                    this.$message({
+                        message: '该二级标签已存在！',
+                        type: 'danger'
+                    })
+                }else{
+                    // 如果是新的  则添加
+                    this.label_c.push({father:this.add_label.add_label_f,children:this.add_label.add_label_c,keyValue:''})
+                    this.$message({
+                        message: '二级标签添加成功！',
+                        type: 'success'
+                    })
+                }
             }
+        },
+        //再次点击一个一级标签后取消一个一级标签的选择
+        handleRadioClick_f(val){
+            this.current_label.label_f_current === val ? this.current_label.label_f_current = '' : this.current_label.label_f_current = val            
+            this.radio1Change()
+        },
+        //再次点击一个二级标签后取消一个二级标签的选择
+        handleRadioClick_c(val){
+            this.current_label.label_c_current === val ? this.current_label.label_c_current = '' : this.current_label.label_c_current = val            
         },
         //  添加一个一级标签
         add_a_label_f(){
@@ -393,9 +634,26 @@ export default {
             }
             this.$refs.add_label_c.focus();
         },
+        // 二级标签选中后，自动去选择一级标签
+        radio_c_change(){
+            var a = this.label_c.find(a => a.children==this.current_label.label_c_current)      //查询当前选中的二级标题
+            this.current_label.label_f_current = a.father
+        },
         //监听一级标签变化的方法
-        radio1Change(){     
-            console.log(this.radio1);
+        //一级标签改变后 去禁用二级标签
+        radio1Change(){ 
+            this.current_label.label_c_current = ''
+        },
+        // 判断该二级标签是否禁用
+        judge_disabled(value){
+
+            if(this.current_label.label_f_current == ""){
+                return false
+            }else if(value.father == this.current_label.label_f_current){   //如果当前这个大类的
+                return false
+            }else{
+                return true
+            }
         },
         // 当前展示图片发生变化
         imgChange(index){
@@ -434,7 +692,6 @@ export default {
         },
         // 键盘监听事件失效
         keyDownReview(){
-            // console.log("取消监听");
             document.onkeydown = function (event) {
                 var e = event || window.event;
                 e.returnValue = true;
@@ -464,6 +721,15 @@ export default {
                 default:
                     break;
                 }
+                // 监听绑定二级标签的按键
+                if(keyCode<=57 && keyCode>=48){
+                    that.label_c.forEach(item => {
+                        if(item.keyValue == (keyCode-48).toString()){
+                            that.current_label.label_c_current = item.children
+                            that.radio_c_change()
+                        }
+                    })
+                }
                 if (e && e.preventDefault) {
                     e.preventDefault();
                 } else {
@@ -477,24 +743,30 @@ export default {
         label_c:{
             handler(new_val,old_val){
                 var key_vlaues = new_val.map(a => a.keyValue)   //将所有二级标签的keyvalue都赋值给key——values
-                console.log(typeof(key_vlaues[0]));
                 key_vlaues = key_vlaues.filter(function (s) {      //过滤器 过滤“” 和 null
                     s = s.toString()
                     return s && s.trim(); 
                 });
-                console.log(key_vlaues);
+                // console.log(key_vlaues);
 
                 this.available_key_value.forEach((item) => {
                     if(key_vlaues.indexOf(item.index)!=-1){
-                        console.log(item.index);
                         this.available_key_value[item.index].val = true // 将已赋值过的二级标签按键从选择器的options中删除
+                    }else{
+                        this.available_key_value[item.index].val = false // 将已赋值过的二级标签按键从选择器的options中添加
                     }
                 })
-                console.log(this.available_key_value);
+                // console.log(this.available_key_value);
                 //还要在腾出来键值时再把它加上
             },
             deep:true
         },
+        // available_key_value:{
+        //     handler(new_val,old_val){
+        //         this.keyArray = new_val.filter(a => a.val==true).map(a => a.index)
+        //         // console.log(this.keyArray);
+        //     },deep:true
+        // }
         
     },
     filters:{           
@@ -553,6 +825,10 @@ export default {
     .el-collapse-item-buttons{
         position:absolute;
         right:30px;
+    }
+    .el-collapse-item-buttons_f{
+        position:absolute;
+        right:85px;
     }
     .all{
         height: 100%;

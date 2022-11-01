@@ -2,7 +2,7 @@
     <el-header height="60px" class="header">
         <h3 class="title">
             <!-- <img src="../../../../assets/etoak_logo.png" class="logo"> -->
-            人工分拣(暂)
+            理大AI(暂)
         </h3>
 
         <div class="menu">
