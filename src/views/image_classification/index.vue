@@ -211,7 +211,7 @@
                             内容的尺寸与 none 或 contain 中的一个相同，取决于它们两个之间谁得到的对象尺寸会更小一些。 -->
                             
                             <!-- 使用v-if 使得只有在current等于该图片的索引时 才会渲染这个DOM  注意 不可以使用v-show -->
-                            <el-image v-if="index == current-1"  :src="item.src"  style="width:100%" fit="contain"  />
+                            <el-image v-if="index <= current && index >= current -2 "  :src="item.src"  style="width:100%" fit="contain"  />
                             
                            
                         </el-carousel-item>
