@@ -184,7 +184,7 @@
             <div class="image_classification_left">
                 <div class="tool_left">
                     <el-button class="tool_left_button" type="success" @click="click_upload"><i class="el-icon-folder-opened"></i>上传</el-button>
-                    <el-button class="tool_left_button" type="success"><i class="el-icon-s-order"></i>导出</el-button>
+                    <el-button class="tool_left_button" type="success" @click="export_csv"><i class="el-icon-s-order"></i>导出</el-button>
                     <input id="upload" accept="image/gif,image/png,image/jpeg,image/jpg,image/bmp" multiple type="file" name="file" ref="upload_input"
                     tabindex="-1" style="display: none;" @change="selectPhoto($event)" >
                     <el-button class="tool_left_button" type="info" @click="keyDown"><i class="el-icon-video-play"></i> 键盘监听</el-button>
@@ -222,7 +222,13 @@
                         <el-descriptions-item label="大小">{{Math.round(imgList[current-1].file.size/1024)+"K"}}</el-descriptions-item>
                         <el-descriptions-item label="最后修改时间">{{(imgList[current-1].file.lastModifiedDate)|formatDate('yyyy-MM-dd HH:mm:ss')}}</el-descriptions-item>
                         <el-descriptions-item label="多目标">
-                            <el-tag size="small" v-for="(tag,index2) in imgList[current-1].info" :key="index2">{{tag.fir_label}}({{tag.sec_label}})</el-tag>
+                            <div class="descriptions-div">
+                                <el-card class="box-card descriptions-card" v-for="(item,index) in current_data" :key="index">
+                                    {{item.label_f}}   
+                                    <el-tag size="small">{{item.label_c}}</el-tag>
+                                </el-card>
+                            </div>
+                            <!-- <el-tag size="small" v-for="(tag,index2) in imgList[current-1].info" :key="index2">{{tag.fir_label}}({{tag.sec_label}})</el-tag> -->
                         </el-descriptions-item>
                     </el-descriptions>
                      <!-- 底部翻页组件     -->
@@ -389,11 +395,16 @@
                                             >
                                         </el-input>
                                         <el-button v-else class="button-new-tag" size="small" @click="showInput">+新增</el-button>
+                                        <br>
+                                    </div>
+                                    <div style="margin-bottom:8px">
+                                        数量：<el-input-number v-model="current_label.current_num" size="small" controls-position="right" :min="1" :max="100"></el-input-number>
                                     </div>
                                 </el-collapse-item>      
                             </el-collapse>
                         </el-card>
-                        <el-button type="success" style="width:100%">保存记录(空格)</el-button>
+                        <el-button type="danger" style="width:20%">清空</el-button>
+                        <el-button type="success" style="width:75%" @click="add_data">保存记录(空格)</el-button>
                     </div>
                 </el-card>
             </div>
@@ -414,7 +425,8 @@ export default {
                 label_c_current:'', //当前选中的父 子 级标签
                 label_age_current:'',//当前选中得年龄
                 label_sex_current:'',//当前选中得性别
-                label_action_current:[]//当前的行为列表
+                label_action_current:[],//当前的行为列表
+                current_num:1   //当前物种的数量
             },
             multipleSelection_c:'',//多选二级标题时的数组
             multipleSelection_f:'',//多选一级标题时的数组
@@ -432,7 +444,7 @@ export default {
             keyMap:[],
             
             // Tip: 按键与键盘对照表数值差96   如 0的keycode=96  2的keycode=98
-            available_key_value:[{index:0,val:false},{index:1,val:false},{index:2,val:false},{index:3,val:false},{index:4,val:false},{index:5,value:false},
+            available_key_value:[{index:0,val:false},{index:1,val:false},{index:2,val:false},{index:3,val:false},{index:4,val:false},{index:5,val:false},
                                 {index:6,val:false},{index:7,val:false},{index:8,val:false},{index:9,val:false}],
             keyArray:[false,false,false,false,false,false,false,false,false,false],        // 表示从0-9的按键是否已被占用
             label_f:['兽类','鸟类','猫类','犬类'],
@@ -440,8 +452,10 @@ export default {
             label_age:['未知','幼年','青年','成年'],
             label_sex:['未知','雄性','雌性'],
             inputVisible: false,//添加新行为时的new tag是否可见
-            inputValue: ''//输入的新new tag
-            // list:[{'image001':[{'一级标签':'犬类','二级标签':'金毛'}]},{'image002':[{'一级标签':'犬类','二级标签':'金毛'}]}],
+            inputValue: '',//输入的新new tag
+            
+            csv_list:[], //缓存中的csv信息
+            current_data:[],    //当前照片的多记录信息
 
         }
     },
@@ -452,7 +466,94 @@ export default {
         this.keyDownReview()
     },
     methods: {
-        
+        export_csv(){
+            var value = ''
+            this.$prompt('请命名该文件', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+            }).then(({ value }) => {
+            this.$message({
+                type: 'success',
+                message: '文件名为: ' + value
+            });
+            this.create_csv(this.csv_list,value)
+            }).catch(() => {
+            this.$message({
+                type: 'info',
+                message: '取消输入'
+            });       
+            });
+            
+        },
+        //导出csv
+        create_csv: function(data, name) {
+             // 列标题，逗号隔开，每一个逗号就是隔开一个单元格
+            let str = 'index,img_name,Y,M,D,h,m,s,tag1,tag2,age,gender,action,num\n'
+            // 增加\t为了不让表格显示科学计数法或者其他格式
+            // 需要导出与列对应的字段，因为列标题已固定，若不声明，json数据中的字段位置不固定循环拼接后不是列标题的顺序导致标题与值导出后不对应
+            // 并可自定义导出字段
+            const needs = ['img_name', 'year', 'month', 'date', 'hour' , 'minute' , 'second' , 
+            'label_f','label_c','age','gender','action','num']
+            for (let i = 0; i < this.csv_list.length; i++) {
+                // jsonData[i]每行数据
+                // 根据导出字段循环取得每行数据中值
+                str+=`${(i+1)+'\t'},`
+                for (let j = 0; j < needs.length; j++) {
+                    let field = needs[j];
+                    // // 修改字段数据  比如日期转换时间戳转日期
+                    // jsonData[i][field] = formatFiled(field, jsonData[i][field]);
+                    str += `${this.csv_list[i][field] + '\t'},`;
+                }
+                str += '\n';
+            }
+            // “\ufeff” BOM头
+            var uri = 'data:text/csv;charset=utf-8,\ufeff' + encodeURIComponent(str);
+            var downloadLink = document.createElement("a");
+            downloadLink.href = uri;
+            downloadLink.download = (name+".csv")||"temp.csv";
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        },
+        //生成一条记录
+        add_data(){
+            var a = {}
+            //索引
+            var img_index = this.current-1
+            //名字
+            a.img_name = this.imgList[img_index].file.name
+            //时间
+            var dt = new Date(this.imgList[img_index].file.lastModifiedDate);
+            a.year = dt.getFullYear();
+            a.month = (dt.getMonth() + 1).toString().padStart(2,'0');
+            a.date = dt.getDate().toString().padStart(2,'0');
+            a.hour = dt.getHours().toString().padStart(2,'0');
+            a.minute = dt.getMinutes().toString().padStart(2,'0');
+            a.second = dt.getSeconds().toString().padStart(2,'0');
+            //父标签
+            a.label_f = this.current_label.label_f_current
+            //子标签
+            a.label_c = this.current_label.label_c_current
+            //年龄
+            a.age = this.current_label.label_age_current
+            //性别
+            a.gender = this.current_label.label_sex_current
+            //行为
+            a.action = ''
+            this.current_label.label_action_current.forEach(item => {
+                a.action = a.action + item +';'
+            })
+            //数量
+            a.num = this.current_label.current_num
+            
+            this.csv_list.push(a)
+
+            this.$message({
+                type: 'success',
+                message: '保存成功！'
+            });
+        },
+
         //点击删除标题的复选框触发
         handleSelectionChange(val) {
             if(this.del_tab_activeName == 'first'){
@@ -718,6 +819,9 @@ export default {
                 case 39:    //F8
                     that.next()
                     break;
+                case 32:
+                    that.add_data()
+                    break;
                 default:
                     break;
                 }
@@ -756,17 +860,22 @@ export default {
                         this.available_key_value[item.index].val = false // 将已赋值过的二级标签按键从选择器的options中添加
                     }
                 })
-                // console.log(this.available_key_value);
+                console.log(this.available_key_value);
                 //还要在腾出来键值时再把它加上
             },
             deep:true
         },
-        // available_key_value:{
-        //     handler(new_val,old_val){
-        //         this.keyArray = new_val.filter(a => a.val==true).map(a => a.index)
-        //         // console.log(this.keyArray);
-        //     },deep:true
-        // }
+        csv_list:{
+            handler(new_val,old_val){
+                // 过滤出属于该图片的记录
+                var img_name = this.imgList[this.current-1].file.name
+                this.current_data = new_val.filter(item => item.img_name == img_name)
+                console.log(this.imgList);
+                console.log(this.csv_list);
+                // console.log(this.current_data);
+            },
+            deep:true
+        }
         
     },
     filters:{           
@@ -806,6 +915,14 @@ export default {
 </script>
 
 <style>
+    .descriptions-div{
+        display: flex;
+        flex-direction: row;
+    }
+    .descriptions-card{
+        background-color: rgb(142, 142, 142);
+        width: 20%;
+    }
     .el-tag + .el-tag { 
         margin-left: 0px;
     }
@@ -840,6 +957,9 @@ export default {
     }
     .carouse {
         width: 89%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
     .tool_left{
         width: 10%;
@@ -873,7 +993,8 @@ export default {
     .image_classification_left_bottom{
         display: flex;
         justify-content: space-between;
-        align-items: center
+        align-items: center;
+        margin-bottom: 15px;
     }
     .card_right{
         width: 98%;
