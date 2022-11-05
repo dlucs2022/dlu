@@ -25,7 +25,7 @@ docker compose start
 ```shell
 docker compose restart
 ```
-### 7. 清除项目
+### 8. 清除项目
 ```shell
 docker compose down
 ```
