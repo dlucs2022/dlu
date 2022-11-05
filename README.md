@@ -1,29 +1,15 @@
-# vue-cli-days14
+# DLU AI
 
-## Project setup
+## 部署
+### 1. 安装docker和docker compose
+> Docker 官方文档：https://docs.docker.com/get-docker/
+### 2. 下载项目源码
+```shell
+git clone https://github.com/dlucs2022/dlu.git
 ```
-npm install
+### 3. 切换目录，启动项目
+```shell
+docker compose up -d
 ```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+#### 4. 测试
+> 访问 http://部署主机IP:80
