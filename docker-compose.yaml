@@ -12,6 +12,6 @@ services:
       - "80:80"
     volumes:
       - dlu:/var/www/html
-      - deploy/nginx.conf:/etc/nginx/nginx.conf
+      - ./deploy/nginx.conf:/etc/nginx/nginx.conf
 volumes:
   dlu:
