@@ -1075,7 +1075,7 @@ export default {
         
     },
     watch:{
-        //多记录中的物种属性变化时的事件
+       //多记录中的物种属性变化时的事件
         current_data_model:{
             handler(new_val,old_val){
                 if(new_val != ''){
