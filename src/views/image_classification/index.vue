@@ -710,7 +710,9 @@ export default {
                     //行为
                     a.action = ''
                     this.current_label.label_action_current.forEach(item => {
-                        a.action = a.action + item +';'
+                        if(item != ''){
+                            a.action = a.action + item +';'
+                        }
                     })
                     if(a.action.length>=1){
                         a.action = a.action.substring(0,a.action.length-1)
@@ -869,7 +871,7 @@ export default {
                 this.$refs.saveTagInput.$refs.input.focus();
             });
         },
-        //
+        //输入新的行为
         handleInputConfirm() {
 
             let inputValue = this.inputValue;
@@ -1082,7 +1084,11 @@ export default {
                     this.current_label.label_c_current = current.label_c
                     this.current_label.label_age_current = current.age
                     this.current_label.label_sex_current = current.gender
-                    this.current_label.label_action_current = current.action.split(";")
+                    if(current.action != ''){
+                        this.current_label.label_action_current = current.action.split(";")
+                    }else{
+                        this.current_label.label_action_current = ''
+                    }
                     this.current_label.current_num = current.num
                 }
             }
