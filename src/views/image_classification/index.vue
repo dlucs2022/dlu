@@ -1,6 +1,49 @@
 <template>
     <div class="all">
-        <!-- :before-close="handleClose" -->
+        <!-- 问题反馈的对话框 -->
+        <el-dialog
+            title="问题反馈"
+            :visible.sync="feedback_dialogVisible"
+            width="30%"
+            >
+            <h4>系统问题请通过以下邮件地址反馈</h4>
+            <span>779093440@qq.com</span><br>
+            <span>1454147447@qq.com</span><br>
+            <span>1218eye@gmail.com</span><br>
+            <br>
+            <span>大理大学数学与计算机学院工科楼601</span>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="feedback_dialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="feedback_dialogVisible = false">确 定</el-button>
+            </span>
+        </el-dialog>
+        <!-- 操作说明的对话框 -->
+        <el-dialog
+            title="操作说明"
+            :visible.sync="explain_dialogVisible"
+            width="50%"
+            >
+            1加载照片：
+            <br>
+            点击左上角“加载”按钮，在弹出的文件选择窗口中点击选择图片，按ctrl键多选，按ctrl+a键全选
+            <br>
+            2照片切换：
+            <br>
+            方式一，点击图片展示区域中，图片两侧的透明按钮;
+            <br>
+            方式二，点击页面中间的底部区域的两个蓝色翻页按钮;
+            <br>
+            方式三：在开启了键盘监听功能后，按键盘中的A，D或者左右箭头进行照片的翻页。
+            <br>
+            方式四：在页面中间的底部区域中标有“Go”的输入框中键入要跳转的图片索引，按下回车。
+            <br>
+            还可以通过页面左上方的空与非空图片翻页组件按钮进行跳转。
+            <br>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="explain_dialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="explain_dialogVisible = false">确 定</el-button>
+            </span>
+        </el-dialog>
         <!-- 设置按钮弹出对话框 -->
         <el-dialog
             title="绑定按键"
@@ -183,12 +226,14 @@
         <div class="image_classification">
             <div class="image_classification_left">
                 <div class="tool_left">
-                    <el-button class="tool_left_button" type="success" @click="click_upload"><i class="el-icon-folder-opened"></i>上传</el-button>
+                    <el-button class="tool_left_button" type="success" @click="click_upload"><i class="el-icon-folder-opened"></i>加载</el-button>
                     <el-button class="tool_left_button" type="success" @click="export_csv"><i class="el-icon-s-order"></i>导出</el-button>
                     <input id="upload" accept="image/gif,image/png,image/jpeg,image/jpg,image/bmp" multiple type="file" name="file" ref="upload_input"
                     tabindex="-1" style="display: none;" @change="selectPhoto($event)" >
                     <el-button class="tool_left_button" type="info" @click="keyDown"><i class="el-icon-video-play"></i> 键盘监听</el-button>
                     <el-button class="tool_left_button" type="info" @click="keyDownReview"><i class="el-icon-video-pause"></i> 键盘失效</el-button>
+                    <el-button class="tool_left_button" type="warning" @click="feedback_dialogVisible = true"><i class="el-icon-s-promotion"></i> 问题反馈</el-button>
+                    <el-button class="tool_left_button" type="warning" @click="explain_dialogVisible = true"><i class="el-icon-mouse"></i> 操作说明</el-button>
                 </div>
                 <div class="carouse">
                     <el-carousel :initial-index="0" @change="imgChange" 
@@ -223,10 +268,12 @@
                         <el-descriptions-item label="最后修改时间">{{(imgList[current-1].file.lastModifiedDate)|formatDate('yyyy-MM-dd HH:mm:ss')}}</el-descriptions-item>
                         <el-descriptions-item label="多目标">
                             <div class="descriptions-div">
-                                <el-card class="box-card descriptions-card" v-for="(item,index) in current_data" :key="index">
-                                    {{item.label_f}}   
-                                    <el-tag size="small">{{item.label_c}}</el-tag>
-                                </el-card>
+                                <el-radio-group v-model="current_data_model" >
+                                    <el-radio-button v-for="item in current_data" :key="item.csvId" :label="item.csvId" 
+                                    @click.native.prevent="handleRadioClick_current_data_model(item.csvId)"> 
+                                        {{item.label_c}}  <el-tag size="mini">{{item.label_f}}</el-tag>
+                                    </el-radio-button>
+                                </el-radio-group>
                             </div>
                             <!-- <el-tag size="small" v-for="(tag,index2) in imgList[current-1].info" :key="index2">{{tag.fir_label}}({{tag.sec_label}})</el-tag> -->
                         </el-descriptions-item>
@@ -237,7 +284,7 @@
                         <el-progress style="width:50%" :text-inside="true" :stroke-width="24" :percentage="percentage" status="success"></el-progress>
                         <el-tag size="small">{{current+'/'+imgList.length}}</el-tag>
                         <el-input placeholder="Go" v-model="keyUpValue" @focus="keyDownReview()" @blur="keyDown()"
-                        @keyup.enter.native="gotoIndex" size="mini" style="width:15%" clearable></el-input>
+                        @keyup.enter.native="gotoIndexByInput" size="mini" style="width:15%" clearable></el-input>
                         <!-- 提示弹出框 -->
                         <el-popover
                             placement="top-start"
@@ -256,11 +303,15 @@
                 <el-card class="box-card card_right">
                     <!-- 非空翻页与空翻页 -->
                     <div class="text item">
-                        <div class="handle_not_null">
-                            <el-button-group>
-                                <el-button type="primary" icon="el-icon-arrow-left" size="mini">上一张非空</el-button>
-                                <el-button type="primary" size="mini">下一张非空<i class="el-icon-arrow-right el-icon--right"></i></el-button>
-                            </el-button-group>
+                        <div class="handle_no_empty">
+                            
+                            <el-button type="primary" style="width:50%" plain icon="el-icon-arrow-left" size="small" @click="pre_not_empty">上一张非空</el-button>
+                            <el-button type="primary" style="width:50%" plain size="small" @click="next_not_empty">下一张非空<i class="el-icon-arrow-right el-icon--right"></i></el-button>   
+                        </div>
+                        <hr>
+                        <div class="handle_empty">
+                            <el-button type="primary" style="width:50%" icon="el-icon-arrow-left" size="small" @click="pre_empty">上一张空</el-button>
+                            <el-button type="primary" style="width:50%" size="small" @click="next_empty">下一张空<i class="el-icon-arrow-right el-icon--right"></i></el-button>
                         </div>
                     </div>
                     <!-- 两个标题选择卡片 -->
@@ -361,7 +412,7 @@
                         </el-input>
                     </el-card>
                     <!-- 底部行为等卡片 -->
-                    <div class="card_right_bottom" >
+                    <div class="card_right_bottom">
                         <el-card class="box-card" shadow="hover" body-style="padding:0px 10px 0px 10px" style="margin:10px 0px 10px 0px" > 
                             <el-collapse v-model="activeNames_individual_attributes">
                                 <el-collapse-item title="个体属性" name="1">
@@ -403,8 +454,8 @@
                                 </el-collapse-item>      
                             </el-collapse>
                         </el-card>
-                        <el-button type="danger" style="width:20%">清空</el-button>
-                        <el-button type="success" style="width:75%" @click="add_data">保存记录(空格)</el-button>
+                        <el-button type="danger" style="width:20%" @click="empty_current_labels">清空</el-button>
+                        <el-button type="success" style="width:76%" @click="add_data">保存记录(空格)</el-button>
                     </div>
                 </el-card>
             </div>
@@ -431,13 +482,15 @@ export default {
             multipleSelection_c:'',//多选二级标题时的数组
             multipleSelection_f:'',//多选一级标题时的数组
             del_tab_activeName: 'first', //  删除标题组对话框中tab切换
+            explain_dialogVisible:false,//操作说明的对话框
+            feedback_dialogVisible:false,//反馈的对话框
             dialogVisible_setting_del:false,// 删除按钮的对话框
             dialogVisible_setting_bind:false,//设置 的对话框
             activeNames_f_and_c_labels: ['1','2'],    //一二级标签得折叠面板的活跃索引
             activeNames_individual_attributes:['1'],//个体行为得折叠面板的活跃索引
-            imgList:[{file:"empty",src:require('../../assets/emptyImg.png'),info:[]}],// info:[{一级标签：‘犬类’，二级标签：‘金毛’，行为：‘睡觉’},{一级标签：‘犬类’，二级标签：‘金毛’，行为：‘睡觉’}]
+            imgList:[{file:"empty",src:require('../../assets/emptyImg.png')}],//    关键的文件数组
             list:[],
-            fileList:[],
+            // fileList:[], 好像没用到
             current:1,//当前图片索引
             percentage:0,//进度条
             keyUpValue:'',
@@ -455,7 +508,14 @@ export default {
             inputValue: '',//输入的新new tag
             
             csv_list:[], //缓存中的csv信息
-            current_data:[],    //当前照片的多记录信息
+            csvId:1,//csv中的ID 
+            current_data:[],    //当前照片的多记录信息{"img_name": "IMAG0001.JPG","year": 2019,"month": "06",
+                        //"date": "15","hour": "05","minute": "52","second": "23","label_f": "兽类","label_c": "老虎",
+                        //"age": "未知","gender": "未知","action": "1;","num": 1,"csvId": 2}
+            current_data_model:'',//当前照片多记录信息中展示的是哪个
+            imgNameAndIndexList:[],//图片名加索引数组[{imageName:oo1.jpg,index:1},{},{}]这样的数组
+            empty_label_imgs:[],    //  空标签的照片们
+            no_empty_label_imgs:[], //  有标签的照片们  {imgName:item.imgName,imgIndex:item.imgIndex,deleted:true}
 
         }
     },
@@ -466,6 +526,99 @@ export default {
         this.keyDownReview()
     },
     methods: {
+        //再次点击一个多信息按钮后取消该按钮的选择
+        handleRadioClick_current_data_model(val){
+            this.current_data_model=== val ? this.current_data_model = '' : this.current_data_model = val
+        },
+        //清空属性栏
+        empty_current_labels(val){
+            //当没有选择多记录时为清空
+            if(this.current_data_model == ''){
+                this.current_label.label_f_current = ''
+                this.current_label.label_c_current = ''
+                this.current_label.label_age_current = ''
+                this.current_label.label_sex_current = ''
+                this.current_label.label_action_current = []
+                this.current_label.current_num = 1
+                if(val != 'changeIndex'){       //表示 不是在切换图片时执行的此函数
+                    this.$message({
+                        message: '清空成功！',
+                        type: 'success'
+                    });
+                }
+               
+            }else if(val != 'changeIndex'){     //表示 不是在切换图片时执行的此函数  且否则为删除该记录
+                this.$confirm('您处于选中某记录的状态，您确定删除当前记录吗？', {
+                confirmButtonText: '删除',
+                cancelButtonText: '取消',
+                type: 'warning',
+                    callback: action => {
+                        if (action === 'confirm') {
+                            var data = this.current_data.find( a => a.csvId == this.current_data_model)
+                            var index = this.csv_list.indexOf(data)
+                            this.csv_list.splice(index,1)        //删除该记录                      
+                        }
+                        this.$message({
+                                message: '删除成功！',
+                                type: 'success'
+                        });
+                    }
+                })
+            }
+        },
+        // 上一张空
+        pre_empty(){
+            for (let i = this.current-1-1; i >= 0; i--) {
+                if(this.empty_label_imgs[i].exist == true ){ //前面的如果有非空的
+                    this.gotoIndex(i)
+                    return
+                }
+            }
+            this.$message({
+                type: 'warning',
+                message: '已无空图片！'
+            });
+        },
+        // 下一张空
+        next_empty(){
+            for (let i = this.current-1+1; i < this.empty_label_imgs.length; i++) {
+                if(this.empty_label_imgs[i].exist == true ){ //后面的如果有非空的
+                    this.gotoIndex(i)
+                    return
+                }
+            }
+            this.$message({
+                type: 'warning',
+                message: '已无空图片！'
+            });
+        },
+        //上一张非空
+        pre_not_empty(){
+            for (let i = this.current-1-1; i >= 0; i--) {
+                if(this.no_empty_label_imgs[i].exist == true ){ //前面的如果有非空的
+                    this.gotoIndex(i)
+                    return
+                }
+            }
+            this.$message({
+                type: 'warning',
+                message: '已无非空图片！'
+            });
+        },
+        // 下一张非空
+        next_not_empty(){
+            for (let i = this.current-1+1; i < this.no_empty_label_imgs.length; i++) {
+                if(this.no_empty_label_imgs[i].exist == true ){ //后面的如果有非空的
+                    this.gotoIndex(i)
+                    return
+                }
+            }
+            this.$message({
+                type: 'warning',
+                message: '已无非空图片！'
+            });
+        },
+        //点击导出按钮后
         export_csv(){
             var value = ''
             this.$prompt('请命名该文件', '提示', {
@@ -515,44 +668,91 @@ export default {
             downloadLink.click();
             document.body.removeChild(downloadLink);
         },
-        //生成一条记录
+        //生成一条记录  OR   修改一条记录
         add_data(){
-            var a = {}
-            //索引
-            var img_index = this.current-1
-            //名字
-            a.img_name = this.imgList[img_index].file.name
-            //时间
-            var dt = new Date(this.imgList[img_index].file.lastModifiedDate);
-            a.year = dt.getFullYear();
-            a.month = (dt.getMonth() + 1).toString().padStart(2,'0');
-            a.date = dt.getDate().toString().padStart(2,'0');
-            a.hour = dt.getHours().toString().padStart(2,'0');
-            a.minute = dt.getMinutes().toString().padStart(2,'0');
-            a.second = dt.getSeconds().toString().padStart(2,'0');
-            //父标签
-            a.label_f = this.current_label.label_f_current
-            //子标签
-            a.label_c = this.current_label.label_c_current
-            //年龄
-            a.age = this.current_label.label_age_current
-            //性别
-            a.gender = this.current_label.label_sex_current
-            //行为
-            a.action = ''
-            this.current_label.label_action_current.forEach(item => {
-                a.action = a.action + item +';'
-            })
-            //数量
-            a.num = this.current_label.current_num
+            if(this.imgList.length == 1){
+                this.$alert('生成记录前请先上传照片', '警告', {
+                confirmButtonText: '确定',
+                callback: action => {
+                    this.click_upload()
+                }
+                });
+            }else{  //已经上传数据集了
+                if(this.current_label.label_c_current == '' || this.current_label.label_f_current == '' ){
+                this.$message({
+                    type: 'danger',
+                    message: '请选择标签后进行保存！'
+                });
+                    return
+                }
+                if(this.current_data_model == ''){  //如果现在不是对多记录的修改状态
+                    var a = {}
+                    //索引
+                    var img_index = this.current-1
+                    //名字
+                    a.img_name = this.imgList[img_index].file.name
+                    //时间
+                    var dt = new Date(this.imgList[img_index].file.lastModifiedDate);
+                    a.year = dt.getFullYear();
+                    a.month = (dt.getMonth() + 1).toString().padStart(2,'0');
+                    a.date = dt.getDate().toString().padStart(2,'0');
+                    a.hour = dt.getHours().toString().padStart(2,'0');
+                    a.minute = dt.getMinutes().toString().padStart(2,'0');
+                    a.second = dt.getSeconds().toString().padStart(2,'0');
+                    //父标签
+                    a.label_f = this.current_label.label_f_current
+                    //子标签
+                    a.label_c = this.current_label.label_c_current
+                    //年龄
+                    a.age = this.current_label.label_age_current
+                    //性别
+                    a.gender = this.current_label.label_sex_current
+                    //行为
+                    a.action = ''
+                    this.current_label.label_action_current.forEach(item => {
+                        a.action = a.action + item +';'
+                    })
+                    if(a.action.length>=1){
+                        a.action = a.action.substring(0,a.action.length-1)
+                    }
+                    //数量
+                    a.num = this.current_label.current_num
+                    a.csvId = this.csvId
+                    this.csv_list.push(a)
+                    this.$message({
+                        type: 'success',
+                        message: '保存成功！'
+                    });
+                    this.csvId+=1
+                }else{  //否则就对该多记录进行修改
+                    var csvId = this.current_data_model
+                    const data = this.csv_list.find(a => a.csvId==csvId)
+                    //父标签
+                    data.label_f = this.current_label.label_f_current
+                    //子标签
+                    data.label_c = this.current_label.label_c_current
+                    //年龄
+                    data.age = this.current_label.label_age_current
+                    //性别
+                    data.gender = this.current_label.label_sex_current
+                    //行为
+                    data.action = ''
+                    this.current_label.label_action_current.forEach(item => {
+                        data.action = data.action + item +';'
+                    })
+                    if(data.action.length>=1){
+                        data.action = data.action.substring(0,data.action.length-1)
+                    }
+                    //数量
+                    data.num = this.current_label.current_num
+                    this.$message({
+                        type: 'success',
+                        message: '修改成功！'
+                    });
+                }
+            }
             
-            this.csv_list.push(a)
-
-            this.$message({
-                type: 'success',
-                message: '保存成功！'
-            });
-        },
+        },  
 
         //点击删除标题的复选框触发
         handleSelectionChange(val) {
@@ -758,10 +958,23 @@ export default {
         },
         // 当前展示图片发生变化
         imgChange(index){
-            console.log(index);
             this.current= (index==0?1:index+1)
             this.percentage = Math.round((this.current / this.imgList.length) * 100)
-            
+            this.changeCurrentData()
+        },
+        //展示图片发生变化时 更新属于该图片的物种属性
+        changeCurrentData(){
+            // 过滤出属于该图片的记录
+            var img_name = this.imgList[this.current-1].file.name
+            this.current_data = this.csv_list.filter(item => item.img_name == img_name)
+            if(this.current_data != ''){
+                this.current_data_model = this.current_data[0].csvId
+            }
+            else{   //该图片没有属性记录
+                this.current_data_model = ''
+                this.empty_current_labels('changeIndex')
+            }
+
         },
         // 初始化加载图片
         selectPhoto(event){
@@ -774,6 +987,19 @@ export default {
                 this.imgList = tempList 
                 event.target.value = "" // 解决不能选同一个文件
                 this.imgChange(0)
+                this.imgNameAndIndexList = []
+                //生成一个 [{imageName:oo1.jpg,index:1},{},{}]这样的数组
+                tempList.forEach((item,index) => {
+                    this.imgNameAndIndexList.push({imgName:item.file.name,imgIndex:index+1})
+                })
+                //将空标签照片数组初始化
+                this.imgNameAndIndexList.forEach((item,index) => {
+                    this.empty_label_imgs.push({imgName:item.imgName,imgIndex:item.imgIndex,exist:true})
+                    this.no_empty_label_imgs.push({imgName:item.imgName,imgIndex:item.imgIndex,exist:false})
+                })
+                //清空csv数据列表
+                this.csv_list = []
+                this.csvId = 1
         },
         // 点击了“上传文件”按钮
         click_upload(){
@@ -788,8 +1014,11 @@ export default {
             this.$refs.carousel.next()
         },
         // 跳转至指定图片索引
-        gotoIndex(){
+        gotoIndexByInput(){
             this.$refs.carousel.setActiveItem(this.keyUpValue-1)
+        },
+        gotoIndex(index){
+            this.$refs.carousel.setActiveItem(index)
         },
         // 键盘监听事件失效
         keyDownReview(){
@@ -844,6 +1073,20 @@ export default {
         
     },
     watch:{
+        //多记录中的物种属性变化时的事件
+        current_data_model:{
+            handler(new_val,old_val){
+                if(new_val != ''){
+                    var current = this.current_data.find( a => a.csvId==new_val)
+                    this.current_label.label_f_current = current.label_f
+                    this.current_label.label_c_current = current.label_c
+                    this.current_label.label_age_current = current.age
+                    this.current_label.label_sex_current = current.gender
+                    this.current_label.label_action_current = current.action.split(";")
+                    this.current_label.current_num = current.num
+                }
+            }
+        },
         label_c:{
             handler(new_val,old_val){
                 var key_vlaues = new_val.map(a => a.keyValue)   //将所有二级标签的keyvalue都赋值给key——values
@@ -860,18 +1103,32 @@ export default {
                         this.available_key_value[item.index].val = false // 将已赋值过的二级标签按键从选择器的options中添加
                     }
                 })
-                console.log(this.available_key_value);
-                //还要在腾出来键值时再把它加上
             },
             deep:true
         },
         csv_list:{
             handler(new_val,old_val){
                 // 过滤出属于该图片的记录
-                var img_name = this.imgList[this.current-1].file.name
-                this.current_data = new_val.filter(item => item.img_name == img_name)
-                console.log(this.imgList);
-                console.log(this.csv_list);
+                this.changeCurrentData()
+                //每次生成都去更新 空标签图片 和 非空标签图片 这两个数组
+                var no_empty_img_set = new_val.map(a => a.img_name)
+                var no_empty_img_names = Array.from(new Set(no_empty_img_set))  //给csvlist里面的名字们去重 这里面都是非空的图片了
+                for (let [index1, item1] of no_empty_img_names.entries()){
+                    for (let [index2, item2] of this.no_empty_label_imgs.entries()){
+                        if(item1 == item2.imgName){
+                            item2.exist = true
+                            this.empty_label_imgs[index2].exist = false
+                            break
+                        }
+                    }
+                }
+                
+                // console.log(this.empty_label_imgs);
+                // console.log(this.no_empty_label_imgs);
+
+
+                // console.log(this.imgList);
+                // console.log(this.csv_list);
                 // console.log(this.current_data);
             },
             deep:true
@@ -915,6 +1172,9 @@ export default {
 </script>
 
 <style>
+    .descriptions-div{
+        height: 40px;
+    }
     .descriptions-div{
         display: flex;
         flex-direction: row;
@@ -1002,9 +1262,15 @@ export default {
         display: flex;
         flex-direction: column;
     }
-    .handle_not_null{
+    .handle_no_empty{
+        width: 100%;
         display: flex;
-        justify-content: space-between;
+        justify-content: center;
+    }
+    .handle_empty{
+        width: 100%;
+        display: flex;
+        justify-content: center;
     }
     .el-radio-button{
         background: none;
