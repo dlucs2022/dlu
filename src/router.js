@@ -8,6 +8,7 @@ const routes = [
   {
     path:'/',
     component:()=>import('@/views/layout'),
+    redirect:'/layout/system_introduce',
   },
   {
     path:'/layout',
