@@ -228,8 +228,8 @@
                 <div class="tool_left">
                     <el-button class="tool_left_button" type="success" @click="click_upload"><i class="el-icon-folder-opened"></i>加载</el-button>
                     <el-button class="tool_left_button" type="success" @click="export_csv"><i class="el-icon-s-order"></i>导出</el-button>
-                    <input id="upload" accept="image/gif,image/png,image/jpeg,image/jpg,image/bmp" multiple type="file" name="file" ref="upload_input"
-                    tabindex="-1" style="display: none;" @change="selectPhoto($event)" >
+                    <input id="upload" webkitdirectory type="file" name="file" ref="upload_input"
+                    tabindex="-1" style="display: none;" @change.stop="selectPhoto($event)" >
                     <el-button class="tool_left_button" type="info" @click="keyDown"><i class="el-icon-video-play"></i> 键盘监听</el-button>
                     <el-button class="tool_left_button" type="info" @click="keyDownReview"><i class="el-icon-video-pause"></i> 键盘失效</el-button>
                     <el-button class="tool_left_button" type="warning" @click="feedback_dialogVisible = true"><i class="el-icon-s-promotion"></i> 问题反馈</el-button>
@@ -490,7 +490,7 @@ export default {
             activeNames_individual_attributes:['1'],//个体行为得折叠面板的活跃索引
             imgList:[{file:"empty",src:require('../../assets/emptyImg.png')}],//    关键的文件数组
             list:[],
-            // fileList:[], 好像没用到
+
             current:1,//当前图片索引
             percentage:0,//进度条
             keyUpValue:'',
@@ -620,16 +620,25 @@ export default {
         },
         //点击导出按钮后
         export_csv(){
+            var dirName = this.imgList[0].file.webkitRelativePath.split("/")[0]
             var value = ''
-            this.$prompt('请命名该文件', '提示', {
+            this.$prompt('请命名该文件(如果不命名，则会使用读取的文件夹名称作为csv文件名)', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
             }).then(({ value }) => {
-            this.$message({
-                type: 'success',
-                message: '文件名为: ' + value
-            });
-            this.create_csv(this.csv_list,value)
+                if(value == '' || value == 'null' || value == null){
+                    this.$message({
+                        type: 'success',
+                        message: '文件名为: ' + dirName
+                    });
+                    this.create_csv(this.csv_list,dirName)
+                }else{
+                    this.$message({
+                        type: 'success',
+                        message: '文件名为: ' + value
+                    });
+                    this.create_csv(this.csv_list,value)
+                }
             }).catch(() => {
             this.$message({
                 type: 'info',
@@ -983,8 +992,10 @@ export default {
                 let fileList = event.target.files
                 var tempList = []           
                 for(let i=0;i<fileList.length;i++){
-                    let fileUrl = URL.createObjectURL(fileList[i]);  // 获取文件url
-                    tempList.push({file:fileList[i],src:fileUrl}) // data中显示的图片url 
+                    if(fileList[i].type == 'image/gif' || fileList[i].type == 'image/png' || fileList[i].type == 'image/jpeg' || fileList[i].type == 'image/jpg' || fileList[i].type == 'image/bmp'){
+                        let fileUrl = URL.createObjectURL(fileList[i]);  // 获取文件url
+                        tempList.push({file:fileList[i],src:fileUrl}) // data中显示的图片url 
+                    }
                 }
                 this.imgList = tempList 
                 event.target.value = "" // 解决不能选同一个文件
@@ -1002,6 +1013,7 @@ export default {
                 //清空csv数据列表
                 this.csv_list = []
                 this.csvId = 1
+                console.log(this.imgList);
         },
         // 点击了“上传文件”按钮
         click_upload(){
