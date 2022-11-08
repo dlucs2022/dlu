@@ -9,7 +9,7 @@
             <el-menu :router="true"  :default-active="$route.path" class="el-menu-demo" mode="horizontal" @select="handleSelect"
             @open="handleOpen" @close="handleClose">
           <!-- background-color="#2d3a4b" -->
-                <el-submenu index="1">
+                <!-- <el-submenu index="1">
                     <template slot="title"> <i class="el-icon-s-home"></i>关于我们</template>
                     <el-menu-item index="/layout/system_introduce">系统功能</el-menu-item>
                     <el-menu-item index="1-2">团队风采</el-menu-item>
@@ -20,8 +20,8 @@
                     <el-menu-item index="1-4-2">选项2</el-menu-item>
                     <el-menu-item index="1-4-3">选项3</el-menu-item>
                     </el-submenu>
-                </el-submenu>
-                <el-menu-item index="2">XXXX</el-menu-item>
+                </el-submenu> -->
+                <el-menu-item index="2">主页</el-menu-item>
                 <el-menu-item index="/layout/image_classification"><i class="el-icon-picture-outline"></i> 图片分拣</el-menu-item>
                 <el-menu-item index="4"><i class="el-icon-user"></i> 个人中心</el-menu-item>
             </el-menu>

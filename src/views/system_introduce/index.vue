@@ -1,12 +1,5 @@
 <template>
   <div class="index">
-    <input id="upload" webkitdirectory  type="file" name="file" ref="upload_input"
-       @change.stop="selectPhoto($event)" >
-
-
-  <a href="javascript:;" >
-    <i ></i>&nbsp;选择文件夹<input ref="file"   type='file' name="file" webkitdirectory  @change.stop="changesData"/>
- </a>
     <div class="demo-image__placeholder">
       <div class="text">
         <div class="title">
@@ -109,22 +102,7 @@ export default {
     handleSelect(key, keyPath) {
       console.log(key, keyPath);
     },
-    selectPhoto (event) {
-		let fileList = event.target.files
-        var tempList = []           
-        for(let i=0;i<fileList.length;i++){
-			if(fileList[i].type == 'image/gif' || fileList[i].type == 'image/png' || fileList[i].type == 'image/jpeg' || fileList[i].type == 'image/jpg' || fileList[i].type == 'image/bmp'){
-				let fileUrl = URL.createObjectURL(fileList[i]);  // 获取文件url
-            	tempList.push({file:fileList[i],src:fileUrl}) // data中显示的图片url 
-			}
-        }
-        this.imgList = tempList 
-        event.target.value = "" // 解决不能选同一个文件
-		console.log(this.imgList);
-    },
-    changesData () {
-        console.log(this.$refs.file.files);
-    }
+    
   },
 };
 </script>
