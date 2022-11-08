@@ -234,6 +234,8 @@
                     <el-button class="tool_left_button" type="info" @click="keyDownReview"><i class="el-icon-video-pause"></i> 键盘失效</el-button>
                     <el-button class="tool_left_button" type="warning" @click="feedback_dialogVisible = true"><i class="el-icon-s-promotion"></i> 问题反馈</el-button>
                     <el-button class="tool_left_button" type="warning" @click="explain_dialogVisible = true"><i class="el-icon-mouse"></i> 操作说明</el-button>
+                    <input id="upload_csv" accept=".csv" type="file" name="file" ref="upload_csv_input"
+                    tabindex="-1" style="display: none;" @change.stop="selectCsv($event)" >
                 </div>
                 <div class="carouse">
                     <el-carousel :initial-index="0" @change="imgChange" 
@@ -300,7 +302,7 @@
             </div>
             <div class="image_classification_right">
                 <!-- 右边的整体卡片 -->
-                <el-card class="box-card card_right">
+                <el-card class="box-card card_right" body-style="padding:5px 10px 10px 10px ">
                     <!-- 非空翻页与空翻页 -->
                     <div class="text item">
                         <div class="handle_no_empty">
@@ -315,62 +317,7 @@
                         </div>
                     </div>
                     <!-- 两个标题选择卡片 -->
-                    <el-card class="box-card" shadow="hover" body-style="padding:0px 10px 0px 10px" style="margin:10px 0px 10px 0px">
-                        <el-collapse v-model="activeNames_f_and_c_labels" >
-                            <el-collapse-item  name="1">
-                                <template slot="title">
-                                    一级标题 
-                                    <div class="el-collapse-item-buttons_f">
-                                        <el-button type="text" size="medium" @click.stop.prevent=downLoad_Sec_Label() 
-                                            icon="el-icon-cloudy"  class="el-collapse-item-button">
-                                        </el-button>
-                                    </div> 
-                                    <el-popover
-                                        placement="top-start"
-                                        title="提示"
-                                        width="200"
-                                        trigger="hover"
-                                        content="再次点击后取消当前一级标签的选择">
-                                        <i slot="reference" class="el-icon-warning"></i>
-                                    </el-popover>                               
-                                </template>
-                                <!-- 一级标题的按钮组-->
-                                <el-radio v-model="current_label.label_f_current" size="small" border @change="radio1Change" style="margin-left:0px;margin-right:0px"
-                                    v-for="(item,index) in label_f" :key="index" :label="item"  @click.native.prevent="handleRadioClick_f(item)" >   
-                                </el-radio> 
-                                
-                            </el-collapse-item>
-                            <el-collapse-item  name="2" style="position:relative">
-                                <template slot="title"> 
-                                    二级标签 
-                                    <!-- 三个小按钮 -->
-                                    <div class="el-collapse-item-buttons">
-                                        <el-button type="text" size="medium" @click.stop.prevent=setting_Sec_Label() @click="dialogVisible_setting_bind = true"
-                                        icon="el-icon-setting"  class="el-collapse-item-button"> </el-button>
-                                        <el-button type="text" size="medium" @click.stop.prevent=setting_Sec_Label() @click="dialogVisible_setting_del = true"
-                                        icon="el-icon-delete"  class="el-collapse-item-button"></el-button>
-                                    </div>
-                                    <el-popover
-                                        placement="top-start"
-                                        title="提示"
-                                        width="200"
-                                        trigger="hover"
-                                        content="选择二级标签后会自动选择一级标签">
-                                        <i slot="reference" class="el-icon-warning"></i>
-                                    </el-popover> 
-                                </template>
-                                <div>
-                                    <el-radio v-model="current_label.label_c_current" size="small" border 
-                                        style="margin-left:0px;margin-right:0px" v-for="(item,index) in label_c" :key="index" @change="radio_c_change" 
-                                        :label="item.children" :disabled="judge_disabled(item)" >
-                                    {{item.children}} <span style="color:white;background-color: #409EFF;">{{(item.keyValue.toString()==''||item.keyValue.toString()==null)?'':'['+item.keyValue+']'}}</span>
-                                    </el-radio>
-                                </div>
-                            </el-collapse-item>
-                        </el-collapse>
-                    </el-card>
-                    <!-- 新增标签的卡片 -->
-                    <el-card class="box-card" shadow="hover" style="margin:10px 0px 10px 0px" body-style="padding:10px 10px 10px 10px">
+                    <el-card class="box-card" shadow="hover" body-style="padding:10px 10px 0px 10px" style="margin:10px 0px 10px 0px">
                         <el-input placeholder="输入二级标签" v-model="add_label.add_label_c"
                             class="input-with-select add_label_c_input" 
                             size="mini"
@@ -410,7 +357,69 @@
                                 <el-button slot="reference" icon="el-icon-document-add" size="mini" @click="add_a_label_c"></el-button>
                             </el-popover>
                         </el-input>
+                        <el-collapse v-model="activeNames_f_and_c_labels" >
+                            <el-collapse-item  name="1">
+                                <template slot="title">
+                                    一级标题 
+                                    <div class="el-collapse-item-buttons_f">
+                                        <el-button type="text" size="medium" @click.stop.prevent="click_upload_csv"
+                                            icon="el-icon-upload2"  class="el-collapse-item-button">
+                                        </el-button>
+                                        
+                                        <el-button type="text" size="medium" @click.stop.prevent=downLoad_Sec_Label() 
+                                            icon="el-icon-cloudy"  class="el-collapse-item-button">
+                                        </el-button>
+                                    </div> 
+                                    <el-popover
+                                        placement="top-start"
+                                        title="提示"
+                                        width="200"
+                                        trigger="hover"
+                                        content="再次点击后取消当前一级标签的选择">
+                                        <i slot="reference" class="el-icon-warning"></i>
+                                    </el-popover>                               
+                                </template>
+                                <!-- 一级标题的按钮组-->
+                                <el-scrollbar style="height: 8vh">
+                                    <el-radio v-model="current_label.label_f_current" size="small" border @change="radio1Change" style="margin-left:0px;margin-right:0px"
+                                        v-for="(item,index) in label_f" :key="index" :label="item"  @click.native.prevent="handleRadioClick_f(item)" >   
+                                    </el-radio> 
+                                </el-scrollbar>
+                                
+                                
+                            </el-collapse-item>
+                            <el-collapse-item  name="2" style="position:relative;">
+                                <template slot="title"> 
+                                    二级标签 
+                                    <!-- 三个小按钮 -->
+                                    <div class="el-collapse-item-buttons">
+                                        <el-button type="text" size="medium" @click.stop.prevent=setting_Sec_Label() @click="dialogVisible_setting_bind = true"
+                                        icon="el-icon-setting"  class="el-collapse-item-button"> </el-button>
+                                        <el-button type="text" size="medium" @click.stop.prevent=setting_Sec_Label() @click="dialogVisible_setting_del = true"
+                                        icon="el-icon-delete"  class="el-collapse-item-button"></el-button>
+                                    </div>
+                                    <el-popover
+                                        placement="top-start"
+                                        title="提示"
+                                        width="200"
+                                        trigger="hover"
+                                        content="选择二级标签后会自动选择一级标签">
+                                        <i slot="reference" class="el-icon-warning"></i>
+                                    </el-popover> 
+                                </template>
+                                <div>
+                                     <el-scrollbar style="height: 20vh">
+                                        <el-radio v-model="current_label.label_c_current" size="mini" border
+                                            style="margin-left:0px;margin-right:0px" v-for="(item,index) in label_c" :key="index" @change="radio_c_change" 
+                                            :label="item.children" :disabled="judge_disabled(item)" >
+                                        {{item.children}} <span style="color:white;background-color: #409EFF;">{{(item.keyValue.toString()==''||item.keyValue.toString()==null)?'':'['+item.keyValue+']'}}</span>
+                                        </el-radio>
+                                    </el-scrollbar>
+                                </div>
+                            </el-collapse-item>
+                        </el-collapse>
                     </el-card>
+                    
                     <!-- 底部行为等卡片 -->
                     <div class="card_right_bottom">
                         <el-card class="box-card" shadow="hover" body-style="padding:0px 10px 0px 10px" style="margin:10px 0px 10px 0px" > 
@@ -500,8 +509,8 @@ export default {
             available_key_value:[{index:0,val:false},{index:1,val:false},{index:2,val:false},{index:3,val:false},{index:4,val:false},{index:5,val:false},
                                 {index:6,val:false},{index:7,val:false},{index:8,val:false},{index:9,val:false}],
             keyArray:[false,false,false,false,false,false,false,false,false,false],        // 表示从0-9的按键是否已被占用
-            label_f:['兽类','鸟类','猫类','犬类'],
-            label_c:[{father:'鸟类',children:'小小鸟',keyValue:''},{father:'兽类',children:'老虎',keyValue:''}],     // 格式：[{father:‘鸟类’,children:‘小小鸟’,keyValue:''},{},{}...]
+            label_f:[],
+            label_c:[],     // 格式：[{father:‘鸟类’,children:‘小小鸟’,keyValue:''},{},{}...]
             label_age:['未知','幼年','青年','成年'],
             label_sex:['未知','雄性','雌性'],
             inputVisible: false,//添加新行为时的new tag是否可见
@@ -556,12 +565,13 @@ export default {
                         if (action === 'confirm') {
                             var data = this.current_data.find( a => a.csvId == this.current_data_model)
                             var index = this.csv_list.indexOf(data)
-                            this.csv_list.splice(index,1)        //删除该记录                      
-                        }
-                        this.$message({
+                            this.csv_list.splice(index,1)        //删除该记录    
+                            this.$message({
                                 message: '删除成功！',
                                 type: 'success'
-                        });
+                            });                  
+                        }
+                        
                     }
                 })
             }
@@ -987,6 +997,56 @@ export default {
             }
 
         },
+        //上传CSV文件时的方法
+        selectCsv(event) {
+            //先选择时清空现有的还是新增
+            const that = this
+            let fileList = event.target.files
+            console.log(fileList);
+            //var input = document.getElementById("fileOutput");
+            // var input = document.querySelector('input[type = "file"]')
+            var file = fileList[0];
+            var reader = new FileReader();
+            var output;
+            reader.onload = function (e) {
+                var csvToText = e.target.result;
+                output = that.csvToJSON(csvToText);
+                console.log(output);
+            };
+            reader.readAsText(file);
+            event.preventDefault();
+        },
+        //csv文件转为对象数组的方法
+        csvToJSON(csv) {
+            var lines = csv.split("\n");
+            var result = [];
+            var headers;
+            headers = lines[0].split(",");
+
+            for (var i = 1; i < lines.length; i++) {
+                var obj = {};
+
+                if(lines[i] == undefined || lines[i].trim() == "") {
+                    continue;
+                }
+
+                var words = lines[i].split(",");
+                for(var j = 0; j < words.length; j++) {
+                    if(words[j].indexOf("\r") != -1){
+                        var reg1 = new RegExp("\r","g"); // 加'g'，删除字符串里所有的"a"
+                        words[j] = words[j].replace(reg1,"");
+                    }
+                    obj[headers[j].trim()] = words[j];
+                }
+                result.push(obj);
+            }
+            result.forEach(a => {
+                if(this.label_f.indexOf(a.tag1) == -1){   //如果现有的父标签数组里不含有这个父标签 则添加
+                    this.label_f.push(a.tag1)
+                }
+                this.label_c.push({father:a.tag1,children:a.tag2,keyValue:''})
+            })
+        },
         // 初始化加载图片
         selectPhoto(event){
                 let fileList = event.target.files
@@ -1018,6 +1078,10 @@ export default {
         // 点击了“上传文件”按钮
         click_upload(){
             this.$refs.upload_input.click()
+        },
+        //点击了上传csv标题组的按钮
+        click_upload_csv(){
+            this.$refs.upload_csv_input.click()
         },
         // 前一张图片（翻页组件中的）
         prev(){
@@ -1191,6 +1255,12 @@ export default {
 </script>
 
 <style>
+    .el-collapse-item__content{
+        padding-bottom: 5px;
+    }
+    .el-scrollbar__wrap {
+    overflow-x: hidden;
+    }
     .descriptions-div{
         height: 40px;
     }
@@ -1224,7 +1294,7 @@ export default {
     }
     .el-collapse-item-buttons_f{
         position:absolute;
-        right:85px;
+        right:90px;
     }
     .all{
         height: 100%;
