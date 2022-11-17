@@ -1,11 +1,12 @@
 version: "1.0"
 services:
   dlu_ai:
+    container_name: dlu_ai_builder
     build: .
     volumes:
       - dlu:/home/node/dist
-    restart: always
   nginx:
+    container_name: dlu_web
     image: nginx
     depends_on:
       - dlu_ai
@@ -15,5 +16,26 @@ services:
       - dlu:/var/www/html
       - ./deploy/nginx/nginx.conf:/etc/nginx/nginx.conf
     restart: always
+
+  dlu_docs_builder:
+    container_name: dlu_docs_builder
+    build:
+      dockerfile: dlu-docs/Dockerfile
+    volumes:
+      - dlu_docs:/docs/builder
+
+  dlu_docs_web:
+    container_name: dlu_docs
+    image: nginx
+    depends_on:
+      - dlu_docs_builder
+    volumes:
+      - dlu_docs:/var/www/html
+      - ./deploy/nginx/nginx_docs.conf:/etc/nginx/nginx.conf
+    expose:
+      - 80
+    restart: always
+
 volumes:
   dlu:
+  dlu_docs:
