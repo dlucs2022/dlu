@@ -23,22 +23,11 @@
             :visible.sync="explain_dialogVisible"
             width="50%"
             >
-            1加载照片：
-            <br>
-            点击左上角“加载”按钮，在弹出的文件选择窗口中点击选择图片，按ctrl键多选，按ctrl+a键全选
-            <br>
-            2照片切换：
-            <br>
-            方式一，点击图片展示区域中，图片两侧的透明按钮;
-            <br>
-            方式二，点击页面中间的底部区域的两个蓝色翻页按钮;
-            <br>
-            方式三：在开启了键盘监听功能后，按键盘中的A，D或者左右箭头进行照片的翻页。
-            <br>
-            方式四：在页面中间的底部区域中标有“Go”的输入框中键入要跳转的图片索引，按下回车。
-            <br>
-            还可以通过页面左上方的空与非空图片翻页组件按钮进行跳转。
-            <br>
+            <el-carousel trigger="click" height="150px" :autoplay="false">
+                <el-carousel-item v-for="item in 4" :key="item">
+                    <h3 class="small" style="text-align:center">{{ item }}</h3>
+                </el-carousel-item>
+            </el-carousel>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="explain_dialogVisible = false">取 消</el-button>
                 <el-button type="primary" @click="explain_dialogVisible = false">确 定</el-button>
@@ -61,13 +50,16 @@
                 prop="father"
                 label="父标签"
                 width="120">
+                <template slot-scope="scope">
+                        <el-tag size="medium">{{ scope.row.father }}</el-tag>
+                </template>
                 </el-table-column>
                 <el-table-column
                 label="子标签"
                 width="120"
                 >
                     <template slot-scope="scope">
-                        <el-tag size="medium">{{ scope.row.children }}</el-tag>
+                        {{ scope.row.children }}
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -233,7 +225,7 @@
                     <el-button class="tool_left_button" type="info" @click="keyDown"><i class="el-icon-video-play"></i> 键盘监听</el-button>
                     <el-button class="tool_left_button" type="info" @click="keyDownReview"><i class="el-icon-video-pause"></i> 键盘失效</el-button>
                     <el-button class="tool_left_button" type="warning" @click="feedback_dialogVisible = true"><i class="el-icon-s-promotion"></i> 问题反馈</el-button>
-                    <el-button class="tool_left_button" type="warning" @click="explain_dialogVisible = true"><i class="el-icon-mouse"></i> 操作说明</el-button>
+                    <el-button class="tool_left_button" type="warning" @click="explain_href"><i class="el-icon-mouse"></i> 操作说明</el-button>
                     <input id="upload_csv" accept=".csv" type="file" name="file" ref="upload_csv_input"
                     tabindex="-1" style="display: none;" @change.stop="selectCsv($event)" >
                 </div>
@@ -535,6 +527,11 @@ export default {
         this.keyDownReview()
     },
     methods: {
+        //点击操作说明后获取环境变量然后跳转
+        explain_href(){
+            var path_value = process.env.dlu_docs_url
+            window.open(path_value);
+        },
         //再次点击一个多信息按钮后取消该按钮的选择
         handleRadioClick_current_data_model(val){
             this.current_data_model=== val ? this.current_data_model = '' : this.current_data_model = val
