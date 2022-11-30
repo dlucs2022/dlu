@@ -46,6 +46,8 @@ services:
       - ./deploy/nginx/nginx_docs.conf:/etc/nginx/nginx.conf
     expose:
       - 80
+    ports:
+      - "81:80"
     restart: always
 
 volumes:
