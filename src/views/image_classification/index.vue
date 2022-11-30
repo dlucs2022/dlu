@@ -529,7 +529,7 @@ export default {
     methods: {
         //点击操作说明后获取环境变量然后跳转
         explain_href(){
-            var path_value = process.env.dlu_docs_url
+            var path_value = process.env.DLU_DOCS_URL
             window.open(path_value);
         },
         //再次点击一个多信息按钮后取消该按钮的选择
