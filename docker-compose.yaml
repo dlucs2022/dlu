@@ -33,7 +33,7 @@ services:
       - dlu_docs:/var/www/html
       - ./deploy/nginx/nginx_docs.conf:/etc/nginx/nginx.conf
     expose:
-      - 80
+      - 81:80
     restart: always
 
 volumes:

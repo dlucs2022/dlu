@@ -10,7 +10,7 @@ RUN pip install sphinx
 RUN pip install sphinx-rtd-theme
 
 WORKDIR /docs
-ADD . .
+ADD dlu_docs/ .
 CMD sphinx-build -b html source builder
 
 
