@@ -5,9 +5,14 @@ services:
     build: .
     volumes:
       - dlu:/home/node/dist
+    environment:
+      - DLU_DOCS_URL
   nginx:
     container_name: dlu_web
     image: nginx
+    networks:
+      dlu_net:
+        ipv4_address: 172.20.0.10
     depends_on:
       - dlu_ai
     ports:
@@ -15,6 +20,10 @@ services:
     volumes:
       - dlu:/var/www/html
       - ./deploy/nginx/nginx.conf:/etc/nginx/nginx.conf
+    links:
+      - dlu_docs_web
+    environment:
+      - DLU_DOCS_URL
     restart: always
 
   dlu_docs_builder:
@@ -29,13 +38,24 @@ services:
     image: nginx
     depends_on:
       - dlu_docs_builder
+    networks:
+      dlu_net:
+        ipv4_address: 172.20.0.20
     volumes:
       - dlu_docs:/var/www/html
       - ./deploy/nginx/nginx_docs.conf:/etc/nginx/nginx.conf
     expose:
-      - 81:80
+      - 80
+    ports:
+      - "81:80"
     restart: always
 
 volumes:
   dlu:
   dlu_docs:
+
+networks:
+  dlu_net:
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

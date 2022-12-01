@@ -1,0 +1,7 @@
+{
+  "docs": {
+    "address": "192.168.46.128",
+    "port": 81,
+    "protocol": "http"
+  }
+}
