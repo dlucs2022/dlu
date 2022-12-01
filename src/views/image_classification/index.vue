@@ -457,6 +457,8 @@
                         </el-card>
                         <el-button type="danger" style="width:20%" @click="empty_current_labels">清空</el-button>
                         <el-button type="success" style="width:76%" @click="add_data">保存记录(空格)</el-button>
+                        <br>
+                        <el-button type="success" style="width:76%" @click="read_json">aaaa(空格)</el-button>
                     </div>
                 </el-card>
             </div>
@@ -465,6 +467,11 @@
 </template>
 
 <script>
+import axios from 'axios'  // 安装axios后引入
+const service = axios.create({
+    baseURL: '', // 请求本地json文件，那么baseURL取空字符串，域名就会是项目域名
+    timeout: 30000,
+});
 export default {
     data() {
         return {
@@ -527,10 +534,17 @@ export default {
         this.keyDownReview()
     },
     methods: {
+        //读取json文件
+        read_json(){
+            service.get('../../assets/test.json').then(res => {   
+                console.log(res)
+            })
+        },
         //点击操作说明后获取环境变量然后跳转
         explain_href(){
-            var path_value = process.env.DLU_DOCS_URL
-            window.open(path_value);
+            // var path_value = process.env.DLU_DOCS_WEB
+            // console.log(path_value);
+            window.open('http://172.20.0.20');
         },
         //再次点击一个多信息按钮后取消该按钮的选择
         handleRadioClick_current_data_model(val){
