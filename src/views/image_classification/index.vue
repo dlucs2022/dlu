@@ -218,6 +218,7 @@
         <div class="image_classification">
             <div class="image_classification_left">
                 <div class="tool_left">
+                    <el-button class="tool_left_button" type="success" @click="login"><i class="el-icon-folder-opened"></i>测试登录</el-button>
                     <el-button class="tool_left_button" type="success" @click="click_upload"><i class="el-icon-folder-opened"></i>加载</el-button>
                     <el-button class="tool_left_button" type="success" @click="export_csv"><i class="el-icon-s-order"></i>导出</el-button>
                     <input id="upload" webkitdirectory type="file" name="file" ref="upload_input"
@@ -467,6 +468,7 @@
 <script>
 import axios from 'axios'  // 安装axios后引入
 import config_json from '../../../config.json'  // 安装axios后引入
+import dao from "@/api/dao";
 export default {
     data() {
         return {
@@ -531,6 +533,13 @@ export default {
         this.keyDownReview()
     },
     methods: {
+        //测试登录
+        login(){
+            dao.login().then(res => {
+                console.log(res
+                );
+            })
+        },
         //点击操作说明后获取环境变量然后跳转
         explain_href(){
             var address = this.config_json.docs.address
@@ -780,6 +789,8 @@ export default {
             }
             
         },  
+        
+        
 
         //点击删除标题的复选框触发
         handleSelectionChange(val) {

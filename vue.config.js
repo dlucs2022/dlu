@@ -1,3 +1,8 @@
+const path = require('path')
+
+function resolve(dir) {
+  return path.join(__dirname, dir)
+}
 module.exports = {
 	devServer: {
 		port: 80, // 端口号，如果端口被占用，会自动提升 1
@@ -10,4 +15,19 @@ module.exports = {
 	assetsDir: "assets", // 存放生成的静态资源 (js、css、img、fonts) 的 (相对于 outputDir) 目录
 	indexPath: "out/index.html", // 默认 index.html, 指定生成的 index.html 的输出路径 (相对于 outputDir)。
 	productionSourceMap: false, // 打包时, 不生成 .map 文件, 加快打包构建
+	chainWebpack: config => {
+		config.resolve.alias
+		  .set("@", resolve("src")) 
+		  .set("assets", resolve("src/assets"))
+		  .set("components", resolve("src/components"))
+		  .set("base", resolve("baseConfig"))
+		  .set("public", resolve("public"));
+	  },
+	configureWebpack: {
+		resolve: {
+			alias: {
+			'@': resolve('src') //配置根目录的@方法
+			}
+		}
+	},
 };
