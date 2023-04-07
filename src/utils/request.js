@@ -10,10 +10,13 @@
 
 import axios from 'axios'
 import router from "../router"
+// axios.defaults.baseURL = '/api'
+axios.defaults.withCredentials=true;
 
 const request = axios.create({
-  baseURL: 'http://localhost:8000/dlu',
+  baseURL: 'http://localhost:8003/dlu',
   timeout:5000,
+  // withCredentials: true, // 跨域请求时发送Cookie
 })
 
 // // 请求拦截器：用于拦截所有的api接口调用

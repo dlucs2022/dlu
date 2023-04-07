@@ -10,7 +10,7 @@
           prop="username"
           :rules="[
             { required: true, message: '请输入用户名', trigger: 'blur' },
-            { min: 4, max: 10, message: '长度必须为4-10之间', trigger: 'blur' },
+            { min: 1, max: 10, message: '长度必须为4-10之间', trigger: 'blur' },
           ]"
         >
           <el-input
@@ -25,7 +25,7 @@
           prop="password"
           :rules="[
             { required: true, message: '请输入密码', trigger: 'blur' },
-            { min: 6, max: 12, message: '长度必须为6-12之间', trigger: 'blur' },
+            { min: 5, max: 12, message: '长度必须为6-12之间', trigger: 'blur' },
           ]"
         >
           <el-input
@@ -35,20 +35,29 @@
             placeholder="请输入密码"
           ></el-input>
         </el-form-item>
+
+
         <el-form-item
           label="验证码"
           prop="verificationcode"
+          :inline="true"
           :rules="[
             { required: true, message: '请输入验证码', trigger: 'blur' },
             { type: 'number', message: '验证码必须为数字', trigger: 'blur' },
           ]"
         >
+
           <el-input
             type="text"
             v-model.number="form.verificationcode"
             prefix-icon="el-icon-message"
             placeholder="请输入验证码"
-          ></el-input>
+          >
+          <template slot="append">
+            <img :src="codeUrl" @click="getCode" style="margin-top:3px"/>
+          </template>
+          
+          </el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="register('form')">注册</el-button>
@@ -61,7 +70,7 @@
 
 <script>
 import Ribbons from "@/assets/js/ribbon_vue";
-import dao1 from "@/api/dao1";
+import dao from "@/api/dao";
 export default {
   Ribbons,
   name: "Login",
@@ -72,22 +81,40 @@ export default {
         password: "",
         verificationcode: "",
       },
+      codeUrl:'',
     };
   },
   mounted() {
     const user = JSON.parse(sessionStorage.getItem("user"));
     Ribbons.start();
+    this.getCode()
   },
   methods: {
     login(form) {
-      // console.log(this.form);
       this.$refs[form].validate((valid) => {
         if (valid) {
-          var user = dao1.login(form.username, form.password);
-          // var a = JSON.stringify(res.user);
-          sessionStorage.setItem("user", JSON.stringify(user));
-
-          this.$router.push("../layout/image_classification");
+          dao.login(this.form.username, this.form.password,this.form.verificationcode).then(res => {
+              if(res.data.message === 'success'){
+                  sessionStorage.setItem("user", JSON.stringify(res.data.data));
+                  Ribbons.stop();
+                  this.$message({
+                        type: 'success',
+                        message: '登录成功！'
+                    });
+                  this.$router.push("../layout/image_classification");
+              }else{
+                  this.$alert(res.data.message, '警告', {
+                    confirmButtonText: '确定',
+                    callback: action => {
+                      this.$message({
+                        type: 'warning',
+                        message: `请重试`
+                      });
+                      this.getCode()
+                    }
+                  });
+              }
+          })
         } else {
           console.error(this.form);
         }
@@ -96,6 +123,16 @@ export default {
     register(form) {
       this.$router.push("./register");
     },
+    getCode() { //点击的时候就图片就请求 图片就换了
+      dao.getCode().then((res) => {
+
+        if (res.status == 200) {
+          this.codeUrl = window.URL.createObjectURL(res.data)
+          // this.codeUrl = "data:image/gif;base64," + res.data; //
+        }
+        //这边我简单判断了下 根据自己需求 进行判断 catch...啥的
+      })
+    }
   },
   beforeDestroy() {
     Ribbons.stop();
@@ -135,7 +172,7 @@ export default {
     .el-button {
       margin-top: 10px;
       margin-right: 30px;
-      margin-left: 30px;
+      margin-left: 15px;
       width: 30%;
     }
     .el-input {
