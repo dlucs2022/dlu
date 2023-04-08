@@ -59,6 +59,7 @@
             placeholder="请输入邀请码"
           ></el-input>
         </el-form-item>
+        <slide-verify ref="slideblock" ></slide-verify>
         <el-form-item>
           <el-button type="primary" @click="prev">返回</el-button>
           <el-button type="primary" @click="confirm('form')">确认</el-button>
@@ -71,7 +72,11 @@
 <script>
 import Ribbons from "@/assets/js/ribbon_vue.js";
 import dao1 from "@/api/dao1.js";
+import slideVerify from "@/views/register/components/verifyCode.vue"
 export default {
+  components:{
+        slideVerify,
+  },
   name: "Register",
   data() {
     return {
