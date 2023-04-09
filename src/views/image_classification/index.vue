@@ -1,5 +1,17 @@
 <template>
     <div class="all">
+        <!-- 统计数据得对话框 -->
+        <!-- 问题反馈的对话框 -->
+        <el-dialog
+            title="数据统计"
+            :visible.sync="data_statistics_dialogVisible"
+            width="60%"
+            :before-close="handleClose_data_statistics_dialogVisible"
+            >
+            <el-card style="border:solid 4px lightblue">
+                <data-statistics v-if="dataStatistics.flag" :seriesData="dataStatistics.datas"></data-statistics>
+            </el-card>
+        </el-dialog>
         <!-- 问题反馈的对话框 -->
         <el-dialog
             title="问题反馈"
@@ -218,6 +230,8 @@
         <div class="image_classification">
             <div class="image_classification_left">
                 <div class="tool_left">
+                    <el-button class="tool_left_button" type="success" @click="getCode"><i class="el-icon-folder-opened"></i>测试验证码</el-button>
+                    <el-button class="tool_left_button" type="success" @click="login"><i class="el-icon-folder-opened"></i>测试登录</el-button>
                     <el-button class="tool_left_button" type="success" @click="click_upload"><i class="el-icon-folder-opened"></i>加载</el-button>
                     <el-button class="tool_left_button" type="success" @click="export_csv"><i class="el-icon-s-order"></i>导出</el-button>
                     <input id="upload" webkitdirectory type="file" name="file" ref="upload_input"
@@ -456,7 +470,7 @@
                             </el-collapse>
                         </el-card>
                         <el-button type="danger" style="width:20%" @click="empty_current_labels">清空</el-button>
-                        <el-button type="success" style="width:76%" @click="add_data">保存记录(空格)</el-button>
+                        <el-button type="success" style="width:76%" id="addDataButton" @click="add_data">保存记录(空格)</el-button>
                     </div>
                 </el-card>
             </div>
@@ -467,7 +481,13 @@
 <script>
 import axios from 'axios'  // 安装axios后引入
 import config_json from '../../../config.json'  // 安装axios后引入
+import dao from "@/api/dao";
+
+import dataStatistics from '@/views/image_classification/components/dataStatistics.vue'
 export default {
+    components:{
+        dataStatistics,
+    },
     data() {
         return {
             axios:axios,
@@ -489,6 +509,11 @@ export default {
             del_tab_activeName: 'first', //  删除标题组对话框中tab切换
             explain_dialogVisible:false,//操作说明的对话框
             feedback_dialogVisible:false,//反馈的对话框
+            data_statistics_dialogVisible:false,//统计数据的对话框
+            dataStatistics:{        //统计数据中：加载和其中的数据
+                flag:false,
+                datas:[],
+            },
             dialogVisible_setting_del:false,// 删除按钮的对话框
             dialogVisible_setting_bind:false,//设置 的对话框
             activeNames_f_and_c_labels: ['1','2'],    //一二级标签得折叠面板的活跃索引
@@ -505,10 +530,12 @@ export default {
             available_key_value:[{index:0,val:false},{index:1,val:false},{index:2,val:false},{index:3,val:false},{index:4,val:false},{index:5,val:false},
                                 {index:6,val:false},{index:7,val:false},{index:8,val:false},{index:9,val:false}],
             keyArray:[false,false,false,false,false,false,false,false,false,false],        // 表示从0-9的按键是否已被占用
+
             label_f:[],
             label_c:[],     // 格式：[{father:‘鸟类’,children:‘小小鸟’,keyValue:''},{},{}...]
             label_age:['未知','幼年','青年','成年'],
             label_sex:['未知','雄性','雌性'],
+
             inputVisible: false,//添加新行为时的new tag是否可见
             inputValue: '',//输入的新new tag
             
@@ -531,6 +558,20 @@ export default {
         this.keyDownReview()
     },
     methods: {
+        //获取验证码
+        getCode(){
+            dao.getCode().then(res => {
+                console.log(res);
+            })
+        },
+
+        //测试登录
+        login(){
+            dao.login().then(res => {
+                console.log(res
+                );
+            })
+        },
         //点击操作说明后获取环境变量然后跳转
         explain_href(){
             var address = this.config_json.docs.address
@@ -544,6 +585,9 @@ export default {
         //再次点击一个多信息按钮后取消该按钮的选择
         handleRadioClick_current_data_model(val){
             this.current_data_model=== val ? this.current_data_model = '' : this.current_data_model = val
+            if(this.current_data_model === ''){
+                this.empty_current_labels('changeIndex')
+            }
         },
         //清空属性栏
         empty_current_labels(val){
@@ -636,6 +680,7 @@ export default {
         },
         //点击导出按钮后
         export_csv(){
+
             var dirName = this.imgList[0].file.webkitRelativePath.split("/")[0]
             var value = ''
             this.$prompt('请命名该文件(如果不命名，则会使用读取的文件夹名称作为csv文件名)', '提示', {
@@ -655,6 +700,8 @@ export default {
                     });
                     this.create_csv(this.csv_list,value)
                 }
+                console.log(this.csv_list);
+
             }).catch(() => {
             this.$message({
                 type: 'info',
@@ -672,6 +719,37 @@ export default {
             // 并可自定义导出字段
             const needs = ['img_name', 'year', 'month', 'date', 'hour' , 'minute' , 'second' , 
             'label_f','label_c','age','gender','action','num']
+            
+            
+
+            //根据csv_list,生成一个字典：字典的键为图片名，如果这个图片在csv_list中，就添加他的value，（可能有多个value，value为数组。）图片不在，他的value就为空数组
+            this.empty_label_imgs.filter( a => a.exist == true).map( a => a.imgName).forEach( empty => {
+                    var a = {}
+                    a.img_name = empty
+                    a.year = ''
+                    a.month = ''
+                    a.date = ''
+                    a.hour = ''
+                    a.minute = ''
+                    a.second = ''
+                    //父标签''
+                    a.label_f =''
+                    //子标签''
+                    a.label_c =''
+                    //年龄''
+                    a.age = ''
+                    //性别''
+                    a.gender = ''
+                    //行为
+                    a.action = []
+                    a.num = ''
+                    //csv中记录的最大csvId+1
+                    a.csvId = this.csvId
+                    this.csvId += 1
+                    this.csv_list.push(a)
+            })
+
+
             for (let i = 0; i < this.csv_list.length; i++) {
                 // jsonData[i]每行数据
                 // 根据导出字段循环取得每行数据中值
@@ -692,7 +770,83 @@ export default {
             document.body.appendChild(downloadLink);
             downloadLink.click();
             document.body.removeChild(downloadLink);
+            //弹出数据统计
+            this.data_statistics()
+        },    
+        //关闭数据统计对话框前
+        handleClose_data_statistics_dialogVisible(done){
+            done()
+            this.dataStatistics.flag = false
         },
+        //数据统计
+        data_statistics(){
+            this.$confirm('是否查看数据统计信息?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'success '
+                }).then(() => {
+                    //整理数据
+                    let data = {}
+                    data['1']= this.countlabel_f(this.csv_list,'label_f') //data['1']=[{"name": "鸟","value": 2},{"name": "人","value": 1},{"name": "空","value": 430}]   
+                    data['1'].forEach( a => {
+                        let f_s = this.csv_list.filter( ele => ele.label_f == (a['name']=='空'?'':a['name']))    //得到全部的一级标题为鸟的数组
+                        if(data['2']){  //如果他b不是空的
+                            data['2'].push(...this.countlabel_f(f_s,'label_c'))     //追加所有元素
+                        }else{
+                            data['2'] = this.countlabel_f(f_s,'label_c')
+                        }
+                    })
+                    //组件传值
+                    this.dataStatistics.datas = data
+                    //显示组件
+                    this.dataStatistics.flag = true
+                    //显示对话框
+                    this.data_statistics_dialogVisible = true
+                    
+
+                    
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消查看'
+                    });
+                });
+        },
+
+        /**
+         * 统计对象数组中每个对象的name属性出现的次数
+         * @param {Array} arr - 对象数组
+         * @returns {Array} - 包含每个name属性及其出现次数的对象数组
+         */
+        countlabel_f(arr,label) {
+            let count = {};
+            if(label == 'label_f'){
+                for (let i = 0; i < arr.length; i++) {
+                    if (count[arr[i][label]==''?'空':arr[i][label]]) {
+                        count[arr[i][label]==''?'空':arr[i][label]]++;
+                    } else {
+                        count[arr[i][label]==''?'空':arr[i][label]] = 1;
+                    }
+                }
+            }else if(label == 'label_c'){
+                for (let i = 0; i < arr.length; i++) {
+                    if (count[arr[i][label]==''?'null':arr[i][label]]) {
+                        count[arr[i][label]==''?'null':arr[i][label]]++;
+                    } else {
+                        count[arr[i][label]==''?'null':arr[i][label]] = 1;
+                    }
+                }
+            }
+
+            let result = [];
+            for (let label_f in count) {
+                result.push({name: label_f, value: count[label_f]});
+            }
+
+            // The 'result' array now contains the desired output of [{name='sss',value=30},{name='aaa',value=20}...]
+            return result;
+        },
+
         //生成一条记录  OR   修改一条记录
         add_data(){
             if(this.imgList.length == 1){
@@ -734,11 +888,14 @@ export default {
                     a.gender = this.current_label.label_sex_current
                     //行为
                     a.action = ''
-                    this.current_label.label_action_current.forEach(item => {
-                        if(item != ''){
-                            a.action = a.action + item +';'
-                        }
-                    })
+                    if(this.current_label.label_action_current.length != 0){
+                        this.current_label.label_action_current.forEach(item => {
+                            if(item != ''){
+                                a.action = a.action + item +';'
+                            }
+                        })
+                    }
+                    
                     if(a.action.length>=1){
                         a.action = a.action.substring(0,a.action.length-1)
                     }
@@ -780,6 +937,8 @@ export default {
             }
             
         },  
+        
+        
 
         //点击删除标题的复选框触发
         handleSelectionChange(val) {
@@ -966,6 +1125,11 @@ export default {
         radio_c_change(){
             var a = this.label_c.find(a => a.children==this.current_label.label_c_current)      //查询当前选中的二级标题
             this.current_label.label_f_current = a.father
+
+            //取消elementui的空格自动选中按钮设置
+            this.$nextTick(()=> {
+                document.getElementById("addDataButton").focus();
+            });
         },
         //监听一级标签变化的方法
         //一级标签改变后 去禁用二级标签
@@ -1072,6 +1236,8 @@ export default {
                     this.imgNameAndIndexList.push({imgName:item.file.name,imgIndex:index+1})
                 })
                 //将空标签照片数组初始化
+                this.empty_label_imgs = []
+                this.no_empty_label_imgs = []
                 this.imgNameAndIndexList.forEach((item,index) => {
                     this.empty_label_imgs.push({imgName:item.imgName,imgIndex:item.imgIndex,exist:true})
                     this.no_empty_label_imgs.push({imgName:item.imgName,imgIndex:item.imgIndex,exist:false})
@@ -1116,6 +1282,7 @@ export default {
             // console.log("开始监听");
             //监听键盘按钮
             let that = this
+            let spacePressed = false; // 添加一个变量来记录空格键是否被按下
             document.onkeydown = function (event) {
                 var e = event || window.event;
                 var keyCode = e.keyCode || e.which;
@@ -1123,17 +1290,20 @@ export default {
                 case 65:    // A
                     that.prev()
                     break
-                case 37:    // <=
+                case 37:    
                     that.prev()
                     break;
-                case 68:    //F6
+                case 68:    
                     that.next()
                     break;
-                case 39:    //F8
+                case 39:    
                     that.next()
                     break;
                 case 32:
-                    that.add_data()
+                    if (!spacePressed) { // 如果空格键没有被按下
+                        that.add_data();
+                        spacePressed = true; // 将空格键状态设置为已按下
+                    }
                     break;
                 default:
                     break;
@@ -1153,7 +1323,15 @@ export default {
                 window.event.returnValue = false;
                 }
             }
+            document.onkeyup = function (event) { // 添加一个keyup事件监听器
+                var e = event || window.event;
+                var keyCode = e.keyCode || e.which;
+                if (keyCode === 32) { // 如果松开的是空格键
+                    spacePressed = false; // 将空格键状态设置为未按下
+                }
+            }
         },
+
         
     },
     watch:{
@@ -1170,7 +1348,7 @@ export default {
                     if(current.action != ''){
                         this.current_label.label_action_current = current.action.split(";")
                     }else{
-                        this.current_label.label_action_current = ''
+                        this.current_label.label_action_current = []
                     }
                     this.current_label.current_num = current.num
                 }
