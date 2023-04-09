@@ -1,5 +1,49 @@
 <template>
   <el-header height="60px" class="header">
+    <!-- Form -->
+    <el-dialog title="用户信息" :visible.sync="dialogFormVisible">
+      <el-button type="danger" size="mini" @click="rejectAll" style="float: right"
+        >全部不通过</el-button
+      >
+      <el-button type="primary" size="mini" @click="passAll" style="float: right"
+        >全部通过</el-button
+      >
+      <el-table :data="tableData" style="width: 100%">
+        <el-table-column type="selection" width="55"></el-table-column>
+        <el-table-column prop="name" label="姓名" align="center"></el-table-column>
+        <el-table-column
+          prop="create_time"
+          label="注册时间"
+          align="center"
+        ></el-table-column>
+        <el-table-column prop="status" label="审核状态" align="center"></el-table-column>
+
+        <el-table-column label="审核" align="center">
+          <template slot-scope="scope">
+            <el-button
+              type="primary"
+              size="mini"
+              icon="el-icon-edit"
+              @click="updateInfo(scope.row)"
+              >通过</el-button
+            >
+            <el-button
+              type="danger"
+              size="mini"
+              icon="el-icon-delete"
+              @click="del(scope.row)"
+              >不通过</el-button
+            >
+          </template></el-table-column
+        >
+      </el-table>
+
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+      </div>
+    </el-dialog>
+
     <h3 class="title">
       <!-- <img src="../../../../assets/etoak_logo.png" class="logo"> -->
       理大AI(暂)
@@ -47,9 +91,12 @@
           操作<i class="el-icon-arrow-down el-icon--right"></i>
         </span>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item icon="el-icon-edit" command="a">修改密码</el-dropdown-item>
-          <el-dropdown-item icon="el-icon-s-fold" command="b">退出系统</el-dropdown-item>
+          <el-dropdown-item icon="el-icon-edit-outline" command="a"
+            >信息管理</el-dropdown-item
+          >
+          <el-dropdown-item icon="el-icon-edit" command="b">修改密码</el-dropdown-item>
           <el-dropdown-item icon="el-icon-close" command="c">退出登录</el-dropdown-item>
+          <el-dropdown-item icon="el-icon-s-fold" command="d">退出系统</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
@@ -57,13 +104,19 @@
 </template>
 
 <script>
+import dao1 from "@/api/dao1.js";
 export default {
   data() {
     return {
+      tableData: [],
+      dialogVisible: false,
+      dialogFormVisible: false,
+      allSelected: false,
       user: "",
     };
   },
   mounted() {
+    this.getTableData();
     const user = sessionStorage.getItem("user");
     if (user) {
       this.user = JSON.parse(user);
@@ -73,6 +126,13 @@ export default {
     this.username = this.$route.query.username;
   },
   methods: {
+    async getTableData() {
+      const res = await dao1.checkList();
+      this.tableData = res.data;
+    },
+    checkAllSelected() {
+      this.allSelected = this.tableData.every((row) => row.checked);
+    },
     // getInfo(){
     //     /* JSON.parse一定要写 不然拿不出来 */
     //     const user = JSON.parse(localStorage.getItem('et2111elementui'))
@@ -91,13 +151,10 @@ export default {
     // /* 这里的command对应  <el-dropdown-item command="对应这里">*/
     handleCommand(command) {
       switch (command) {
-        //             case 'a':
-        //                 this.$message({type:'info',message:'修改密码功能建设中'})
-        //                 /* 这里可以是修改密码的路由 */
-        //                 break;
-        //             case 'b':
-        //                 localStorage.removeItem('et2111elementui')
-        //                 this.$router.push('/')
+        case "a":
+          this.dialogVisible = true;
+          this.dialogFormVisible = true;
+          break;
         case "c":
           sessionStorage.removeItem("user");
           this.$router.push("/");
