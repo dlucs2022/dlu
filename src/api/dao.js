@@ -17,5 +17,28 @@ export default {
             method:'get',
             responseType:'blob'
         })
+    },
+    /* 判断邀请码是否存在 */
+    check_invitationcode(code){
+        return request({
+            url:`/user/be_invited?code=${code}`,
+            method:'post',
+        })
+    },
+    /* 判断用户名是否已经存在 */
+    check_username(userName){
+        return request({
+            url:`/user/check_name?name=${userName}`,
+            method:'post'
+        })
+    },
+    register(regForm){
+        delete regForm.checkPass
+        return request({
+            url:`/user/register`,
+            method:'post',
+            data:regForm,
+
+        })
     }
 }

@@ -1,0 +1,117 @@
+
+    .el-collapse-item__content{
+        padding-bottom: 5px;
+    }
+    .el-scrollbar__wrap {
+    overflow-x: hidden;
+    }
+    .descriptions-div{
+        height: 40px;
+    }
+    .descriptions-div{
+        display: flex;
+        flex-direction: row;
+    }
+    .descriptions-card{
+        background-color: rgb(142, 142, 142);
+        width: 20%;
+    }
+    .el-tag + .el-tag { 
+        margin-left: 0px;
+    }
+    .button-new-tag {
+        margin-left: 10px;
+        height: 32px;
+        line-height: 30px;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+    .input-new-tag {
+        width: 90px;
+        margin-left: 10px;
+        vertical-align: bottom;
+    }
+
+    .el-collapse-item-buttons{
+        position:absolute;
+        right:30px;
+    }
+    .el-collapse-item-buttons_f{
+        position:absolute;
+        right:90px;
+    }
+    .all{
+        height: 100%;
+    }
+    .image_classification{
+        display: flex;
+        justify-content: space-between;
+        height: 100%;
+    }
+    .carouse {
+        width: 89%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    .tool_left{
+        width: 10%;
+        display: flex;
+        flex-direction: column;
+        margin-right: 5px;
+    }
+    
+    .tool_left .el-button{
+        margin-left: 0px;
+        margin-top: 8px;
+    }
+    .image_classification_left{
+        margin-left: 4px;
+        display: flex;
+        width: 75%;
+    }
+    .image_classification_right{
+        width: 25%;
+        margin-right: 5px;
+    }
+    .el-carousel{
+        /* margin-top: 40px; */
+        /* background-color: bisque; */
+    }
+    .el-carousel__item{
+        display: flex;
+        flex-direction:column;
+        justify-content: space-between;
+    }
+    .image_classification_left_bottom{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    .card_right{
+        width: 98%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    .handle_no_empty{
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+    .handle_empty{
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+    .el-radio-button{
+        background: none;
+    }
+    .add_label_c_input{
+        width: 100%;
+    }
+    .add_label_c_select{
+        width: 120px;
+    }
+

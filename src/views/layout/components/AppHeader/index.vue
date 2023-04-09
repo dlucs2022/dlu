@@ -46,7 +46,7 @@
 
     <h3 class="title">
       <!-- <img src="../../../../assets/etoak_logo.png" class="logo"> -->
-      理大AI(暂)
+      智拣AI
     </h3>
 
     <div class="menu">
@@ -72,7 +72,7 @@
                       <el-menu-item index="1-4-3">选项3</el-menu-item>
                       </el-submenu>git config --global http.proxy http://127.0.0.1:1080
                   </el-submenu> -->
-        <el-menu-item index="2">主页</el-menu-item>
+        <el-menu-item index="/layout/system_introduce">主页</el-menu-item>
         <el-menu-item index="/layout/image_classification"
           ><i class="el-icon-picture-outline"></i> 图片分拣</el-menu-item
         >

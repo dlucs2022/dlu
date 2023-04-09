@@ -1,13 +1,28 @@
 <template>
   <div class="register">
+    <el-dialog
+        title="人机验证"
+        :visible.sync="verifyDialogVisible"
+        width="30%">
+        <!-- :before-close="handleClose" -->
+        <div>
+          <!-- @putIsVerify="getIsVerify"  : 接收子组件传值 -->
+          <slide-verify ref="slideblock" @putIsVerify="getIsVerify" ></slide-verify>
+        </div>
+        
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="verifyDialogVisible = false">取 消</el-button>
+        </span>
+      </el-dialog>
     <el-card class="box-card">
       <div slot="header" class="clearfix">
         <span>注册</span>
       </div>
+      
       <el-form :model="form" ref="form" label-width="80px">
         <el-form-item
           label="用户名"
-          prop="username"
+          prop="name"
           :rules="[
             { required: true, message: '请输入用户名', trigger: 'blur' },
             { min: 4, max: 10, message: '长度必须为4-10之间', trigger: 'blur' },
@@ -15,7 +30,7 @@
         >
           <el-input
             type="text"
-            v-model="form.username"
+            v-model="form.name"
             prefix-icon="el-icon-user"
             placeholder="请输入用户名"
           ></el-input>
@@ -54,15 +69,15 @@
         <el-form-item label="邀请码">
           <el-input
             type="text"
-            v-model="form.invitationcode"
+            v-model="form.invite_code"
             prefix-icon="el-icon-key"
-            placeholder="请输入邀请码"
+            placeholder="请输入邀请码(可不填写)"
           ></el-input>
         </el-form-item>
-        <slide-verify ref="slideblock" ></slide-verify>
+        
         <el-form-item>
           <el-button type="primary" @click="prev">返回</el-button>
-          <el-button type="primary" @click="confirm('form')">确认</el-button>
+          <el-button type="primary" @click="confirm('form')" >确认</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -71,7 +86,7 @@
 
 <script>
 import Ribbons from "@/assets/js/ribbon_vue.js";
-import dao1 from "@/api/dao1.js";
+import dao from "@/api/dao.js";
 import slideVerify from "@/views/register/components/verifyCode.vue"
 export default {
   components:{
@@ -80,18 +95,32 @@ export default {
   name: "Register",
   data() {
     return {
+      
       form: {
-        username: "",
+        name: "",
         password: "",
         checkPass: "",
-        invitationcode: "",
+        invite_code: "",
       },
+      isVerify:false,
+      verifyDialogVisible:false,
+
     };
   },
   mounted() {
     Ribbons.start();
   },
   methods: {
+    getIsVerify(value){
+      this.isVerify = value
+      if(this.isVerify){
+          this.verifyDialogVisible = false
+          this.$message({
+            message:'校验通过！',
+            type:'success'
+          })
+      }
+    },
     validatePass(rule, value, callback) {
       if (value === "") {
         callback(new Error("请再次输入密码"));
@@ -110,13 +139,26 @@ export default {
       Ribbons.stop();
       this.$router.push("./login");
     },
-    confirm(form) {
+    async confirm(form) {   //异步
+      const that = this
       // console.log(this.form);
-      const result_invitationcode = dao1.check_invitationcode();
-      const result_username = dao1.check_username();
+      let invitationPass = false
+      let userNamePass = false 
+      
+      if(!this.form.invite_code){
+        await dao.check_invitationcode(this.form.invite_code).then(res => {
+          invitationPass = (res.data.message=='success') 
+        })
+      }
+      await dao.check_username(this.form.name).then(res => {    //await：等待
+        userNamePass = (res.data.message=='success')        
+      })
+      
+      
+
       this.$refs[form].validate((valid) => {
-        if (result_username.message === "success") {
-          if (this.form.invitationcode === "") {
+        if (userNamePass) {
+          if (this.form.invite_code === "") {
             if (valid) {
               this.$confirm("是否确认注册?", {
                 confirmButtonText: "确定",
@@ -124,12 +166,13 @@ export default {
                 type: "warning",
               })
                 .then(() => {
-                  this.$message({
-                    message: "注册成功",
-                    type: "success",
-                  });
-                  Ribbons.stop();
-                  this.$router.push("./login");
+                  //还没验证？开启人机校验
+                  if(!this.isVerify){
+                    this.verifyDialogVisible = true
+                    this.$refs.slideblock.handleClick();
+                  }else{
+                    this.userRegister()
+                  }
                 })
                 .catch(() => {
                   this.$message({
@@ -139,7 +182,7 @@ export default {
                 });
             }
           } else {
-            if (result_invitationcode.message === "success") {
+            if (invitationPass) {
               if (valid) {
                 this.$confirm("是否确认注册?", {
                   confirmButtonText: "确定",
@@ -147,12 +190,13 @@ export default {
                   type: "warning",
                 })
                   .then(() => {
-                    this.$message({
-                      message: "注册成功",
-                      type: "success",
-                    });
-                    Ribbons.stop();
-                    this.$router.push("./login");
+                    //还没验证？开启人机校验
+                    if(!this.isVerify){
+                      this.verifyDialogVisible = true
+                      this.$refs.slideblock.handleClick();
+                    }else{
+                      this.userRegister()
+                    }
                   })
                   .catch(() => {
                     this.$message({
@@ -170,7 +214,32 @@ export default {
         }
       });
     },
+    userRegister(){
+      dao.register(this.form).then(res => {
+          if(res.data.message == 'success'){
+            Ribbons.stop();
+            this.$message({
+              message: "注册成功",
+              type: "success",
+            });
+            this.$router.push("./login");
+          }
+      })
+    }
   },
+  watch:{
+    verifyDialogVisible(newValue,oldValue){
+      if(newValue){ //newValue==true 也就是打开了对话框的时候
+        console.log(newValue);
+        this.getIsVerify(false)
+      }
+    },
+    isVerify(newValue,oldValue){
+      if(newValue){ //验证通过的时候  进行注册
+        this.userRegister()
+      }
+    }
+  }
 };
 </script>
 
