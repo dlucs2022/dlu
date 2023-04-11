@@ -1,48 +1,7 @@
 <template>
   <el-header height="60px" class="header">
-    <!-- Form -->
-    <el-dialog title="用户信息" :visible.sync="dialogFormVisible">
-      <el-button type="danger" size="mini" @click="rejectAll" style="float: right"
-        >全部不通过</el-button
-      >
-      <el-button type="primary" size="mini" @click="passAll" style="float: right"
-        >全部通过</el-button
-      >
-      <el-table :data="tableData" style="width: 100%">
-        <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column prop="name" label="姓名" align="center"></el-table-column>
-        <el-table-column
-          prop="create_time"
-          label="注册时间"
-          align="center"
-        ></el-table-column>
-        <el-table-column prop="status" label="审核状态" align="center"></el-table-column>
-
-        <el-table-column label="审核" align="center">
-          <template slot-scope="scope">
-            <el-button
-              type="primary"
-              size="mini"
-              icon="el-icon-edit"
-              @click="updateInfo(scope.row)"
-              >通过</el-button
-            >
-            <el-button
-              type="danger"
-              size="mini"
-              icon="el-icon-delete"
-              @click="del(scope.row)"
-              >不通过</el-button
-            >
-          </template></el-table-column
-        >
-      </el-table>
-
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
-      </div>
-    </el-dialog>
+    
+  
 
     <h3 class="title">
       <!-- <img src="../../../../assets/etoak_logo.png" class="logo"> -->
@@ -76,15 +35,23 @@
         <el-menu-item index="/layout/image_classification"
           ><i class="el-icon-picture-outline"></i> 图片分拣</el-menu-item
         >
-        <el-menu-item index="4"><i class="el-icon-user"></i> 个人中心</el-menu-item>
+        <el-submenu index="3">
+          <template slot="title">
+            <i class="el-icon-user"></i>个人中心
+          </template>
+          <el-menu-item index="3-1"><i class="el-icon-edit-outline"></i> 信息修改</el-menu-item>
+          <el-menu-item index="/layout/person_center/check_list"><i class="el-icon-document"></i> 审核列表</el-menu-item>
+          <el-menu-item index="3-1"><i class="el-icon-cloudy"></i> 云端数据库</el-menu-item>
+        </el-submenu>
       </el-menu>
     </div>
 
     <div class="info">
       <span class="show">{{ this.user.name }}欢迎您回来</span>
-      <el-button v-if="!user" type="primary" @click="$router.push('/login')"
-        >登录</el-button
-      >
+      <el-button type="text" v-if="!user" @click="$router.push('/login')" style="margin-left:20px">
+        <i class="el-icon-user-solid"></i> 登录
+      </el-button>
+
 
       <el-dropdown @command="handleCommand">
         <span class="el-dropdown-link">
@@ -96,7 +63,6 @@
           >
           <el-dropdown-item icon="el-icon-edit" command="b">修改密码</el-dropdown-item>
           <el-dropdown-item icon="el-icon-close" command="c">退出登录</el-dropdown-item>
-          <el-dropdown-item icon="el-icon-s-fold" command="d">退出系统</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
@@ -104,19 +70,19 @@
 </template>
 
 <script>
-import dao1 from "@/api/dao1.js";
+import checkList from "@/views/personal_center/check_list/index.vue";
+
 export default {
+  components:{
+    checkList,
+  },
   data() {
     return {
-      tableData: [],
-      dialogVisible: false,
-      dialogFormVisible: false,
-      allSelected: false,
       user: "",
     };
   },
   mounted() {
-    this.getTableData();
+    // this.getTableData();
     const user = sessionStorage.getItem("user");
     if (user) {
       this.user = JSON.parse(user);
@@ -126,13 +92,7 @@ export default {
     this.username = this.$route.query.username;
   },
   methods: {
-    async getTableData() {
-      const res = await dao1.checkList();
-      this.tableData = res.data;
-    },
-    checkAllSelected() {
-      this.allSelected = this.tableData.every((row) => row.checked);
-    },
+    
     // getInfo(){
     //     /* JSON.parse一定要写 不然拿不出来 */
     //     const user = JSON.parse(localStorage.getItem('et2111elementui'))
@@ -152,7 +112,6 @@ export default {
     handleCommand(command) {
       switch (command) {
         case "a":
-          this.dialogVisible = true;
           this.dialogFormVisible = true;
           break;
         case "c":
