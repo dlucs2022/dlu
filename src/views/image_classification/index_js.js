@@ -78,6 +78,12 @@ export default {
         this.keyDownReview()
     },
     methods: {
+        handleOpen(key, keyPath) {
+            console.log(key, keyPath);
+          },
+          handleClose(key, keyPath) {
+            console.log(key, keyPath);
+          },
         //获取验证码
         getCode(){
             dao.getCode().then(res => {

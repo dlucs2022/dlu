@@ -240,6 +240,43 @@
                     <el-button class="tool_left_button" type="warning" @click="explain_href"><i class="el-icon-mouse"></i> 操作说明</el-button>
                     <input id="upload_csv" accept=".csv" type="file" name="file" ref="upload_csv_input"
                     tabindex="-1" style="display: none;" @change.stop="selectCsv($event)" >
+                    <!-- <el-menu
+                        default-active="2"
+                        class="el-menu-vertical-demo"
+                        @open="handleOpen"
+                        @close="handleClose">
+                        <el-submenu index="1">
+                            <template slot="title">
+                            <i class="el-icon-location"></i>
+                            <span>本地</span>
+                            </template>
+                            <el-menu-item-group>
+                            <el-menu-item index="1-1" @click="click_upload" >加载</el-menu-item>
+                            <el-menu-item index="1-2">导出</el-menu-item>
+                            <el-menu-item index="1-3">校验</el-menu-item>
+                            </el-menu-item-group>
+                        </el-submenu>
+                        <el-submenu index="2">
+                            <template slot="title">
+                            <i class="el-icon-location"></i>
+                            <span>键盘</span>
+                            </template>
+                            <el-menu-item-group>
+                            <el-menu-item index="2-1">键盘监听</el-menu-item>
+                            <el-menu-item index="2-2">键盘失效</el-menu-item>
+                            </el-menu-item-group>
+                        </el-submenu>
+                        <el-submenu index="3">
+                            <template slot="title">
+                            <i class="el-icon-location"></i>
+                            <span>步骤</span>
+                            </template>
+                            <el-menu-item-group>
+                            <el-menu-item index="3-1">操作说明</el-menu-item>
+                            <el-menu-item index="3-2">问题反馈</el-menu-item>
+                            </el-menu-item-group>
+                        </el-submenu>
+                    </el-menu> -->
                 </div>
                 <div class="carouse">
                     <el-carousel :initial-index="0" @change="imgChange" 

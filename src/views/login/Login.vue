@@ -1,70 +1,72 @@
 <template>
   <div class="login">
-    <el-card class="box-card">
-      <div slot="header" class="clearfix">
-        <span>登录</span>
-      </div>
-      <el-form :model="form" ref="form" label-width="80px">
-        <el-form-item
-          label="用户名"
-          prop="username"
-          :rules="[
-            { required: true, message: '请输入用户名', trigger: 'blur' },
-            { min: 1, max: 10, message: '长度必须为4-10之间', trigger: 'blur' },
-          ]"
-        >
-          <el-input
-            type="text"
-            v-model="form.username"
-            prefix-icon="el-icon-user"
-            placeholder="请输入用户名"
-          ></el-input>
-        </el-form-item>
-        <el-form-item
-          label="密码"
-          prop="password"
-          :rules="[
-            { required: true, message: '请输入密码', trigger: 'blur' },
-            { min: 5, max: 12, message: '长度必须为6-12之间', trigger: 'blur' },
-          ]"
-        >
-          <el-input
-            type="password"
-            v-model="form.password"
-            prefix-icon="el-icon-unlock"
-            placeholder="请输入密码"
-          ></el-input>
-        </el-form-item>
-
-
-        <el-form-item
-          label="验证码"
-          prop="verificationcode"
-          :inline="true"
-          :rules="[
-            { required: true, message: '请输入验证码', trigger: 'blur' },
-            { type: 'number', message: '验证码必须为数字', trigger: 'blur' },
-          ]"
-        >
-
-          <el-input
-            type="text"
-            v-model.number="form.verificationcode"
-            prefix-icon="el-icon-message"
-            placeholder="请输入验证码"
+    <transition name="el-zoom-in-center">
+      <el-card v-show="show_card" class="box-card">
+        <div slot="header" class="clearfix">
+          <span>登录</span>
+        </div>
+        <el-form :model="form" ref="form" label-width="80px">
+          <el-form-item
+            label="用户名"
+            prop="username"
+            :rules="[
+              { required: true, message: '请输入用户名', trigger: 'blur' },
+              { min: 1, max: 10, message: '长度必须为4-10之间', trigger: 'blur' },
+            ]"
           >
-          <template slot="append">
-            <img :src="codeUrl" @click="getCode" style="margin-top:3px"/>
-          </template>
-          
-          </el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="register('form')">注册</el-button>
-          <el-button type="primary" @click="login('form')">登录</el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+            <el-input
+              type="text"
+              v-model="form.username"
+              prefix-icon="el-icon-user"
+              placeholder="请输入用户名"
+            ></el-input>
+          </el-form-item>
+          <el-form-item
+            label="密码"
+            prop="password"
+            :rules="[
+              { required: true, message: '请输入密码', trigger: 'blur' },
+              { min: 5, max: 12, message: '长度必须为6-12之间', trigger: 'blur' },
+            ]"
+          >
+            <el-input
+              type="password"
+              v-model="form.password"
+              prefix-icon="el-icon-unlock"
+              placeholder="请输入密码"
+            ></el-input>
+          </el-form-item>
+
+
+          <el-form-item
+            label="验证码"
+            prop="verificationcode"
+            :inline="true"
+            :rules="[
+              { required: true, message: '请输入验证码', trigger: 'blur' },
+              { type: 'number', message: '验证码必须为数字', trigger: 'blur' },
+            ]"
+          >
+
+            <el-input
+              type="text"
+              v-model.number="form.verificationcode"
+              prefix-icon="el-icon-message"
+              placeholder="请输入验证码"
+            >
+            <template slot="append">
+              <img :src="codeUrl" @click="getCode" style="margin-top:3px"/>
+            </template>
+            
+            </el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="register('form')">注册</el-button>
+            <el-button type="primary" @click="login('form')">登录</el-button>
+          </el-form-item>
+        </el-form>
+      </el-card>
+    </transition>
   </div>
 </template>
 
@@ -82,12 +84,14 @@ export default {
         verificationcode: "",
       },
       codeUrl:'',
+      show_card:false
     };
   },
   mounted() {
     const user = JSON.parse(sessionStorage.getItem("user"));
     Ribbons.start();
     this.getCode()
+    setTimeout(this.show_card = true,1000)
   },
   methods: {
     login(form) {

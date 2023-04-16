@@ -1,6 +1,6 @@
 <template>
     <el-footer height="30px" class="footer"> 
-        <h4>版权所有©智拣AIAi-2022</h4>
+        <h4>版权所有©智拣AI-2022</h4>
         <address class="address"><i class="el-icon-location-outline"></i>大理白族自治州大理市大理镇弘圣路2号</address>
         <address class="address"><i class="el-icon-chat-dot-round"></i>779093440@qq.com</address>
     </el-footer>

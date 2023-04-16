@@ -32,6 +32,7 @@ export default {
             method:'post'
         })
     },
+    /* 注册 */
     register(regForm){
         delete regForm.checkPass
         return request({
@@ -39,6 +40,20 @@ export default {
             method:'post',
             data:regForm,
 
+        })
+    },
+
+    /* 获取待审核列表 */
+    checkList(invite_code,pageNumber,pageSize){
+        console.log(invite_code);
+        return request({
+            url:`/user/checkList`,
+            params:{
+                pageNumber:pageNumber,
+                pageSize:pageSize,
+                invite_code:invite_code,
+            },
+            method:'post'
         })
     }
 }

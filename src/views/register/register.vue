@@ -14,73 +14,75 @@
           <el-button @click="verifyDialogVisible = false">取 消</el-button>
         </span>
       </el-dialog>
-    <el-card class="box-card">
-      <div slot="header" class="clearfix">
-        <span>注册</span>
-      </div>
-      
-      <el-form :model="form" ref="form" label-width="80px">
-        <el-form-item
-          label="用户名"
-          prop="name"
-          :rules="[
-            { required: true, message: '请输入用户名', trigger: 'blur' },
-            { min: 4, max: 10, message: '长度必须为4-10之间', trigger: 'blur' },
-          ]"
-        >
-          <el-input
-            type="text"
-            v-model="form.name"
-            prefix-icon="el-icon-user"
-            placeholder="请输入用户名"
-          ></el-input>
-        </el-form-item>
-        <el-form-item
-          label="密码"
-          prop="password"
-          :rules="[
-            { required: true, message: '请输入密码', trigger: 'blur' },
-            { min: 6, max: 12, message: '长度必须为6-12之间', trigger: 'blur' },
-          ]"
-        >
-          <el-input
-            type="password"
-            v-model="form.password"
-            prefix-icon="el-icon-unlock"
-            placeholder="请输入密码"
-          ></el-input>
-        </el-form-item>
-
-        <el-form-item
-          label="确认密码"
-          prop="checkPass"
-          :rules="[
-            { required: true, message: '请输入密码', trigger: 'blur' },
-            { validator: validatePass, trigger: 'blur' },
-          ]"
-        >
-          <el-input
-            type="password"
-            v-model="form.checkPass"
-            prefix-icon="el-icon-unlock"
-            placeholder="请再次输入密码"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="邀请码">
-          <el-input
-            type="text"
-            v-model="form.invite_code"
-            prefix-icon="el-icon-key"
-            placeholder="请输入邀请码(可不填写)"
-          ></el-input>
-        </el-form-item>
+    <transition name="el-zoom-in-center">
+      <el-card v-show="show_card" class="box-card">
+        <div slot="header" class="clearfix">
+          <span>注册</span>
+        </div>
         
-        <el-form-item>
-          <el-button type="primary" @click="prev">返回</el-button>
-          <el-button type="primary" @click="confirm('form')" >确认</el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
+        <el-form :model="form" ref="form" label-width="80px">
+          <el-form-item
+            label="用户名"
+            prop="name"
+            :rules="[
+              { required: true, message: '请输入用户名', trigger: 'blur' },
+              { min: 4, max: 10, message: '长度必须为4-10之间', trigger: 'blur' },
+            ]"
+          >
+            <el-input
+              type="text"
+              v-model="form.name"
+              prefix-icon="el-icon-user"
+              placeholder="请输入用户名"
+            ></el-input>
+          </el-form-item>
+          <el-form-item
+            label="密码"
+            prop="password"
+            :rules="[
+              { required: true, message: '请输入密码', trigger: 'blur' },
+              { min: 6, max: 12, message: '长度必须为6-12之间', trigger: 'blur' },
+            ]"
+          >
+            <el-input
+              type="password"
+              v-model="form.password"
+              prefix-icon="el-icon-unlock"
+              placeholder="请输入密码"
+            ></el-input>
+          </el-form-item>
+
+          <el-form-item
+            label="确认密码"
+            prop="checkPass"
+            :rules="[
+              { required: true, message: '请输入密码', trigger: 'blur' },
+              { validator: validatePass, trigger: 'blur' },
+            ]"
+          >
+            <el-input
+              type="password"
+              v-model="form.checkPass"
+              prefix-icon="el-icon-unlock"
+              placeholder="请再次输入密码"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="邀请码">
+            <el-input
+              type="text"
+              v-model="form.invite_code"
+              prefix-icon="el-icon-key"
+              placeholder="请输入邀请码(可不填写)"
+            ></el-input>
+          </el-form-item>
+          
+          <el-form-item>
+            <el-button type="primary" @click="prev">返回</el-button>
+            <el-button type="primary" @click="confirm('form')" >确认</el-button>
+          </el-form-item>
+        </el-form>
+      </el-card>
+    </transition>
   </div>
 </template>
 
@@ -104,11 +106,12 @@ export default {
       },
       isVerify:false,
       verifyDialogVisible:false,
-
+      show_card:false
     };
   },
   mounted() {
     Ribbons.start();
+    setTimeout(this.show_card = true,1000)
   },
   methods: {
     getIsVerify(value){
