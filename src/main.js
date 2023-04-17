@@ -1,15 +1,21 @@
 import Vue from "vue";
 import App from "./App.vue";
-import ElementUI from 'element-ui';
-import 'element-ui/lib/theme-chalk/index.css';
+ //引入element-ui的全部组件
+ import ElementUI from 'element-ui'
+//引入element-ui的css
+import 'element-ui/lib/theme-chalk/index.css'
 import router from "./router";
 import SlideVerify from 'vue-monoplasty-slide-verify'
+import qs from 'qs'
 
 /* 引入导航守卫 */
 // import './permission'
 Vue.config.productionTip = false;
-Vue.use(ElementUI);
+//使用elementUI
+Vue.use(ElementUI) 
 Vue.use(SlideVerify)
+
+
 
 new Vue({
   router,
