@@ -46,8 +46,12 @@ const routes = [
         component: () => import('./views/image_classification')
       },
       {
-        path:'/layout/person_center/check_list',
-        component:() => import('./views/personal_center/check_list')
+        path: '/layout/person_center/check_list',
+        component: () => import('./views/personal_center/check_list')
+      },
+      {
+        path: '/layout/person_center/update_info',
+        component: () => import('./views/personal_center/update_info')
       }
     ]
   },

@@ -34,8 +34,8 @@
         >
         <el-submenu index="3">
           <template slot="title"> <i class="el-icon-user"></i>个人中心 </template>
-          <el-menu-item index="3-1"
-            ><i class="el-icon-edit-outline"></i> 信息修改</el-menu-item
+          <el-menu-item index="/layout/person_center/update_info"
+            ><i class="el-icon-edit-outline"></i> 修改密码</el-menu-item
           >
           <el-menu-item index="/layout/person_center/check_list"
             ><i class="el-icon-document"></i> 审核列表</el-menu-item
@@ -66,8 +66,7 @@
           <el-dropdown-item icon="el-icon-edit-outline" command="a"
             >信息管理</el-dropdown-item
           >
-          <el-dropdown-item icon="el-icon-edit" command="b">修改密码</el-dropdown-item>
-          <el-dropdown-item icon="el-icon-close" command="c">退出登录</el-dropdown-item>
+          <el-dropdown-item icon="el-icon-close" command="b">退出登录</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
@@ -116,9 +115,9 @@ export default {
     handleCommand(command) {
       switch (command) {
         case "a":
-          this.dialogFormVisible = true;
+          // this.dialogFormVisible = true;
           break;
-        case "c":
+        case "b":
           sessionStorage.removeItem("user");
           this.user = "";
           this.$router.push("/");

@@ -37,7 +37,6 @@
             ></el-input>
           </el-form-item>
 
-
           <el-form-item
             label="验证码"
             prop="verificationcode"
@@ -47,17 +46,15 @@
               { type: 'number', message: '验证码必须为数字', trigger: 'blur' },
             ]"
           >
-
             <el-input
               type="text"
               v-model.number="form.verificationcode"
               prefix-icon="el-icon-message"
               placeholder="请输入验证码"
             >
-            <template slot="append">
-              <img :src="codeUrl" @click="getCode" style="margin-top:3px"/>
-            </template>
-            
+              <template slot="append">
+                <img :src="codeUrl" @click="getCode" style="margin-top: 3px" />
+              </template>
             </el-input>
           </el-form-item>
           <el-form-item>
@@ -83,42 +80,44 @@ export default {
         password: "",
         verificationcode: "",
       },
-      codeUrl:'',
-      show_card:false
+      codeUrl: "",
+      show_card: false,
     };
   },
   mounted() {
     const user = JSON.parse(sessionStorage.getItem("user"));
     Ribbons.start();
-    this.getCode()
-    setTimeout(this.show_card = true,1000)
+    this.getCode();
+    setTimeout((this.show_card = true), 1000);
   },
   methods: {
     login(form) {
       this.$refs[form].validate((valid) => {
         if (valid) {
-          dao.login(this.form.username, this.form.password,this.form.verificationcode).then(res => {
-              if(res.data.message === 'success'){
-                  sessionStorage.setItem("user", JSON.stringify(res.data.data));
-                  Ribbons.stop();
-                  this.$message({
-                        type: 'success',
-                        message: '登录成功！'
+          dao
+            .login(this.form.username, this.form.password, this.form.verificationcode)
+            .then((res) => {
+              if (res.data.message === "success") {
+                sessionStorage.setItem("user", JSON.stringify(res.data.data));
+                Ribbons.stop();
+                this.$message({
+                  type: "success",
+                  message: "登录成功！",
+                });
+                this.$router.push("../layout/image_classification");
+              } else {
+                this.$alert(res.data.message, "警告", {
+                  confirmButtonText: "确定",
+                  callback: (action) => {
+                    this.$message({
+                      type: "warning",
+                      message: `请重试`,
                     });
-                  this.$router.push("../layout/image_classification");
-              }else{
-                  this.$alert(res.data.message, '警告', {
-                    confirmButtonText: '确定',
-                    callback: action => {
-                      this.$message({
-                        type: 'warning',
-                        message: `请重试`
-                      });
-                      this.getCode()
-                    }
-                  });
+                    this.getCode();
+                  },
+                });
               }
-          })
+            });
         } else {
           console.error(this.form);
         }
@@ -127,16 +126,16 @@ export default {
     register(form) {
       this.$router.push("./register");
     },
-    getCode() { //点击的时候就图片就请求 图片就换了
+    getCode() {
+      //点击的时候就图片就请求 图片就换了
       dao.getCode().then((res) => {
-
         if (res.status == 200) {
-          this.codeUrl = window.URL.createObjectURL(res.data)
+          this.codeUrl = window.URL.createObjectURL(res.data);
           // this.codeUrl = "data:image/gif;base64," + res.data; //
         }
         //这边我简单判断了下 根据自己需求 进行判断 catch...啥的
-      })
-    }
+      });
+    },
   },
   beforeDestroy() {
     Ribbons.stop();
