@@ -1,29 +1,7 @@
 <template>
   <el-card class="check_lsit_card">
-    <el-button
-      type="danger"
-      v-if="multipleSelection.length === this.tableData.length"
-      size="mini"
-      @click="rejectAll"
-      style="float: right; margin-right: 30px"
-      >全部拒绝</el-button
-    >
-    <el-button
-      type="primary"
-      v-if="multipleSelection.length === this.tableData.length"
-      size="mini"
-      @click="passAll"
-      style="float: right; margin-right: 10px"
-      >全部通过</el-button
-    >
-    <el-table
-      :data="tableData"
-      @select="handleSelect"
-      @selection-change="handleSelectionChange"
-      ref="multipleTable"
-      style="width: 100%"
-    >
-      <el-table-column type="selection" width="55"></el-table-column>
+    <el-table :data="tableData" ref="multipleTable" style="width: 100%">
+      <el-table-column width="55"></el-table-column>
       <el-table-column prop="name" label="姓名" align="center" sortable></el-table-column>
       <el-table-column
         prop="create_time"
@@ -45,6 +23,7 @@
             size="mini"
             icon="el-icon-edit"
             @click="pass(scope.row)"
+            :disabled="scope.row.status === '已通过'"
             >通过</el-button
           >
           <el-button
@@ -52,6 +31,7 @@
             size="mini"
             icon="el-icon-delete"
             @click="reject(scope.row)"
+            :disabled="scope.row.status === '已拒绝'"
             >不通过</el-button
           >
         </template>
@@ -121,14 +101,6 @@ export default {
       this.getTableData();
     },
 
-    // 选择事件
-    handleSelect(selection, row) {
-      console.log(row.status);
-    },
-    handleSelectionChange(val) {
-      this.multipleSelection = val; //存储选中的数据
-      console.log(val);
-    },
     async getTableData() {
       await dao
         .checkList(this.user.invite_code, this.page, this.itemsPerPage)
@@ -143,32 +115,53 @@ export default {
       this.allSelected = this.tableData.every((row) => row.checked);
     },
     pass(row) {
-      console.log("通过", row.name);
-      dao.multiPass(row.name).then(() => {
-        this.getTableData();
-      });
+      this.$confirm("是否确认通过审核?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          dao.Pass(row.name).then(() => {
+            this.getTableData();
+          });
+          this.$message({
+            type: "success",
+            message: "修改成功!",
+            duration: "1000",
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消修改",
+            duration: "1000",
+          });
+        });
     },
+
     reject(row) {
-      console.log("不通过", row.name);
-      dao.multiRefuse(row.name).then(() => {
-        this.getTableData();
-      });
-    },
-    rejectAll() {
-      const names = this.multipleSelection.map((row) => row.name);
-      // row.status = "通过";
-      // console.log(names);
-      dao.multiRefuse(names).then(() => {
-        this.getTableData();
-      });
-    },
-    passAll() {
-      const names = this.multipleSelection.map((row) => row.name);
-      // row.status = "通过";
-      // console.log(names);
-      dao.multiPass(names).then(() => {
-        this.getTableData();
-      });
+      this.$confirm("是否确认拒绝审核?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          dao.Refuse(row.name).then(() => {
+            this.getTableData();
+          });
+          this.$message({
+            type: "success",
+            message: "修改成功!",
+            duration: "1000",
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消修改",
+            duration: "1000",
+          });
+        });
     },
   },
 };

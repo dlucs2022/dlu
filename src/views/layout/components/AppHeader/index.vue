@@ -34,10 +34,15 @@
         >
         <el-submenu index="3">
           <template slot="title"> <i class="el-icon-user"></i>个人中心 </template>
+          <el-menu-item index="/layout/person_center/"
+            ><i class="el-icon-edit-outline"></i> 个人信息</el-menu-item
+          >
           <el-menu-item index="/layout/person_center/update_info"
             ><i class="el-icon-edit-outline"></i> 修改密码</el-menu-item
           >
-          <el-menu-item index="/layout/person_center/check_list"
+          <el-menu-item
+            index="/layout/person_center/check_list"
+            :disabled="this.user.power !== '1'"
             ><i class="el-icon-document"></i> 审核列表</el-menu-item
           >
           <el-menu-item index="/layout/person_center/data_base"
@@ -120,7 +125,7 @@ export default {
         case "b":
           sessionStorage.removeItem("user");
           this.user = "";
-          this.$router.push("/");
+          this.$router.push("/home");
           location.reload();
           break;
         default:

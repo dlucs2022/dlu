@@ -46,6 +46,7 @@
               v-model="form.password"
               prefix-icon="el-icon-unlock"
               placeholder="请输入密码"
+              show-password
             ></el-input>
           </el-form-item>
 
@@ -62,6 +63,7 @@
               v-model="form.checkPass"
               prefix-icon="el-icon-unlock"
               placeholder="请再次输入密码"
+              show-password
             ></el-input>
           </el-form-item>
           <el-form-item label="邀请码">
