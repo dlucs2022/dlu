@@ -14,10 +14,10 @@ import router from "../router"
 axios.defaults.withCredentials = true;
 
 const request = axios.create({
-  baseURL: 'http://localhost:8003/dlu',
-  timeout:5000,
+  baseURL: 'http://192.168.46.136:8003/dlu',
+  timeout: 5000,
   withCredentials: true, // 跨域请求时发送Cookie
-  crossDomain: true
+  crossDomain: true,
 })
 
 // // 请求拦截器：用于拦截所有的api接口调用

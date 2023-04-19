@@ -3,15 +3,16 @@
     <div class="demo-image__placeholder">
       <div class="text">
         <div class="title">
-          <p>智拣AI</p>
+          <span>智拣AI</span>
         </div>
+        <el-divider></el-divider>
         <div class="content">
-          <p style="font-size:15px">
+          <span>
             智拣AI红外照片分拣平台，它可以帮助图像识别研究人员快速、准确、高效地对红外照片进行标注。
             我们的系统利用了最先进的深度学习技术，可以通过预训练好的模型对照片进行预标注，从而节省用户的时间和精力。
             如果预标注不满足研究人员需要，研究人员可以对标注进行微调，以达到最佳效果。同时，该系统也支持上传自己的模型，
             以适应不同的场景和需求。我们的系统可以极大减少人工标注成本，提高标注质量和效率，为用户提供更好的体验和价值。
-          </p>
+          </span>
         </div>
       </div>
       <el-image :src="src">
@@ -20,7 +21,21 @@
         </div>
       </el-image>
     </div>
-
+    <div class="statistic">
+      <el-card class="box-card" shadow="hover">
+        <span style="display:block">处理图片数</span>
+        <i
+          class="el-icon-picture"
+          style="color: #9370db; font-size: 20px; margin-right: 10px"
+        ></i>
+        <span style="font-size: 30px">336,969</span>
+      </el-card>
+      <el-card class="box-card" shadow="hover">
+        <span style="display:block">使用人数</span>
+        <i class="el-icon-user" style="font-size: 20px; margin-right: 10px"></i>
+        <span style="font-size: 30px">2,041</span>
+      </el-card>
+    </div>
     <div class="show">
       <div class="title">
         <p>物种百科</p>
@@ -28,68 +43,78 @@
       <div class="cards">
         <div class="box">
           <div class="imgBx">
-            <img src="@/assets/imgs/introduce/dianjinsihou2.jpg">
+            <img src="@/assets/imgs/introduce/dianjinsihou2.jpg" />
           </div>
           <div class="content">
             <h3>滇金丝猴</h3>
             <el-scrollbar style="height: 40vh">
-              <p>滇金丝猴（学名：Rhinopithecus bieti）
+              <p>
+                滇金丝猴（学名：Rhinopithecus bieti）
                 滇金丝猴的皮毛并不是金黄色的毛，以灰黑、白色为主。
                 中文标准名称应为“黑仰鼻猴”。它们的头顶长有尖形黑色冠毛，
                 眼周和吻鼻部青灰色或肉粉色，鼻端上翘呈深蓝色。
-                身体背侧、手足和尾均为灰黑色，
-                背后具有灰白色的稀疏长毛。
-                  滇金丝猴是中国特有的珍稀濒危灵长类动物。仅分布在中国川滇藏三省区交界处，
-                  喜马拉雅山南缘横断山系的云岭山脉当中，澜沧江和金沙江之间一个狭小地域 。
-                <a href="https://baike.baidu.com/item/%E6%BB%87%E9%87%91%E4%B8%9D%E7%8C%B4/373252"
-                 target="_blank" style="float: right;color:blue">学习更多>>
+                身体背侧、手足和尾均为灰黑色， 背后具有灰白色的稀疏长毛。
+                滇金丝猴是中国特有的珍稀濒危灵长类动物。仅分布在中国川滇藏三省区交界处，
+                喜马拉雅山南缘横断山系的云岭山脉当中，澜沧江和金沙江之间一个狭小地域 。
+                <a
+                  href="https://baike.baidu.com/item/%E6%BB%87%E9%87%91%E4%B8%9D%E7%8C%B4/373252"
+                  target="_blank"
+                  style="float: right; color: blue"
+                  >学习更多>>
                 </a>
               </p>
             </el-scrollbar>
-            
           </div>
         </div>
         <div class="box">
           <div class="imgBx">
-            <img src="@/assets/imgs/introduce/houzi.jpg">
+            <img src="@/assets/imgs/introduce/houzi.jpg" />
           </div>
           <div class="content">
             <h3>山魈</h3>
             <el-scrollbar style="height: 40vh">
-                <p>山魈（学名:Mandrillus sphinx），世界上最大的猴科灵长类动物。头大而长，鼻骨两侧各有1块骨质突起，
-                  其上有纵向排列的脊状突起，其间为沟，外被绿色皮肤，脊间鲜红色。
-                  雄性每侧约有6条主要的沟，其红色部分伸延到鼻骨和吻部周围，这种色彩鲜艳的特殊图案形似鬼怪，因而人称山魈。
-              山魈为群居动物，小群落生活，嬉戏于丛林及岩石间，主要天敌是花豹，但花豹一般只猎捕雌性山魈和未成年山魈。
+              <p>
+                山魈（学名:Mandrillus
+                sphinx），世界上最大的猴科灵长类动物。头大而长，鼻骨两侧各有1块骨质突起，
+                其上有纵向排列的脊状突起，其间为沟，外被绿色皮肤，脊间鲜红色。
+                雄性每侧约有6条主要的沟，其红色部分伸延到鼻骨和吻部周围，这种色彩鲜艳的特殊图案形似鬼怪，因而人称山魈。
+                山魈为群居动物，小群落生活，嬉戏于丛林及岩石间，主要天敌是花豹，但花豹一般只猎捕雌性山魈和未成年山魈。
+                山魈主要产于非洲中西部潮湿的常绿雨林中，从萨纳加河（喀麦隆）以南到赤道几内亚大陆、
+                加蓬南部大部分地区、刚果共和国西南部到库伊卢河，一直到刚果河一带。
+                山魈在全球主要分布于喀麦隆、刚果、赤道几内亚（大陆）和加蓬。后来在泰国、越南等南亚地区也有发现，原因未知。
 
-              山魈主要产于非洲中西部潮湿的常绿雨林中，从萨纳加河（喀麦隆）以南到赤道几内亚大陆、
-              加蓬南部大部分地区、刚果共和国西南部到库伊卢河，一直到刚果河一带。
-              山魈在全球主要分布于喀麦隆、刚果、赤道几内亚（大陆）和加蓬。后来在泰国、越南等南亚地区也有发现，原因未知。
-
-              <a href="https://baike.baidu.com/item/%E5%B1%B1%E9%AD%88/813499" 
-              target="_blank" style="float: right;color:blue">学习更多>>
-            </a>
-          </p>
-          </el-scrollbar>
-            
+                <a
+                  href="https://baike.baidu.com/item/%E5%B1%B1%E9%AD%88/813499"
+                  target="_blank"
+                  style="float: right; color: blue"
+                  >学习更多>>
+                </a>
+              </p>
+            </el-scrollbar>
           </div>
         </div>
         <div class="box">
           <div class="imgBx">
-            <img src="@/assets/imgs/introduce/maoniu.jpg">
+            <img src="@/assets/imgs/introduce/maoniu.jpg" />
           </div>
           <div class="content">
             <h3>牦牛</h3>
             <el-scrollbar style="height: 40vh">
-                <p>牦牛（学名：Bos mutus或Bos grunniens，英文名称：wild yak），属于哺乳纲、真兽亚纲、偶蹄目、反刍亚目、牛科、牛亚科动物，
-                  是以中国青藏高原为中心，及其毗邻高山、亚高山高寒地区的特有珍稀牛种之一，草食性反刍家畜。牦牛能适应高寒气候，
-                  是世界上生活在海拔最高处的（除人类外）哺乳动物，分布于中国青藏高原海拔3000米以上地区。
-                  牦牛的藏语叫雅客，世界通称为“yak”，即藏语译音。 西方国家因其主产于中国青藏高原藏族地区，也称西藏牛。牦牛尾如马尾，所以又名马尾牛。
-                  <a href="https://baike.baidu.com/link?url=VMMufibiDbIg6nwzRu1CUp_XEfgRifbkma3WJS4RdfLFIxPKbEJwUriJf_A9x9Y4gG75gqkTSPNNGNkNzabrL5d-n-FYj-OoEau_7ikN_sO" 
-                  target="_blank" style="float: right;color:blue">学习更多>>
-                  </a>
-                </p>
+              <p>
+                牦牛（学名：Bos mutus或Bos grunniens，英文名称：wild
+                yak），属于哺乳纲、真兽亚纲、偶蹄目、反刍亚目、牛科、牛亚科动物，
+                是以中国青藏高原为中心，及其毗邻高山、亚高山高寒地区的特有珍稀牛种之一，草食性反刍家畜。牦牛能适应高寒气候，
+                是世界上生活在海拔最高处的（除人类外）哺乳动物，分布于中国青藏高原海拔3000米以上地区。
+                牦牛的藏语叫雅客，世界通称为“yak”，即藏语译音。
+                西方国家因其主产于中国青藏高原藏族地区，也称西藏牛。牦牛尾如马尾，所以又名马尾牛。
+                <a
+                  href="https://baike.baidu.com/link?url=VMMufibiDbIg6nwzRu1CUp_XEfgRifbkma3WJS4RdfLFIxPKbEJwUriJf_A9x9Y4gG75gqkTSPNNGNkNzabrL5d-n-FYj-OoEau_7ikN_sO"
+                  target="_blank"
+                  style="float: right; color: blue"
+                  >学习更多>>
+                </a>
+              </p>
             </el-scrollbar>
-            
           </div>
         </div>
       </div>
@@ -102,11 +127,10 @@
 import "../../assets/css/style.css";
 
 export default {
-  
   data() {
     return {
       name: "",
-	  imgList:[],
+      imgList: [],
       test:
         "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Sapiente recusandae, voluptatibus magnam reprehenderit a numquam. Temporibus esse sit provident quaerat quae.",
       activeIndex2: "1",
@@ -123,7 +147,6 @@ export default {
     handleSelect(key, keyPath) {
       console.log(key, keyPath);
     },
-    
   },
 };
 </script>
@@ -131,35 +154,52 @@ export default {
 .index {
   .demo-image__placeholder {
     width: 100%;
+    height: 20%;
     background-color: #9370db;
     .text {
       display: flex;
+      flex-wrap: wrap;
       flex-direction: column;
       justify-content: center;
-      // width: 600px;
       position: absolute;
-
-      // left: 120px;
-      margin-top: 50px;
       margin-left: 10%;
       margin-right: 50%;
       color: white;
       .title {
+        margin-top: 7.5%;
         text-align: left;
         font-size: 2.5vw;
-        margin-bottom: 20px;
       }
       .content {
         text-align: left;
-        font-size: 1vw;
-        line-height: 1.2vw;
+        font-size: 1.2vw;
+        line-height: 1.7vw;
+        flex: 1;
       }
     }
     .el-image {
-      margin-top: 30px;
+      margin-top: 40px;
       margin-bottom: 30px;
       width: 35%;
       left: 55%;
+    }
+  }
+  .statistic {
+    position: absolute;
+    background-color: white;
+    justify-content: center;
+    gap: 10px;
+    padding: 5px;
+    display: flex;
+    width: 400px;
+    left: 250px;
+    top: 425px;
+    box-shadow: 12px 12px 2px 1px rgba(0, 0, 255, 0.2);
+    .box-card {
+      background-color: white;
+      width: 200px;
+      border-radius: 20px;
+      // opacity: 0.5;
     }
   }
   .show {
@@ -169,8 +209,8 @@ export default {
     background-color: #d3d3d3;
     .title {
       position: relative;
-      text-align: left;
-      margin-left: 10%;
+      text-align: right;
+      margin-right: 15%;
       top: 50px;
       font-size: 2.5vw;
     }
@@ -185,94 +225,83 @@ export default {
       margin-left: 20%;
       right: 200px;
     } */
-    .cards
-      {
-        width: 1000px;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        margin: 100px auto;
-      }
-      .box
-      {
-        position: relative;
-        width: 300px;
-        height: 400px;
-        background: #000;
-        box-shadow: 0 30px 30px rgba(0,0,0,.5);
-      }
-      .box .imgBx
-      {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-      }
-      .box .imgBx img
-      {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: 0.5s;
-      }
-      .box:hover .imgBx img
-      {
-        opacity: 0;
-      }
-      .box .content
-      {
-        position: absolute;
-        bottom: 20px;
-        left: 10%;
-        width: 80%;
-        height: 60px;
-        background: #fafafa;
-        transition: 0.5s;
-        overflow: hidden;
+    .cards {
+      width: 1000px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      margin: 100px auto;
+    }
+    .box {
+      position: relative;
+      width: 300px;
+      height: 400px;
+      background: #000;
+      box-shadow: 0 30px 30px rgba(0, 0, 0, 0.5);
+    }
+    .box .imgBx {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .box .imgBx img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: 0.5s;
+    }
+    .box:hover .imgBx img {
+      opacity: 0;
+    }
+    .box .content {
+      position: absolute;
+      bottom: 20px;
+      left: 10%;
+      width: 80%;
+      height: 60px;
+      background: #fafafa;
+      transition: 0.5s;
+      overflow: hidden;
 
-        padding: 15px;
-        box-sizing: border-box;
-      }
-      .box:hover .content
-      {
-        width: 100%;
-        height: 100%;
-        bottom: 0;
-        left: 0;
-      }
-      .box .content h3
-      {
-        margin: 0;
-        padding: 0;
-        font-size: 20px;
-        text-align: center;
-      }
-      .box .content p
-      {
-        margin: 10px 0 0;
-        padding: 0;
-        opacity: 0;
-        line-height: 1.6em;
-        transition: 0.5s;
-        text-align:justify;
-      }
-      .box .content p a {
-        color:#222;
-        text-decoration:none
-        
-      }
-      .box .content p :hover {
-        color:#00a6bc;
-      }
-      .box:hover .content p
-      {
-        opacity: 1;
-        transition-delay: 0.5s;
-      }
+      padding: 15px;
+      box-sizing: border-box;
+    }
+    .box:hover .content {
+      width: 100%;
+      height: 100%;
+      bottom: 0;
+      left: 0;
+    }
+    .box .content h3 {
+      margin: 0;
+      padding: 0;
+      font-size: 20px;
+      text-align: center;
+    }
+    .box .content p {
+      margin: 10px 0 0;
+      padding: 0;
+      opacity: 0;
+      line-height: 1.6em;
+      transition: 0.5s;
+      text-align: justify;
+    }
+    .box .content p a {
+      color: #222;
+      text-decoration: none;
+    }
+    .box .content p :hover {
+      color: #00a6bc;
+    }
+    .box:hover .content p {
+      opacity: 1;
+      transition-delay: 0.5s;
+    }
   }
 }
 </style>
