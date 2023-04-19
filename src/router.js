@@ -13,6 +13,12 @@ const routes = [
     redirect: '/layout/system_introduce',
   },
   {
+    path: '/home',
+    component: () => import('@/views/layout'),
+    // redirect:'/layout/system_introduce',
+    redirect: '/layout/system_introduce',
+  },
+  {
     path: "/register",
     name: "register",
     hidden: true,
@@ -38,21 +44,30 @@ const routes = [
     redirect: '/layout/system_introduce',
     children: [
       {
-        path: '/layout/system_introduce',
+        path: 'system_introduce',
         component: () => import('./views/system_introduce')
       },
       {
-        path: '/layout/image_classification',
+        path: 'image_classification',
         component: () => import('./views/image_classification')
       },
       {
-        path: '/layout/person_center/check_list',
-        component: () => import('./views/personal_center/check_list')
+        path: 'person_center',
+        component: () => import('./views/personal_center/'),
+        children: [
+          {
+            path: 'check_list',
+            component: () => import('./views/personal_center/check_list')
+          },
+          {
+            path: 'update_info',
+            component: () => import('./views/personal_center/update_info')
+          },
+        ]
       },
-      {
-        path: '/layout/person_center/update_info',
-        component: () => import('./views/personal_center/update_info')
-      }
+
+
+
     ]
   },
 

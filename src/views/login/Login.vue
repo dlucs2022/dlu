@@ -34,6 +34,7 @@
               v-model="form.password"
               prefix-icon="el-icon-unlock"
               placeholder="请输入密码"
+              show-password
             ></el-input>
           </el-form-item>
 
@@ -103,6 +104,7 @@ export default {
                 this.$message({
                   type: "success",
                   message: "登录成功！",
+                  duration: "1000",
                 });
                 this.$router.push("../layout/image_classification");
               } else {
@@ -112,6 +114,7 @@ export default {
                     this.$message({
                       type: "warning",
                       message: `请重试`,
+                      duration: "1000",
                     });
                     this.getCode();
                   },
