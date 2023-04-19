@@ -52,6 +52,10 @@ const routes = [
       {
         path: '/layout/person_center/update_info',
         component: () => import('./views/personal_center/update_info')
+      },
+      {
+        path: '/layout/person_center/data_base',
+        component: () => import('./views/personal_center/data_base')
       }
     ]
   },

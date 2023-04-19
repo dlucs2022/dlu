@@ -278,6 +278,7 @@
                         </el-submenu>
                     </el-menu> -->
                 </div>
+                <!-- 中间整体走马灯 -->
                 <div class="carouse">
                     <el-carousel :initial-index="0" @change="imgChange" 
                     indicator-position="none"  height="600px" :autoplay="false" arrow="always" ref="carousel" :loop="false">

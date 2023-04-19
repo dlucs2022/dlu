@@ -40,7 +40,7 @@
           <el-menu-item index="/layout/person_center/check_list"
             ><i class="el-icon-document"></i> 审核列表</el-menu-item
           >
-          <el-menu-item index="3-1"
+          <el-menu-item index="/layout/person_center/data_base"
             ><i class="el-icon-cloudy"></i> 云端数据库</el-menu-item
           >
         </el-submenu>
