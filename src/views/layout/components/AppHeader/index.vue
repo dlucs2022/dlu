@@ -32,28 +32,16 @@
         <el-menu-item index="/layout/image_classification"
           ><i class="el-icon-picture-outline"></i> 图片分拣</el-menu-item
         >
-        <el-submenu index="3">
-          <template slot="title"> <i class="el-icon-user"></i>个人中心 </template>
-          <el-menu-item index="/layout/person_center/"
-            ><i class="el-icon-edit-outline"></i> 个人信息</el-menu-item
-          >
-          <el-menu-item index="/layout/person_center/update_info"
-            ><i class="el-icon-edit-outline"></i> 修改密码</el-menu-item
-          >
-          <el-menu-item
-            index="/layout/person_center/check_list"
-            :disabled="this.user.power !== '1'"
-            ><i class="el-icon-document"></i> 审核列表</el-menu-item
-          >
-          <el-menu-item index="/layout/person_center/data_base"
-            ><i class="el-icon-cloudy"></i> 云端数据库</el-menu-item
-          >
-        </el-submenu>
+        <el-menu-item index="/layout/person_center/userInfo"
+          ><i class="el-icon-user"></i> 个人中心</el-menu-item
+        >
       </el-menu>
     </div>
 
     <div class="info">
-      <span class="show" v-show="this.user.name">{{ this.user.name }}欢迎您回来</span>
+      <span class="show" v-if="this.user && this.user.name"
+        >{{ this.user.name }}欢迎您回来</span
+      >
       <el-button
         type="text"
         v-if="!user"
@@ -68,10 +56,9 @@
           操作<i class="el-icon-arrow-down el-icon--right"></i>
         </span>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item icon="el-icon-edit-outline" command="a"
-            >信息管理</el-dropdown-item
+          <el-dropdown-item icon="el-icon-close" @command="handleCommand"
+            >退出登录</el-dropdown-item
           >
-          <el-dropdown-item icon="el-icon-close" command="b">退出登录</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
@@ -101,36 +88,11 @@ export default {
     this.username = this.$route.query.username;
   },
   methods: {
-    // getInfo(){
-    //     /* JSON.parse一定要写 不然拿不出来 */
-    //     const user = JSON.parse(localStorage.getItem('et2111elementui'))
-    //     if(!user){
-    //         this.$message({
-    //             type:'error',
-    //             message:'还没登录呐！！！！！！！！'
-    //         })
-    //         setTimeout(()=>{
-    //             this.$router.push('/')
-    //         },1500)
-    //         return
-    //     }
-    //     this.user = user
-    // },
-    // /* 这里的command对应  <el-dropdown-item command="对应这里">*/
     handleCommand(command) {
-      switch (command) {
-        case "a":
-          // this.dialogFormVisible = true;
-          break;
-        case "b":
-          sessionStorage.removeItem("user");
-          this.user = "";
-          this.$router.push("/home");
-          location.reload();
-          break;
-        default:
-          break;
-      }
+      sessionStorage.removeItem("user");
+      this.user = "";
+      this.$router.push("/home");
+      location.reload();
     },
     created() {
       // this.getInfo()

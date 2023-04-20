@@ -5,7 +5,12 @@
         <div slot="header" class="clearfix">
           <span>登录</span>
         </div>
-        <el-form :model="form" ref="form" label-width="80px">
+        <el-form
+          :model="form"
+          ref="form"
+          label-width="80px"
+          @keyup.enter.native="login('form')"
+        >
           <el-form-item
             label="用户名"
             prop="username"
@@ -100,7 +105,7 @@ export default {
             .then((res) => {
               if (res.data.message === "success") {
                 sessionStorage.setItem("user", JSON.stringify(res.data.data));
-                Ribbons.stop();
+
                 this.$message({
                   type: "success",
                   message: "登录成功！",
