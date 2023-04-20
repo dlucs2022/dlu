@@ -32,7 +32,7 @@
         <el-menu-item index="/layout/image_classification"
           ><i class="el-icon-picture-outline"></i> 图片分拣</el-menu-item
         >
-        <el-menu-item index="/layout/person_center/userInfo"
+        <el-menu-item index="/layout/person_center/"
           ><i class="el-icon-user"></i> 个人中心</el-menu-item
         >
       </el-menu>

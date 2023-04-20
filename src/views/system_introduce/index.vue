@@ -23,7 +23,7 @@
     </div>
     <div class="statistic">
       <el-card class="box-card" shadow="hover">
-        <span style="display:block">处理图片数</span>
+        <span style="display: block">处理图片数</span>
         <i
           class="el-icon-picture"
           style="color: #9370db; font-size: 20px; margin-right: 10px"
@@ -31,7 +31,7 @@
         <span style="font-size: 30px">336,969</span>
       </el-card>
       <el-card class="box-card" shadow="hover">
-        <span style="display:block">使用人数</span>
+        <span style="display: block">使用人数</span>
         <i class="el-icon-user" style="font-size: 20px; margin-right: 10px"></i>
         <span style="font-size: 30px">2,041</span>
       </el-card>
@@ -192,8 +192,8 @@ export default {
     padding: 5px;
     display: flex;
     width: 400px;
-    left: 250px;
-    top: 425px;
+    left: 25%;
+    top: 60%;
     box-shadow: 12px 12px 2px 1px rgba(0, 0, 255, 0.2);
     .box-card {
       background-color: white;
