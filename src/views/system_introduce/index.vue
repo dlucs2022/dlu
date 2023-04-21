@@ -121,58 +121,126 @@
     </div>
 
     <div class="show_card_f">
-      <div class="show_card" :style="{backgroundColor: bgColor1, color: textColor1}"
-       @mouseenter="bgColor1 = '#fff';textColor1 = '#409EFF'" @mouseleave="bgColor1 = '#409EFF'; textColor1 = '#fff'">
-        <img src="@/assets/imgs/introduce/icon/sharpicons_Cow.png" alt="">
+      <div
+        class="show_card"
+        :style="{ backgroundColor: bgColor1, color: textColor1 }"
+        @mouseenter="
+          bgColor1 = '#fff';
+          textColor1 = '#409EFF';
+        "
+        @mouseleave="
+          bgColor1 = '#409EFF';
+          textColor1 = '#fff';
+        "
+      >
+        <img src="@/assets/imgs/introduce/icon/sharpicons_Cow.png" alt="" />
         牛
-        <br>
+        <br />
         识别率：98.0%
       </div>
-      <div class="show_card" :style="{backgroundColor: bgColor2, color: textColor2}"
-       @mouseenter="bgColor2 = '#fff';textColor2 = '#409EFF'" @mouseleave="bgColor2 = '#409EFF'; textColor2 = '#fff'">
-        <img src="@/assets/imgs/introduce/icon/sharpicons_Bird.png" alt="">
+      <div
+        class="show_card"
+        :style="{ backgroundColor: bgColor2, color: textColor2 }"
+        @mouseenter="
+          bgColor2 = '#fff';
+          textColor2 = '#409EFF';
+        "
+        @mouseleave="
+          bgColor2 = '#409EFF';
+          textColor2 = '#fff';
+        "
+      >
+        <img src="@/assets/imgs/introduce/icon/sharpicons_Bird.png" alt="" />
         鸟
-        <br>
+        <br />
         识别率：97.3%
       </div>
-      <div class="show_card" :style="{backgroundColor: bgColor3, color: textColor3}"
-       @mouseenter="bgColor3 = '#fff';textColor3 = '#409EFF'" @mouseleave="bgColor3 = '#409EFF'; textColor3 = '#fff'">
-        <img src="@/assets/imgs/introduce/icon/sharpicons_Horse.png" alt="">
+      <div
+        class="show_card"
+        :style="{ backgroundColor: bgColor3, color: textColor3 }"
+        @mouseenter="
+          bgColor3 = '#fff';
+          textColor3 = '#409EFF';
+        "
+        @mouseleave="
+          bgColor3 = '#409EFF';
+          textColor3 = '#fff';
+        "
+      >
+        <img src="@/assets/imgs/introduce/icon/sharpicons_Horse.png" alt="" />
         马
-        <br>
+        <br />
         识别率：97.3%
       </div>
-      <div class="show_card" :style="{backgroundColor: bgColor4, color: textColor4}"
-       @mouseenter="bgColor4 = '#fff';textColor4 = '#409EFF'" @mouseleave="bgColor4 = '#409EFF'; textColor4 = '#fff'">
-        <img src="@/assets/imgs/introduce/icon/sharpicons_Monkey.png" alt="">
+      <div
+        class="show_card"
+        :style="{ backgroundColor: bgColor4, color: textColor4 }"
+        @mouseenter="
+          bgColor4 = '#fff';
+          textColor4 = '#409EFF';
+        "
+        @mouseleave="
+          bgColor4 = '#409EFF';
+          textColor4 = '#fff';
+        "
+      >
+        <img src="@/assets/imgs/introduce/icon/sharpicons_Monkey.png" alt="" />
         猴
-        <br>
+        <br />
         识别率：97.3%
       </div>
-      <div class="show_card" :style="{backgroundColor: bgColor5, color: textColor5}"
-       @mouseenter="bgColor5 = '#fff';textColor5 = '#409EFF'" @mouseleave="bgColor5 = '#409EFF'; textColor5 = '#fff'">
-        <img src="@/assets/imgs/introduce/icon/sharpicons_Deer.png" alt="">
+      <div
+        class="show_card"
+        :style="{ backgroundColor: bgColor5, color: textColor5 }"
+        @mouseenter="
+          bgColor5 = '#fff';
+          textColor5 = '#409EFF';
+        "
+        @mouseleave="
+          bgColor5 = '#409EFF';
+          textColor5 = '#fff';
+        "
+      >
+        <img src="@/assets/imgs/introduce/icon/sharpicons_Deer.png" alt="" />
         鹿
-        <br>
+        <br />
         识别率：97.3%
       </div>
-      <div class="show_card" :style="{backgroundColor: bgColor6, color: textColor6}"
-       @mouseenter="bgColor6 = '#fff';textColor6 = '#409EFF'" @mouseleave="bgColor6 = '#409EFF'; textColor6 = '#fff'">
-        <img src="@/assets/imgs/introduce/icon/sharpicons_Sheep.png" alt="">
+      <div
+        class="show_card"
+        :style="{ backgroundColor: bgColor6, color: textColor6 }"
+        @mouseenter="
+          bgColor6 = '#fff';
+          textColor6 = '#409EFF';
+        "
+        @mouseleave="
+          bgColor6 = '#409EFF';
+          textColor6 = '#fff';
+        "
+      >
+        <img src="@/assets/imgs/introduce/icon/sharpicons_Sheep.png" alt="" />
         羊
-        <br>
+        <br />
         识别率：97.3%
       </div>
-      <div class="show_card" :style="{backgroundColor: bgColor7, color: textColor7}"
-       @mouseenter="bgColor7 = '#fff';textColor7 = '#409EFF'" @mouseleave="bgColor7 = '#409EFF'; textColor7 = '#fff'">
-        <img src="@/assets/imgs/introduce/icon/sharpicons_Cat.png" alt="">
+      <div
+        class="show_card"
+        :style="{ backgroundColor: bgColor7, color: textColor7 }"
+        @mouseenter="
+          bgColor7 = '#fff';
+          textColor7 = '#409EFF';
+        "
+        @mouseleave="
+          bgColor7 = '#409EFF';
+          textColor7 = '#fff';
+        "
+      >
+        <img src="@/assets/imgs/introduce/icon/sharpicons_Cat.png" alt="" />
         猫
-        <br>
+        <br />
         识别率：97.3%
       </div>
-
     </div>
-
   </div>
 </template>
 
@@ -189,26 +257,26 @@ export default {
         "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Sapiente recusandae, voluptatibus magnam reprehenderit a numquam. Temporibus esse sit provident quaerat quae.",
       activeIndex2: "1",
       src: "https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg",
-      bgColor1: '#409EFF',
-      textColor1: '#fff',
+      bgColor1: "#409EFF",
+      textColor1: "#fff",
 
-      bgColor2: '#409EFF',
-      textColor2: '#fff',
+      bgColor2: "#409EFF",
+      textColor2: "#fff",
 
-      bgColor3: '#409EFF',
-      textColor3: '#fff',
+      bgColor3: "#409EFF",
+      textColor3: "#fff",
 
-      bgColor4: '#409EFF',
-      textColor4: '#fff',
+      bgColor4: "#409EFF",
+      textColor4: "#fff",
 
-      bgColor5: '#409EFF',
-      textColor5: '#fff',
+      bgColor5: "#409EFF",
+      textColor5: "#fff",
 
-      bgColor6: '#409EFF',
-      textColor6: '#fff',
+      bgColor6: "#409EFF",
+      textColor6: "#fff",
 
-      bgColor7: '#409EFF',
-      textColor7: '#fff',
+      bgColor7: "#409EFF",
+      textColor7: "#fff",
     };
   },
   created() {
@@ -218,8 +286,8 @@ export default {
   watch: {},
   mounted() {},
   methods: {
-    logss(){
-        console.log('sssssssss');
+    logss() {
+      console.log("sssssssss");
     },
     handleSelect(key, keyPath) {
       console.log(key, keyPath);
@@ -228,8 +296,6 @@ export default {
 };
 </script>
 <style lang="scss">
-
-
 .index {
   .demo-image__placeholder {
     width: 100%;
@@ -272,7 +338,7 @@ export default {
     display: flex;
     width: 400px;
     left: 25%;
-    top: 60%;
+    top: 55%;
     box-shadow: 12px 12px 2px 1px rgba(0, 0, 255, 0.2);
     .box-card {
       background-color: white;
@@ -382,33 +448,31 @@ export default {
       transition-delay: 0.5s;
     }
   }
-  .show_card_f{
-  display: flex;
-  justify-content: space-around;
-  flex-wrap:wrap;
-  width:100%;
-  margin: 0px auto;
-  padding-bottom: 20px;
-  background-color: #d3d3d3;
+  .show_card_f {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    width: 100%;
+    margin: 0px auto;
+    padding-bottom: 20px;
+    background-color: #d3d3d3;
 
-  .show_card{
-  height: 180px;
-  width: 150px;
-  // margin-left: 50px ;
-  position: relative;
-  border-radius:10px;
-  text-align: center;
-  display: flex;
-  justify-content: space-around;
-  align-items:center;
-  flex-direction: column;
-  img{
-    width: 100px;
-    height: 100px;
-    
+    .show_card {
+      height: 180px;
+      width: 150px;
+      // margin-left: 50px ;
+      position: relative;
+      border-radius: 10px;
+      text-align: center;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      flex-direction: column;
+      img {
+        width: 100px;
+        height: 100px;
+      }
+    }
   }
-  }
-}
-
 }
 </style>

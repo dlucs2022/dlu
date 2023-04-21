@@ -3,7 +3,9 @@
     <el-container style="height: 800px; border: 1px solid #eee">
       <el-aside width="200px" style="margin-top: 1%">
         <div style="width: 190px; background-color: white; padding: 5px; margin: auto">
-          <p style="margin: 0 auto; text-align: center">{{ user.name }}</p>
+          <!-- <p style="margin: 0 auto; text-align: center">
+            {{ user.name }}
+          </p> -->
         </div>
 
         <el-menu :default-openeds="['1', '2']">
@@ -17,7 +19,10 @@
                 ><el-menu-item index="1-2">修改密码</el-menu-item></router-link
               >
               <router-link class="alink" to="/layout/person_center/check_list"
-                ><el-menu-item index="1-3" :disabled="this.user.power !== '1'"
+                ><el-menu-item
+                  index="1-3"
+                  v-if="this.user"
+                  :disabled="this.user.power !== '1'"
                   >审核列表</el-menu-item
                 ></router-link
               >
@@ -45,36 +50,44 @@
 
 <script>
 export default {
-  name: "Space",
   components: {},
-  // beforeRouteEnter: (to, from, next) => {
-  //   let islogin = sessionStorage.getItem("user");
-  //   if (!islogin) {
-  //     // 弹出提示框
-  //     MessageBox.alert("请先登录", "提示", {
-  //       confirmButtonText: "确定",
-  //       callback: () => {
-  //         next({ path: "/login" });
-  //       },
-  //     });
-  //   }
-  //   next();
-  // },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      let islogin = sessionStorage.getItem("user");
+      if (!islogin) {
+        vm.$confirm("请先登录", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        })
+          .then(() => {
+            vm.$router.push("/login");
+          })
+          .catch(() => {
+            vm.$message({
+              type: "info",
+              message: "已取消",
+            });
+            vm.$router.push("/home");
+          });
+      }
+    });
+  },
   data() {
     return {
       user: JSON.parse(sessionStorage.getItem("user")),
     };
   },
-  mounted() {
-    if (!this.user) {
-      this.$alert("请先登录", "提示", {
-        confirmButtonText: "确定",
-        callback: () => {
-          this.$router.push("/login");
-        },
-      });
-    }
-  },
+  // mounted() {
+  //   if (!this.user) {
+  //     this.$alert("请先登录", "提示", {
+  //       confirmButtonText: "确定",
+  //       callback: () => {
+  //         this.$router.push("/login");
+  //       },
+  //     });
+  //   }
+  // },
 };
 </script>
 
