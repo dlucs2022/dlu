@@ -105,11 +105,10 @@ export default {
             .then((res) => {
               if (res.data.message === "success") {
                 sessionStorage.setItem("user", JSON.stringify(res.data.data));
-
-                this.$message({
+                this.$notify({
+                  title: "成功",
+                  message: "登录成功",
                   type: "success",
-                  message: "登录成功！",
-                  duration: "1000",
                 });
                 this.$router.push("../layout/image_classification");
               } else {

@@ -10,7 +10,7 @@
           <el-submenu index="1">
             <template slot="title"><i class="el-icon-message"></i>用户中心</template>
             <el-menu-item-group>
-              <router-link class="alink" to="/layout/person_center/userInfo"
+              <router-link class="alink" to="/layout/person_center/user_info"
                 ><el-menu-item index="1-1">个人信息</el-menu-item></router-link
               >
               <router-link class="alink" to="/layout/person_center/update_info"
@@ -29,9 +29,6 @@
               <router-link class="alink" to="/layout/person_center/data_base"
                 ><el-menu-item index="2-1">云数据</el-menu-item></router-link
               >
-              <router-link class="alink" to="/space/wirterboke"
-                ><el-menu-item index="2-2">云照片</el-menu-item></router-link
-              >
             </el-menu-item-group>
           </el-submenu>
         </el-menu>
@@ -47,7 +44,6 @@
 </template>
 
 <script>
-import { MessageBox } from "element-ui";
 export default {
   name: "Space",
   components: {},

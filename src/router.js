@@ -70,8 +70,12 @@ const router = new VueRouter({
               component: () => import('./views/personal_center/update_info')
             },
             {
-              path: 'userInfo',
-              component: () => import('./views/personal_center/userInfo')
+              path: 'user_info',
+              component: () => import('./views/personal_center/user_info')
+            },
+            {
+              path: 'data_base',
+              component: () => import('./views/personal_center/data_base')
             },
             {
               path: 'data_base',
