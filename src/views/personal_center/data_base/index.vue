@@ -105,7 +105,12 @@
     </div>
 </template>
 <script>
+import fileAttribute from "./fileAttribute";
+
 export default {
+    components:{
+        fileAttribute,
+    },
     name: 'CompleteMachineDrawing',
     data(){
         return{

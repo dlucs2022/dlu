@@ -35,6 +35,9 @@
         <el-menu-item index="/layout/person_center/userInfo"
           ><i class="el-icon-user"></i> 个人中心</el-menu-item
         >
+        <el-menu-item index="/layout/opinion"
+          ><i class="el-icon-chat-dot-square"></i> 意见征集</el-menu-item
+        >
       </el-menu>
     </div>
 

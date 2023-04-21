@@ -26,7 +26,7 @@
           <el-submenu index="2">
             <template slot="title"><i class="el-icon-menu"></i>云端数据库</template>
             <el-menu-item-group>
-              <router-link class="alink" to="/space/bokelist"
+              <router-link class="alink" to="/layout/person_center/data_base"
                 ><el-menu-item index="2-1">云数据</el-menu-item></router-link
               >
               <router-link class="alink" to="/space/wirterboke"

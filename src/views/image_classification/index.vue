@@ -402,7 +402,7 @@
                         <el-collapse v-model="activeNames_f_and_c_labels" >
                             <el-collapse-item  name="1">
                                 <template slot="title">
-                                    一级标题 
+                                    一级标签 
                                     <div class="el-collapse-item-buttons_f">
                                         <el-button type="text" size="medium" @click.stop.prevent="click_upload_csv"
                                             icon="el-icon-upload2"  class="el-collapse-item-button">

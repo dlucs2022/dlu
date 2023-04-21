@@ -53,6 +53,10 @@ const router = new VueRouter({
           component: () => import('./views/image_classification')
         },
         {
+          path: 'opinion',
+          component: () => import('./views/opinion')
+        },
+        {
           path: 'person_center',
           meta: { isAuth: true, },
           component: () => import('./views/personal_center/'),
@@ -68,6 +72,10 @@ const router = new VueRouter({
             {
               path: 'userInfo',
               component: () => import('./views/personal_center/userInfo')
+            },
+            {
+              path: 'data_base',
+              component: () => import('./views/personal_center/data_base')
             },
           ]
         },
