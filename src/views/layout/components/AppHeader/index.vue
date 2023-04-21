@@ -59,7 +59,10 @@
           操作<i class="el-icon-arrow-down el-icon--right"></i>
         </span>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item icon="el-icon-close" @command="handleCommand"
+          <el-dropdown-item
+            icon="el-icon-close"
+            @command="handleCommand"
+            :disabled="logout()"
             >退出登录</el-dropdown-item
           >
         </el-dropdown-menu>
@@ -92,6 +95,9 @@ export default {
   },
   methods: {
     handleCommand(command) {
+      if (!this.user) {
+        return false;
+      }
       sessionStorage.removeItem("user");
       this.user = "";
       this.$router.push("/home");
@@ -99,6 +105,13 @@ export default {
     },
     created() {
       // this.getInfo()
+    },
+    logout() {
+      if (this.user && this.user.name) {
+        return false;
+      } else {
+        return true;
+      }
     },
   },
 };
