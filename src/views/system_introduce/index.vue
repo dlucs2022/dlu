@@ -20,22 +20,33 @@
           加载中<span class="dot">...</span>
         </div>
       </el-image>
+      <div class="statistic">
+        <el-card class="box-card" shadow="hover">
+          <span style="display: block">处理图片数</span>
+          <i
+            class="el-icon-picture"
+            style="color: #9370db; font-size: 20px; margin-right: 10px"
+          ></i>
+          <count-to
+            :start-val="0"
+            :end-val="336969"
+            :duration="2000"
+            class="card-panel-num"
+          />
+        </el-card>
+        <el-card class="box-card" shadow="hover">
+          <span style="display: block">使用人数</span>
+          <i class="el-icon-user" style="font-size: 20px; margin-right: 10px"></i>
+          <count-to
+            :start-val="0"
+            :end-val="2041"
+            :duration="2000"
+            class="card-panel-num"
+          />
+        </el-card>
+      </div>
     </div>
-    <div class="statistic">
-      <el-card class="box-card" shadow="hover">
-        <span style="display: block">处理图片数</span>
-        <i
-          class="el-icon-picture"
-          style="color: #9370db; font-size: 20px; margin-right: 10px"
-        ></i>
-        <count-to :start-val="0" :end-val="336969" :duration="2000" class="card-panel-num" />
-      </el-card>
-      <el-card class="box-card" shadow="hover">
-        <span style="display: block">使用人数</span>
-        <i class="el-icon-user" style="font-size: 20px; margin-right: 10px"></i>
-        <count-to :start-val="0" :end-val="2041" :duration="2000" class="card-panel-num" />
-      </el-card>
-    </div>
+
     <div class="show">
       <div class="title">
         <p>物种百科</p>
@@ -247,10 +258,10 @@
 <script>
 // import x from ''
 import "../../assets/css/style.css";
-import CountTo from 'vue-count-to'
+import CountTo from "vue-count-to";
 
 export default {
-  components:{
+  components: {
     CountTo,
   },
   data() {
@@ -341,16 +352,17 @@ export default {
     padding: 5px;
     display: flex;
     width: 420px;
-    left: 25%;
-    top: 55%;
+    // left: 25%;
+    margin-left: 20%;
+    margin-top: -25px;
     box-shadow: 12px 12px 2px 1px rgba(0, 0, 255, 0.2);
     .box-card {
       background-color: white;
       width: 200px;
       border-radius: 20px;
-      .card-panel-num{
-          font-size: 30px;
-          font-weight: bold;
+      .card-panel-num {
+        font-size: 30px;
+        font-weight: bold;
       }
       // opacity: 0.5;
     }
