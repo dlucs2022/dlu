@@ -69,7 +69,7 @@
 }
 
 .tool_left {
-    width: 10%;
+    width: 120px;
     display: flex;
     flex-direction: column;
     margin-right: 5px;

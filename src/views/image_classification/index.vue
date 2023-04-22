@@ -195,6 +195,7 @@
           <el-button class="tool_left_button" type="success" @click="click_upload"
             ><i class="el-icon-folder-opened"></i>加载</el-button
           >
+
           <el-upload
             action
             accept=".csv"
@@ -203,13 +204,14 @@
             :on-change="handle"
           >
             <el-button
-              class="tool_left_button"
               type="success"
               @cilck="import_csv($event)"
               :disabled="this.imgList[0].file === 'empty'"
+              style="width: 120px"
               ><i class="el-icon-document-add"></i>导入</el-button
             >
           </el-upload>
+
           <el-button
             type="success"
             @click="export_csv"
