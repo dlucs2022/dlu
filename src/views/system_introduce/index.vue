@@ -476,6 +476,7 @@ export default {
       justify-content: space-around;
       align-items: center;
       flex-direction: column;
+      box-shadow: 10px 5px 18px 0 rgba(52,153,246,.49);
       img {
         width: 100px;
         height: 100px;
