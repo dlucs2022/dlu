@@ -2,7 +2,7 @@
 import axios from 'axios'  // 安装axios后引入
 import config_json from '../../../config.json'  // 安装axios后引入
 import dao from "@/api/dao";
-
+import Papa from 'papaparse'
 import dataStatistics from '@/views/image_classification/components/dataStatistics.vue'
 export default {
     components: {
@@ -204,6 +204,53 @@ export default {
                 message: '已无非空图片！'
             });
         },
+        handle(event) {
+            let file = event.raw;
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = () => {
+                const result = reader.result;
+                const jsonDataArray = Papa.parse(result, { header: true }).data;
+                for (let i = 0; i < jsonDataArray.length - 1; i++) {
+                    const jsonData = jsonDataArray[i];
+                    console.log(jsonData);
+                    if (
+                        jsonData.Y === "\t" &&
+                        jsonData.M === "\t" &&
+                        jsonData.D === "\t" &&
+                        jsonData.h === "\t" &&
+                        jsonData.m === "\t" &&
+                        jsonData.s === "\t" &&
+                        jsonData.tag1 === "\t" &&
+                        jsonData.tag2 === "\t" &&
+                        jsonData.age === "\t" &&
+                        jsonData.gender === "\t" &&
+                        jsonData.action === "\t" &&
+                        jsonData.num === "\t"
+                    ) continue
+                    const newCsv = {
+                        img_name: jsonData.img_name.trim(),
+                        year: parseInt(jsonData.Y),
+                        month: jsonData.M.trim(),
+                        date: jsonData.D.trim(),
+                        hour: jsonData.h.trim(),
+                        minute: jsonData.m.trim(),
+                        second: jsonData.s.trim(),
+                        label_f: jsonData.tag1.trim(),
+                        label_c: jsonData.tag2.trim(),
+                        age: jsonData.age.trim(),
+                        gender: jsonData.gender.trim(),
+                        action: jsonData.action.trim(),
+                        num: parseInt(jsonData.num),
+                        csvId: this.csv_list.length + 1
+                    };
+                    this.csv_list.push(newCsv);
+                }
+            };
+            reader.readAsText(file);
+            console.log(this.csv_list);
+        },
         //点击导出按钮后
         export_csv() {
             // this.current_data_model = ''
@@ -372,6 +419,7 @@ export default {
 
         //生成一条记录  OR   修改一条记录
         add_data() {
+            console.log(this.csv_list);
             if (this.imgList.length == 1) {
                 this.$alert('生成记录前请先上传照片', '警告', {
                     confirmButtonText: '确定',
@@ -626,6 +674,7 @@ export default {
                 }
             }
         },
+
         //再次点击一个一级标签后取消一个一级标签的选择
         handleRadioClick_f(val) {
             this.current_label.label_f_current === val ? this.current_label.label_f_current = '' : this.current_label.label_f_current = val
@@ -688,8 +737,9 @@ export default {
             }
 
         },
-        //上传CSV文件时的方法
-        selectCsv(event) {
+
+        //上传LabelCSV文件时的方法
+        select_LabelCsv(event) {
             //先选择时清空现有的还是新增
             const that = this
             let fileList = event.target.files
@@ -707,20 +757,46 @@ export default {
             reader.readAsText(file);
             event.preventDefault();
         },
-        downCsv() {
-            const csvContent = [];
-            csvContent.push(['tag1', 'tag2']);
-            this.label_c.forEach(label => {
-                csvContent.push([label.father, label.children]);
-            });
-            const csvContentStr = csvContent.map(row => row.join(',')).join('\n');
-            const uri = 'data:text/csv;charset=utf-8,\ufeff' + encodeURIComponent(csvContentStr);
-            const downloadLink = document.createElement('a');
-            downloadLink.href = uri;
-            downloadLink.download = 'temp.csv';
-            document.body.appendChild(downloadLink);
-            downloadLink.click();
-            document.body.removeChild(downloadLink);
+        selectCsv(event) {
+            const that = this;
+            let fileList = event.target.files;
+            if (!fileList || fileList.length === 0) {
+                // handle error
+                return;
+            }
+            var file = fileList[0];
+            var reader = new FileReader();
+            var output;
+            reader.onload = function (e) {
+                var csvToText = e.target.result;
+                output = that.csvToJSON(csvToText);
+                console.log(output);
+                that.csv_list = output;
+            };
+            reader.readAsText(file);
+            event.preventDefault();
+        },
+        csvToJSON(csv) {
+            var lines = csv.split("\n");
+            var result = [];
+            var headers;
+            headers = lines[0].split(",");
+            for (var i = 1; i < lines.length; i++) {
+                var obj = {};
+                if (lines[i] == undefined || lines[i].trim() == "") {
+                    continue;
+                }
+                var words = lines[i].split(",");
+                for (var j = 0; j < words.length; j++) {
+                    if (words[j].indexOf("\r") != -1) {
+                        var reg1 = new RegExp("\r", "g");
+                        words[j] = words[j].replace(reg1, "");
+                    }
+                    obj[headers[j].trim()] = words[j];
+                }
+                result.push(obj);
+            }
+            return result;
         },
         //csv文件转为对象数组的方法
         csvToJSON(csv) {

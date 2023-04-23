@@ -195,8 +195,24 @@
           <el-button class="tool_left_button" type="success" @click="click_upload"
             ><i class="el-icon-folder-opened"></i>加载</el-button
           >
+
+          <el-upload
+            action
+            accept=".csv"
+            :auto-upload="false"
+            :show-file-list="false"
+            :on-change="handle"
+          >
+            <el-button
+              type="success"
+              @cilck="import_csv($event)"
+              :disabled="this.imgList[0].file === 'empty'"
+              style="width: 120px"
+              ><i class="el-icon-document-add"></i>导入</el-button
+            >
+          </el-upload>
+
           <el-button
-            class="tool_left_button"
             type="success"
             @click="export_csv"
             :disabled="this.imgList[0].file === 'empty'"
@@ -235,7 +251,7 @@
             ref="upload_csv_input"
             tabindex="-1"
             style="display: none"
-            @change.stop="selectCsv($event)"
+            @change.stop="select_LabelCsv($event)"
           />
           <!-- <el-menu
                         default-active="2"

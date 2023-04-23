@@ -64,10 +64,6 @@ export default {
             vm.$router.push("/login");
           })
           .catch(() => {
-            vm.$message({
-              type: "info",
-              message: "已取消",
-            });
             vm.$router.push("/home");
           });
       }
