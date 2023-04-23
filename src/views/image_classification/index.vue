@@ -333,8 +333,8 @@
             }}</el-descriptions-item>
             <el-descriptions-item label="多目标">
               <div class="descriptions-div">
-                <el-radio-group v-model="current_data_model">
-                  <el-radio-button
+                <el-radio-group  v-model="current_data_model">
+                  <el-radio-button 
                     v-for="item in current_data"
                     :key="item.csvId"
                     :label="item.csvId"
