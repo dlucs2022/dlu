@@ -101,15 +101,16 @@
 
         <add ref="addOne"/>
         <file-attribute ref="fileAttribute"/>
-        <file-list ref="fileList"></file-list>
+        <!-- <file-list ref="fileList"></file-list> -->
     </div>
 </template>
 <script>
 import fileAttribute from "./fileAttribute";
+import add from './addOne'
 
 export default {
     components:{
-        fileAttribute,
+        add,fileAttribute,
     },
     name: 'CompleteMachineDrawing',
     data(){
@@ -196,7 +197,7 @@ export default {
                     progress:0,
                     total:0
                 },{
-                    id:4,
+                    id:5,
                     type:1,
                     folderName:'102034.png',
                     fileUrl:'#',
@@ -204,7 +205,7 @@ export default {
                     progress:0,
                     total:0
                 },{
-                    id:4,
+                    id:6,
                     type:1,
                     folderName:'102034.png',
                     fileUrl:'#',
@@ -212,7 +213,7 @@ export default {
                     progress:0,
                     total:0
                 },{
-                    id:4,
+                    id:7,
                     type:1,
                     folderName:'102034.png',
                     fileUrl:'#',
@@ -220,7 +221,7 @@ export default {
                     progress:0,
                     total:0
                 },{
-                    id:4,
+                    id:8,
                     type:1,
                     folderName:'102034.png',
                     fileUrl:'#',
@@ -228,7 +229,7 @@ export default {
                     progress:0,
                     total:0
                 },{
-                    id:4,
+                    id:9,
                     type:1,
                     folderName:'102034.png',
                     fileUrl:'#',
@@ -236,7 +237,7 @@ export default {
                     progress:0,
                     total:0
                 },{
-                    id:4,
+                    id:10,
                     type:1,
                     folderName:'102034.png',
                     fileUrl:'#',
@@ -244,7 +245,7 @@ export default {
                     progress:0,
                     total:0
                 },{
-                    id:4,
+                    id:11,
                     type:1,
                     folderName:'102034.png',
                     fileUrl:'#',
@@ -252,7 +253,7 @@ export default {
                     progress:0,
                     total:0
                 },{
-                    id:4,
+                    id:12,
                     type:1,
                     folderName:'102034.png',
                     fileUrl:'#',
@@ -260,7 +261,7 @@ export default {
                     progress:0,
                     total:0
                 },{
-                    id:4,
+                    id:13,
                     type:1,
                     folderName:'102034.png',
                     fileUrl:'#',
@@ -268,7 +269,7 @@ export default {
                     progress:0,
                     total:0
                 },{
-                    id:4,
+                    id:14,
                     type:1,
                     folderName:'102034.png',
                     fileUrl:'#',
@@ -276,7 +277,7 @@ export default {
                     progress:0,
                     total:0
                 },{
-                    id:4,
+                    id:15,
                     type:1,
                     folderName:'102034.png',
                     fileUrl:'#',
@@ -284,7 +285,7 @@ export default {
                     progress:0,
                     total:0
                 },{
-                    id:4,
+                    id:16,
                     type:1,
                     folderName:'102034.png',
                     fileUrl:'#',
@@ -292,7 +293,7 @@ export default {
                     progress:0,
                     total:0
                 },{
-                    id:4,
+                    id:17,
                     type:1,
                     folderName:'102034.png',
                     fileUrl:'#',
@@ -300,7 +301,7 @@ export default {
                     progress:0,
                     total:0
                 },{
-                    id:4,
+                    id:18,
                     type:1,
                     folderName:'102034.png',
                     fileUrl:'#',
@@ -308,7 +309,7 @@ export default {
                     progress:0,
                     total:0
                 },{
-                    id:4,
+                    id:19,
                     type:1,
                     folderName:'102034.png',
                     fileUrl:'#',
@@ -316,7 +317,7 @@ export default {
                     progress:0,
                     total:0
                 },{
-                    id:4,
+                    id:20,
                     type:1,
                     folderName:'102034.png',
                     fileUrl:'#',
@@ -324,7 +325,7 @@ export default {
                     progress:0,
                     total:0
                 },{
-                    id:4,
+                    id:21,
                     type:1,
                     folderName:'102034.png',
                     fileUrl:'#',
@@ -332,7 +333,7 @@ export default {
                     progress:0,
                     total:0
                 },{
-                    id:4,
+                    id:22,
                     type:1,
                     folderName:'102034.png',
                     fileUrl:'#',
@@ -340,7 +341,7 @@ export default {
                     progress:0,
                     total:0
                 },{
-                    id:4,
+                    id:23,
                     type:1,
                     folderName:'102034.png',
                     fileUrl:'#',
@@ -348,7 +349,7 @@ export default {
                     progress:0,
                     total:0
                 },{
-                    id:4,
+                    id:24,
                     type:1,
                     folderName:'102034.png',
                     fileUrl:'#',
@@ -356,7 +357,7 @@ export default {
                     progress:0,
                     total:0
                 },{
-                    id:4,
+                    id:25,
                     type:1,
                     folderName:'102034.png',
                     fileUrl:'#',
@@ -364,7 +365,7 @@ export default {
                     progress:0,
                     total:0
                 },{
-                    id:4,
+                    id:26,
                     type:1,
                     folderName:'102034.png',
                     fileUrl:'#',
@@ -372,7 +373,7 @@ export default {
                     progress:0,
                     total:0
                 },{
-                    id:4,
+                    id:27,
                     type:1,
                     folderName:'102034.png',
                     fileUrl:'#',
@@ -380,7 +381,7 @@ export default {
                     progress:0,
                     total:0
                 },{
-                    id:4,
+                    id:28,
                     type:1,
                     folderName:'102034.png',
                     fileUrl:'#',
@@ -388,7 +389,7 @@ export default {
                     progress:0,
                     total:0
                 },{
-                    id:4,
+                    id:29,
                     type:1,
                     folderName:'102034.png',
                     fileUrl:'#',
@@ -396,7 +397,7 @@ export default {
                     progress:0,
                     total:0
                 },{
-                    id:4,
+                    id:30,
                     type:1,
                     folderName:'102034.png',
                     fileUrl:'#',
@@ -404,7 +405,7 @@ export default {
                     progress:0,
                     total:0
                 },{
-                    id:4,
+                    id:31,
                     type:1,
                     folderName:'102034.png',
                     fileUrl:'#',
@@ -412,7 +413,7 @@ export default {
                     progress:0,
                     total:0
                 },{
-                    id:4,
+                    id:32,
                     type:1,
                     folderName:'102034.png',
                     fileUrl:'#',
@@ -420,7 +421,7 @@ export default {
                     progress:0,
                     total:0
                 },{
-                    id:4,
+                    id:34,
                     type:1,
                     folderName:'102034.png',
                     fileUrl:'#',
@@ -448,14 +449,14 @@ export default {
                 type:'error',
                 message:'暂不可用！'
             })
-            /* this.addFolderShow = false
+            this.addFolderShow = false
             let o = {
                 folderName: '',
                 type: 1,
                 createTime: new Date().format('yyyy/MM/dd hh:mm:ss')
             }
             this.folderList.push(o);
-            this.$refs.addOne.open(); */
+            this.$refs.addOne.open();
         },
         //打开文件属性
         attribute() {

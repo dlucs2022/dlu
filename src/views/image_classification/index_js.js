@@ -253,6 +253,7 @@ export default {
         },
         //点击导出按钮后
         export_csv() {
+            // this.current_data_model = ''
             var dirName = this.imgList[0].file.webkitRelativePath.split("/")[0]
             var value = ''
             this.$prompt('请命名该文件(如果不命名，则会使用读取的文件夹名称作为csv文件名)', '提示', {
@@ -293,15 +294,18 @@ export default {
                 'label_f', 'label_c', 'age', 'gender', 'action', 'num']
 
             //根据csv_list,生成一个字典：字典的键为图片名，如果这个图片在csv_list中，就添加他的value，（可能有多个value，value为数组。）图片不在，他的value就为空数组
+            console.log(this.empty_label_imgs);
             this.empty_label_imgs.filter(a => a.exist == true).map(a => a.imgName).forEach(empty => {
                 var a = {}
+                let img = this.imgList.find( a => a.file.name == empty)
+                var dt = new Date(img.file.lastModifiedDate);
                 a.img_name = empty
-                a.year = ''
-                a.month = ''
-                a.date = ''
-                a.hour = ''
-                a.minute = ''
-                a.second = ''
+                a.year = dt.getFullYear();
+                a.month = (dt.getMonth() + 1).toString().padStart(2, '0');
+                a.date = dt.getDate().toString().padStart(2, '0');
+                a.hour = dt.getHours().toString().padStart(2, '0');
+                a.minute = dt.getMinutes().toString().padStart(2, '0');
+                a.second = dt.getSeconds().toString().padStart(2, '0');
                 //父标签''
                 a.label_f = ''
                 //子标签''
@@ -474,6 +478,7 @@ export default {
                         type: 'success',
                         message: '保存成功！'
                     });
+                    console.log(a);
                     this.csvId += 1
                 } else {  //否则就对该多记录进行修改
                     var csvId = this.current_data_model
@@ -840,7 +845,8 @@ export default {
             this.imgNameAndIndexList = []
             //生成一个 [{imageName:oo1.jpg,index:1},{},{}]这样的数组
             tempList.forEach((item, index) => {
-                this.imgNameAndIndexList.push({ imgName: item.file.name, imgIndex: index + 1 })
+                this.imgNameAndIndexList.push({ imgName: item.file.name, 
+                    imgIndex: index + 1 })
             })
             //将空标签照片数组初始化
             this.empty_label_imgs = []
@@ -988,7 +994,7 @@ export default {
                 var no_empty_img_set = new_val.map(a => a.img_name)
                 var no_empty_img_names = Array.from(new Set(no_empty_img_set))  //给csvlist里面的名字们去重 这里面都是非空的图片了
                 for (let [index1, item1] of no_empty_img_names.entries()) {
-                    for (let [index2, item2] of this.no_empty_label_imgs.entries()) {
+                    for (let [index2, item2] of this.no_empty_label_imgs.entries()) { 
                         if (item1 == item2.imgName) {
                             item2.exist = true
                             this.empty_label_imgs[index2].exist = false
