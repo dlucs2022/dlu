@@ -29,9 +29,14 @@
                       </el-submenu>git config --global http.proxy http://127.0.0.1:1080
                   </el-submenu> -->
         <el-menu-item index="/layout/system_introduce">主页</el-menu-item>
-        <el-menu-item index="/layout/image_classification"
-          ><i class="el-icon-picture-outline"></i> 图片分拣</el-menu-item
+        <el-submenu index="2">
+          <template slot="title"
+            ><i class="el-icon-picture-outline"></i>照片分拣</template
+          >
+          <el-menu-item index="/layout/image_classification">人工分拣</el-menu-item>
+          <el-menu-item index="/layout/canvas">画框 </el-menu-item></el-submenu
         >
+
         <el-menu-item index="/layout/person_center/"
           ><i class="el-icon-user"></i> 个人中心</el-menu-item
         >
