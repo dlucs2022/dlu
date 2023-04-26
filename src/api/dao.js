@@ -142,6 +142,16 @@ export default {
                 path:path
             }
         })
+    },
+
+    async queryImgList(path){
+        return request({
+            url:'/file/queryImgList',
+            method:"post",
+            params:{
+                path:path
+            }
+        })
     }
 
 };

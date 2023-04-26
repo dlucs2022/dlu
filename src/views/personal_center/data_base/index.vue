@@ -108,7 +108,7 @@
 import fileAttribute from "./fileAttribute";
 import add from './addOne'
 import dao from '@/api/dao'
-
+import axios from 'axios'
 export default {
     components:{
         add,fileAttribute,
@@ -171,13 +171,20 @@ export default {
         //打开或下载文件
         openFileList() {
             // this.folderShow = false
-            axios.post("http://127.0.0.1/detect_image?image=C:/Users/86156/Pictures/Screenshots/110845.png").then(res => {
-                console.log(res);
-            }).catch( e => {
+            // axios.post(this.path).then(res => {
+            //     console.log(res);
+            // }).catch( e => {
 
-            })
+            // })
             if (this.type == 0) {
-                this.$refs.fileList.open(this.folderId,this.folderName);
+                this.$router.push({
+                    name:  'label_test',
+                    params: {
+                        path:this.path
+                    },
+
+                })
+                // this.$refs.fileList.open(this.folderId,this.folderName);
             } else {
                 //下载文件
                 window.open(this.url, '_blank')
