@@ -3,6 +3,7 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 
 
+
 Vue.use(VueRouter);
 
 const router = new VueRouter({
@@ -55,6 +56,11 @@ const router = new VueRouter({
         {
           path: 'canvas',
           component: () => import('./views/image_classification/canvas')
+        },
+        {
+          name:'label_test',
+          path:'label_test',
+          component:() => import('./views/image_classification/label_test')
         },
         {
           path: 'opinion',
