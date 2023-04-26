@@ -53,6 +53,10 @@ const router = new VueRouter({
           component: () => import('./views/image_classification')
         },
         {
+          path: 'canvas',
+          component: () => import('./views/image_classification/canvas')
+        },
+        {
           path: 'opinion',
           component: () => import('./views/opinion')
         },

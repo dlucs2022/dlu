@@ -2,11 +2,11 @@
   <div class="all">
     <!-- 统计数据得对话框 -->
     <!-- 问题反馈的对话框 -->
-    <el-dialog
+    <el-drawer
       title="数据统计"
       :visible.sync="data_statistics_dialogVisible"
-      width="60%"
       :before-close="handleClose_data_statistics_dialogVisible"
+      size="70%"
     >
       <el-card style="border: solid 4px lightblue">
         <data-statistics
@@ -14,22 +14,8 @@
           :seriesData="dataStatistics.datas"
         ></data-statistics>
       </el-card>
-    </el-dialog>
-    <!-- 问题反馈的对话框 -->
-    <el-dialog title="问题反馈" :visible.sync="feedback_dialogVisible" width="30%">
-      <h4>系统问题请通过以下邮件地址反馈</h4>
-      <span>779093440@qq.com</span><br />
-      <span>1454147447@qq.com</span><br />
-      <span>1218eye@gmail.com</span><br />
-      <br />
-      <span>大理大学数学与计算机学院工科楼601</span>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="feedback_dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="feedback_dialogVisible = false"
-          >确 定</el-button
-        >
-      </span>
-    </el-dialog>
+    </el-drawer>
+
     <!-- 操作说明的对话框 -->
     <el-dialog title="操作说明" :visible.sync="explain_dialogVisible" width="50%">
       <el-carousel trigger="click" height="150px" :autoplay="false">
@@ -192,7 +178,14 @@
     <div class="image_classification">
       <div class="image_classification_left">
         <div class="tool_left">
-          <el-button class="tool_left_button" type="success" @click="click_upload"
+          <el-button
+            class="tool_left_button"
+            @click="click_upload"
+            style="
+              background-color: rgb(64, 224, 208);
+              border-color: rgb(64, 224, 208);
+              color: #fff;
+            "
             ><i class="el-icon-folder-opened"></i>加载</el-button
           >
 
@@ -234,12 +227,7 @@
           <el-button class="tool_left_button" type="info" @click="keyDownReview"
             ><i class="el-icon-video-pause"></i> 键盘失效</el-button
           >
-          <el-button
-            class="tool_left_button"
-            type="warning"
-            @click="feedback_dialogVisible = true"
-            ><i class="el-icon-s-promotion"></i> 问题反馈</el-button
-          >
+
           <el-button class="tool_left_button" type="warning" @click="explain_href"
             ><i class="el-icon-mouse"></i> 操作说明</el-button
           >
@@ -349,8 +337,8 @@
             }}</el-descriptions-item>
             <el-descriptions-item label="多目标">
               <div class="descriptions-div">
-                <el-radio-group  v-model="current_data_model">
-                  <el-radio-button 
+                <el-radio-group v-model="current_data_model">
+                  <el-radio-button
                     v-for="item in current_data"
                     :key="item.csvId"
                     :label="item.csvId"

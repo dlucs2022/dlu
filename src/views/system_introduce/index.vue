@@ -15,11 +15,18 @@
           </span>
         </div>
       </div>
-      <el-image :src="src">
+      <div class="top-image">
+        <el-carousel height="50vh" :interval="3000">
+          <el-carousel-item v-for="(item, index) in imgs" :key="index">
+            <el-image :src="item.src" />
+          </el-carousel-item>
+        </el-carousel>
+      </div>
+      <!-- <el-image :src="src">
         <div slot="placeholder" class="image-slot">
           加载中<span class="dot">...</span>
         </div>
-      </el-image>
+      </el-image> -->
       <div class="statistic">
         <el-card class="box-card" shadow="hover">
           <span style="display: block">处理图片数</span>
@@ -266,6 +273,12 @@ export default {
   },
   data() {
     return {
+      imgs: [
+        { src: require("@/assets/imgs/system_introduce/1.jpg") },
+        { src: require("@/assets/imgs/system_introduce/2.jpg") },
+        { src: require("@/assets/imgs/system_introduce/3.jpg") },
+        { src: require("@/assets/imgs/system_introduce/4.jpg") },
+      ],
       name: "",
       imgList: [],
       test:
@@ -313,9 +326,10 @@ export default {
 <style lang="scss">
 .index {
   .demo-image__placeholder {
-    width: 100%;
-    height: 20%;
+    // width: 100%;
+    height: 55vh;
     background-color: #9370db;
+    // display: flex;
     .text {
       display: flex;
       flex-wrap: wrap;
@@ -326,7 +340,7 @@ export default {
       margin-right: 50%;
       color: white;
       .title {
-        margin-top: 7.5%;
+        margin-top: 5vh;
         text-align: left;
         font-size: 2.5vw;
       }
@@ -337,11 +351,12 @@ export default {
         flex: 1;
       }
     }
-    .el-image {
-      margin-top: 40px;
-      margin-bottom: 30px;
-      width: 35%;
-      left: 55%;
+    .top-image {
+      margin-top: 2vh;
+      margin-right: 7vh;
+      height: 100%;
+      width: 40%;
+      float: right;
     }
   }
   .statistic {
@@ -352,9 +367,8 @@ export default {
     padding: 5px;
     display: flex;
     width: 420px;
-    // left: 25%;
     margin-left: 20%;
-    margin-top: -25px;
+    margin-top: 50vh;
     box-shadow: 12px 12px 2px 1px rgba(0, 0, 255, 0.2);
     .box-card {
       background-color: white;
@@ -488,7 +502,7 @@ export default {
       justify-content: space-around;
       align-items: center;
       flex-direction: column;
-      box-shadow: 10px 5px 18px 0 rgba(52,153,246,.49);
+      box-shadow: 10px 5px 18px 0 rgba(52, 153, 246, 0.49);
       img {
         width: 100px;
         height: 100px;
