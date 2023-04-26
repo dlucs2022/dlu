@@ -83,11 +83,65 @@ export default {
         });
     },
     Refuse(userList) {
-        console.log("dao接受到了userList", userList);
         return request({
             url: `/user/multiRefuse`,
             method: "post",
             params: { list: userList },
         });
     },
+
+    folderComplete(userName,invite_code,folderName,file_number,size,){
+        return request({
+            url:`/file/folderComplete`,
+            method:"post",
+            params:{
+                userName:userName,
+                invite_code:invite_code,
+                file_name:folderName,
+                file_number:file_number,
+                size:size,
+            }
+        })
+    },
+
+    queryFolderByInviteCode(invite_code){
+        return request({
+            url:`/file/queryFolderByInviteCode`,
+            method:"post",
+            params:{
+                invite_code : invite_code
+            }
+        })
+    },
+
+    queryFolderByFileName(invite_code,file_name){
+        return request({
+            url:`/file/queryFolderByFileName`,
+            method:"post",
+            params:{
+                invite_code:invite_code,
+                file_name:file_name,
+            }
+        })
+    },
+    fileRename(path,reName){
+        return request({
+            url:`/file/fileRename`,
+            method:"post",
+            params:{
+                path:path,
+                reName:reName
+            }
+        })
+    },
+    deleteFileByPath(path){
+        return request({
+            url:`/file/deleteFileByPath`,
+            method:"post",
+            params:{
+                path:path
+            }
+        })
+    }
+
 };

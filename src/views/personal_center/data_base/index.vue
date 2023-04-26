@@ -5,8 +5,8 @@
                 <el-input placeholder="文件名称" v-model="queryParams.folderName"></el-input>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" icon="el-icon-search" size="mini" >搜索</el-button>
-                <el-button icon="el-icon-refresh" size="mini" >重置</el-button>
+                <el-button type="primary" icon="el-icon-search" size="mini" @click="queryFolderByFileName">搜索</el-button>
+                <el-button icon="el-icon-refresh" size="mini" @click="list">重置</el-button>
             </el-form-item>
         </el-form>
 
@@ -16,14 +16,14 @@
                 <template v-if="folderList.length === 0">
                     <el-empty description="暂无文件，请右键创建一个文件夹吧" style="height: 600px"></el-empty>
                 </template>
-                <div v-for="(item,index) in folderList" :key="item.id">
+                <div v-for="(item,index) in folderList" :key="item.path">
                     <div class="folderContainer">
-                        <div v-if="item.type == 0" class="folderWrapper" @dblclick="ondblclickFile(item.id,item.folderName)"
+                        <div v-if="item.type == 0" class="folderWrapper" @dblclick="ondblclickFile(item.path,item.file_name)"
                             @contextmenu.prevent.stop="rightClickFolder(index,item,$event)">
                         <div class="folder">
                             <div class="front">
-                                <div class="bar" v-show="!Math.round((item.progress/item.total)*100) == 0">
-                                    <el-progress type="circle" :width=70  :stroke-width=8 :percentage="Math.round((item.progress/item.total)*100)" 
+                                <div class="bar" v-show="!Math.round((item.progress/item.file_number)*100) == 0">
+                                    <el-progress type="circle" :width=70  :stroke-width=8 :percentage="Math.round((item.progress/item.file_number)*100)" 
                                     :color="customColorMethod" ></el-progress>
                                 </div>
                             </div>
@@ -32,14 +32,14 @@
                         </div>
                         <div class="folderName">
                             <span>{{
-                                item.folderName.length > 10 ? item.folderName.substring(0, 6) + '...' : item.folderName
+                                item.file_name.length > 10 ? item.file_name.substring(0, 6) + '...' : item.file_name
                             }}</span>
                         </div>
                         <div class="folderTime">
-                            <span>{{ item.createTime }}</span>
+                            <span>{{ item.create_time }}</span>
                         </div>
                         <div class="progress">
-                            {{item.progress}}/{{item.total}}
+                            {{item.progress}}/{{item.file_number}}
                         </div>
                         
                         
@@ -49,11 +49,11 @@
                             @contextmenu.prevent.stop="rightClickFolder(index,item,$event)"/>
                         <div class="folderName">
                             <span>{{
-                                item.folderName.length > 10 ? item.folderName.substring(0, 6) + '...' : item.folderName
+                                item.file_name.length > 10 ? item.file_name.substring(0, 6) + '...' : item.file_name
                             }}</span>
                         </div>
                         <div class="folderTime">
-                            <span>{{ item.createTime }}</span>
+                            <span>{{ item.create_time }}</span>
                         </div>
                         </div>
                     </div>
@@ -82,7 +82,7 @@
         <div class="add-folder-9" :style="folderStyle" v-show="folderShow">
             <div class="add-folder-1">
                 <div class="add-folder-2" @click="openFileList">
-                {{ type == 0 ? '打开文件' : '下载文件' }}
+                {{ type == 0 ? '标注此数据' : '下载文件' }}
                 </div>
                 <div style="border: 2px solid rgba(18,17,42,.07)"></div>
                 <div class="add-folder-2" @click="updateFloder">
@@ -107,6 +107,7 @@
 <script>
 import fileAttribute from "./fileAttribute";
 import add from './addOne'
+import dao from '@/api/dao'
 
 export default {
     components:{
@@ -133,7 +134,9 @@ export default {
                 top: '0px'
             },
             cardLoading: false,
-
+            user:JSON.parse(sessionStorage.getItem("user")),
+            reName:'',
+            type:'',
         }
     },
     created(){
@@ -146,296 +149,33 @@ export default {
         //查询文件列表
         list() {
             this.cardLoading = true
-            /* getData('/folder/list', this.queryParams).then(res => {
-                this.folderList = res.data
-                this.cardLoading = false
-            }).catch(() => {
-                this.cardLoading = false
-            }) */
             setTimeout(() => {
-                this.folderList = [{
-                    id:0,
-                    type:0,
-                    folderName:'拉沙山数据',
-                    fileUrl:'#',
-                    createTime:'2020-03-24 16:35',
-                    progress:300,
-                    total:900
-                },
-                {
-                    id:1,
-                    type:0,
-                    folderName:'拉沙山数据2',
-                    fileUrl:'#',
-                    createTime:'2020-04-14 16:35',
-                    progress:900,
-                    total:1235
-                },
-                {
-                    id:2,
-                    type:0,
-                    folderName:'苍山东',
-                    fileUrl:'#',
-                    createTime:'2020-03-24 16:35',
-                    progress:95,
-                    total:1310
-                },
-                {
-                    id:3,
-                    type:0,
-                    folderName:'怒江数据',
-                    fileUrl:'#',
-                    createTime:'2020-03-24 16:35',
-                    progress:850,
-                    total:930
-                },{
-                    id:4,
-                    type:1,
-                    folderName:'102034.png',
-                    fileUrl:'#',
-                    createTime:'2020-03-24 16:35',
-                    progress:0,
-                    total:0
-                },{
-                    id:5,
-                    type:1,
-                    folderName:'102034.png',
-                    fileUrl:'#',
-                    createTime:'2020-03-24 16:35',
-                    progress:0,
-                    total:0
-                },{
-                    id:6,
-                    type:1,
-                    folderName:'102034.png',
-                    fileUrl:'#',
-                    createTime:'2020-03-24 16:35',
-                    progress:0,
-                    total:0
-                },{
-                    id:7,
-                    type:1,
-                    folderName:'102034.png',
-                    fileUrl:'#',
-                    createTime:'2020-03-24 16:35',
-                    progress:0,
-                    total:0
-                },{
-                    id:8,
-                    type:1,
-                    folderName:'102034.png',
-                    fileUrl:'#',
-                    createTime:'2020-03-24 16:35',
-                    progress:0,
-                    total:0
-                },{
-                    id:9,
-                    type:1,
-                    folderName:'102034.png',
-                    fileUrl:'#',
-                    createTime:'2020-03-24 16:35',
-                    progress:0,
-                    total:0
-                },{
-                    id:10,
-                    type:1,
-                    folderName:'102034.png',
-                    fileUrl:'#',
-                    createTime:'2020-03-24 16:35',
-                    progress:0,
-                    total:0
-                },{
-                    id:11,
-                    type:1,
-                    folderName:'102034.png',
-                    fileUrl:'#',
-                    createTime:'2020-03-24 16:35',
-                    progress:0,
-                    total:0
-                },{
-                    id:12,
-                    type:1,
-                    folderName:'102034.png',
-                    fileUrl:'#',
-                    createTime:'2020-03-24 16:35',
-                    progress:0,
-                    total:0
-                },{
-                    id:13,
-                    type:1,
-                    folderName:'102034.png',
-                    fileUrl:'#',
-                    createTime:'2020-03-24 16:35',
-                    progress:0,
-                    total:0
-                },{
-                    id:14,
-                    type:1,
-                    folderName:'102034.png',
-                    fileUrl:'#',
-                    createTime:'2020-03-24 16:35',
-                    progress:0,
-                    total:0
-                },{
-                    id:15,
-                    type:1,
-                    folderName:'102034.png',
-                    fileUrl:'#',
-                    createTime:'2020-03-24 16:35',
-                    progress:0,
-                    total:0
-                },{
-                    id:16,
-                    type:1,
-                    folderName:'102034.png',
-                    fileUrl:'#',
-                    createTime:'2020-03-24 16:35',
-                    progress:0,
-                    total:0
-                },{
-                    id:17,
-                    type:1,
-                    folderName:'102034.png',
-                    fileUrl:'#',
-                    createTime:'2020-03-24 16:35',
-                    progress:0,
-                    total:0
-                },{
-                    id:18,
-                    type:1,
-                    folderName:'102034.png',
-                    fileUrl:'#',
-                    createTime:'2020-03-24 16:35',
-                    progress:0,
-                    total:0
-                },{
-                    id:19,
-                    type:1,
-                    folderName:'102034.png',
-                    fileUrl:'#',
-                    createTime:'2020-03-24 16:35',
-                    progress:0,
-                    total:0
-                },{
-                    id:20,
-                    type:1,
-                    folderName:'102034.png',
-                    fileUrl:'#',
-                    createTime:'2020-03-24 16:35',
-                    progress:0,
-                    total:0
-                },{
-                    id:21,
-                    type:1,
-                    folderName:'102034.png',
-                    fileUrl:'#',
-                    createTime:'2020-03-24 16:35',
-                    progress:0,
-                    total:0
-                },{
-                    id:22,
-                    type:1,
-                    folderName:'102034.png',
-                    fileUrl:'#',
-                    createTime:'2020-03-24 16:35',
-                    progress:0,
-                    total:0
-                },{
-                    id:23,
-                    type:1,
-                    folderName:'102034.png',
-                    fileUrl:'#',
-                    createTime:'2020-03-24 16:35',
-                    progress:0,
-                    total:0
-                },{
-                    id:24,
-                    type:1,
-                    folderName:'102034.png',
-                    fileUrl:'#',
-                    createTime:'2020-03-24 16:35',
-                    progress:0,
-                    total:0
-                },{
-                    id:25,
-                    type:1,
-                    folderName:'102034.png',
-                    fileUrl:'#',
-                    createTime:'2020-03-24 16:35',
-                    progress:0,
-                    total:0
-                },{
-                    id:26,
-                    type:1,
-                    folderName:'102034.png',
-                    fileUrl:'#',
-                    createTime:'2020-03-24 16:35',
-                    progress:0,
-                    total:0
-                },{
-                    id:27,
-                    type:1,
-                    folderName:'102034.png',
-                    fileUrl:'#',
-                    createTime:'2020-03-24 16:35',
-                    progress:0,
-                    total:0
-                },{
-                    id:28,
-                    type:1,
-                    folderName:'102034.png',
-                    fileUrl:'#',
-                    createTime:'2020-03-24 16:35',
-                    progress:0,
-                    total:0
-                },{
-                    id:29,
-                    type:1,
-                    folderName:'102034.png',
-                    fileUrl:'#',
-                    createTime:'2020-03-24 16:35',
-                    progress:0,
-                    total:0
-                },{
-                    id:30,
-                    type:1,
-                    folderName:'102034.png',
-                    fileUrl:'#',
-                    createTime:'2020-03-24 16:35',
-                    progress:0,
-                    total:0
-                },{
-                    id:31,
-                    type:1,
-                    folderName:'102034.png',
-                    fileUrl:'#',
-                    createTime:'2020-03-24 16:35',
-                    progress:0,
-                    total:0
-                },{
-                    id:32,
-                    type:1,
-                    folderName:'102034.png',
-                    fileUrl:'#',
-                    createTime:'2020-03-24 16:35',
-                    progress:0,
-                    total:0
-                },{
-                    id:34,
-                    type:1,
-                    folderName:'102034.png',
-                    fileUrl:'#',
-                    createTime:'2020-03-24 16:35',
-                    progress:0,
-                    total:0
-                },]
+                dao.queryFolderByInviteCode(this.user.invite_code).then(res => {
+                    this.folderList = res.data.data
+                })
+                
                 this.cardLoading = false
-            }, 1000);
+            }, 500);
             this.addFolderShow = false
+        },
+        queryFolderByFileName(){
+            this.cardLoading = true
+            setTimeout(() => {
+                dao.queryFolderByFileName(this.user.invite_code,this.queryParams.folderName).then(res => {
+                    this.folderList = res.data.data
+                })
+                this.cardLoading = false
+            },1000)
+            
         },
         //打开或下载文件
         openFileList() {
-            this.folderShow = false
+            // this.folderShow = false
+            axios.post("http://127.0.0.1/detect_image?image=C:/Users/86156/Pictures/Screenshots/110845.png").then(res => {
+                console.log(res);
+            }).catch( e => {
+
+            })
             if (this.type == 0) {
                 this.$refs.fileList.open(this.folderId,this.folderName);
             } else {
@@ -445,51 +185,42 @@ export default {
         },
         //上传文件
         addFile() {
-            this.$message({
-                type:'error',
-                message:'暂不可用！'
-            })
             this.addFolderShow = false
-            let o = {
-                folderName: '',
-                type: 1,
-                createTime: new Date().format('yyyy/MM/dd hh:mm:ss')
-            }
-            this.folderList.push(o);
             this.$refs.addOne.open();
         },
         //打开文件属性
         attribute() {
-            this.$refs.fileAttribute.open(this.type, this.folderId)
+            let fileItem = this.folderList.find(a => a.path === this.path)
+            
+            
+            this.$refs.fileAttribute.open(fileItem)
             this.folderShow = false
         },
+        
         //重命名
         updateFloder() {
             this.folderShow = false
             this.$prompt('请输入文件夹名称', {
-                inputValue: this.folderName,
+                inputValue: this.reName,
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
             }).then(({value}) => {
-                this.folderList[this.dataIndex].folderName = value
-                this.$message({
-                    type:'error',
-                    message:'暂不可用！'
+                // this.folderList[this.dataIndex].file_name = value
+                dao.fileRename(this.path,value).then(res => {
+                    console.log(res);
+                    if(res.data.message == 'success'){
+                        this.$message({
+                        type: 'success',
+                        message: '重命名成功!'
+                        });
+                    }else{
+                        this.$message({
+                        type: 'error',
+                        message: '修改失败请重试!'
+                        });
+                    }
                 })
-                /* getData("/folder/rename/" + this.folderId + '/' + value + '/' + this.type).then(res => {
-                if (res.code == 200) {
-                    this.$message({
-                    type: 'success',
-                    message: '重命名成功!'
-                    });
-                } else {
-                    this.$message({
-                    type: 'error',
-                    message: '修改失败请重试!'
-                    });
-                    this.folderList[this.dataIndex].folderName = this.folderName
-                }
-                }) */
+                this.list()
             }).catch(() => {
                 this.folderList[this.dataIndex].folderName = this.folderName
             });
@@ -502,24 +233,20 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                this.$message({
-                    type:'error',
-                    message:'暂不可用！'
+                dao.deleteFileByPath(this.path).then(res => {
+                    if(res.data.data == 'success'){
+                        this.$message({
+                        type: 'success',
+                        message: '删除成功!'
+                        });
+                    }else{
+                        this.$message({
+                        type: 'error',
+                        message: '删除失败请重试!'
+                        });
+                    }
                 })
-                /* getData("/folder/del/" + this.folderId + '/' + this.type).then(res => {
-                this.folderList.splice(this.dataIndex, 1)
-                if (res.code == 200) {
-                    this.$message({
-                    type: 'success',
-                    message: '删除成功!'
-                    });
-                } else {
-                    this.$message({
-                    type: 'error',
-                    message: '删除失败请重试!'
-                    });
-                }
-                }) */
+                this.list()
             }).catch(() => {
             });
         },
@@ -578,10 +305,11 @@ export default {
         },
         //文件夹右键
         rightClickFolder(index, item, e) {
-            this.folderName = item.folderName
+            this.file_name = item.folderName
             this.folderId = item.id
             this.type = item.type
             this.url = item.fileUrl
+            this.path = item.path
             this.dataIndex = index
             this.folderStyle.left = e.pageX + 'px'
             this.folderStyle.top = e.pageY + 'px'
