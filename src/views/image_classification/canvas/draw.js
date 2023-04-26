@@ -228,6 +228,7 @@ function newDraw(cav, ctx, list) {
     let sX = 0; // 起点X坐标
     let sY = 0; // 起点Y坐标
 
+
     /* 按下鼠标左键 */
     cav.onmousedown = function (ed) {
         /* 使用变量 */
@@ -442,3 +443,4 @@ function reDraw(cav, ctx, list, i) {
         }
     })
 };
+
