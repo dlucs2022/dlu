@@ -757,6 +757,22 @@ export default {
             reader.readAsText(file);
             event.preventDefault();
         },
+        // 下载LableCSV
+        downCsv() {
+            const csvContent = [];
+            csvContent.push(['tag1', 'tag2']);
+            this.label_c.forEach(label => {
+                csvContent.push([label.father, label.children]);
+            });
+            const csvContentStr = csvContent.map(row => row.join(',')).join('\n');
+            const uri = 'data:text/csv;charset=utf-8,\ufeff' + encodeURIComponent(csvContentStr);
+            const downloadLink = document.createElement('a');
+            downloadLink.href = uri;
+            downloadLink.download = 'temp.csv';
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        },
         selectCsv(event) {
             const that = this;
             let fileList = event.target.files;
