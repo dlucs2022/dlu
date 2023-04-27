@@ -3,6 +3,11 @@
     <div id="pic-label">
       <div class="canvasDraw">
         <el-button @click="getData">保存修改</el-button>
+        <el-button-group style="float:right;width:50%">
+            <el-button style="width:50%" :disabled="activeIndex == 0" @click="changeimg('pre')" type="primary" icon="el-icon-arrow-left">上一张</el-button>
+            <el-button style="width:50%" :disabled="activeIndex == imgList.length-1" @click="changeimg('next')" type="primary">
+                下一张<i class="el-icon-arrow-right el-icon--right"></i></el-button>
+        </el-button-group>
         <div class="context__x">
           <canvas ref="canvas" id="labelCanvas"> </canvas>
           <!-- 编辑和删除弹窗 -->
@@ -98,12 +103,14 @@ export default {
   name: "",
   data() {
     return {
+        activeIndex:0,
         imgList:[],
         canvasInfo: {
             width: "",
             height: "",
         },
         editorCanvas: "",
+        fabricJson:[],
         mouseFrom: {},
         mouseTo: {},
         showCon: false,
@@ -147,6 +154,51 @@ export default {
     };
   },
   methods: {
+    changeimg(change){
+        if(change === 'pre'){
+            this.fabricJson[this.activeIndex] = JSON.stringify(
+                this.editorCanvas.toJSON(["rectId", "textID", "lockScalingFlip"])
+            )
+
+
+            this.activeIndex -= 1;
+            
+            // this.fabricJson[i-1] = JSON.stringify(this.fabricObj);
+            this.editorCanvas.clear().renderAll();
+            this.initeditorCanvas(this.activeIndex)
+            let a = this.fabricJson
+            if (this.fabricJson[this.activeIndex] !== ''){
+                this.editorCanvas.loadFromJSON(
+                    this.fabricJson[this.activeIndex],
+                    this.editorCanvas.renderAll.bind(this.editorCanvas),
+                    function (o, object) {
+
+                     }
+                )
+            }
+        }else{
+            this.fabricJson[this.activeIndex] = JSON.stringify(
+                this.editorCanvas.toJSON(["rectId", "textID", "lockScalingFlip"])
+            )
+
+
+            this.activeIndex += 1;
+            
+            // this.fabricJson[i-1] = JSON.stringify(this.fabricObj);
+            this.editorCanvas.clear().renderAll();
+            this.initeditorCanvas(this.activeIndex)
+            let a = this.fabricJson
+            if (this.fabricJson[this.activeIndex] !== ''){
+                this.editorCanvas.loadFromJSON(
+                    this.fabricJson[this.activeIndex],
+                    this.editorCanvas.renderAll.bind(this.editorCanvas),
+                    function (o, object) {
+
+                     }
+                )
+            }
+        }
+    },
     //请求图片地址
     async queryImgList(){
         let path = this.$route.params.path;
@@ -226,14 +278,14 @@ export default {
         });
     },
     init() {
-      this.initeditorCanvas();
+      this.initeditorCanvas('init');
       this.initD();
     },
     // 初始化模板编辑画布
     initeditorCanvas(i) {
       // 根据canvas绘制保存的内容
-      const str = JSON.parse(localStorage.getItem("canvasdata"));
-      console.log("str", str);
+    //   const str = JSON.parse(localStorage.getItem("canvasdata"));
+    //   console.log("str", str);
       
       // 初始化canvas
       this.editorCanvas = new fabric.Canvas("labelCanvas", {
@@ -250,14 +302,17 @@ export default {
       // this.editorCanvas.selection = false;
       // this.editorCanvas.toJSON(['rectId'])
       // this.editorCanvas.skipTargetFind = true;
-    //   console.log(this.imgList);
-      let img = this.imgList[0].path
+    
+    let img = ''
+    if(i === 'init'){
+        img = this.imgList[0].path
+    }else{
+        img = this.imgList[i].path
+    }
       
-    //   var img = "https://i1.mifile.cn/f/i/18/mitv4A/40/build.jpg";
       // mounted内预设的比例(由于图片太大，展示不下，实际项目中可以根据后端返回的图片大小范围去设置缩放比例)
       const scaleX = 1000 / this.imgW
       const scaleY = 750 / this.imgH
-
     
       // 将图片设置成背景
       this.editorCanvas.setBackgroundImage(
@@ -279,7 +334,7 @@ export default {
       // 监听鼠标右键的执行
       this.editorCanvas.on("mouse:down", this.canvasOnMouseDown);
       // 数据回显
-      if (str) {
+      /* if (str) {
         // this.editorCanvas.loadFromJSON(str)
         this.editorCanvas.loadFromJSON(
           str,
@@ -288,7 +343,7 @@ export default {
 
           }
         );
-      }
+      } */
     },
     initD() {
       this.editorCanvas.on("mouse:down", (options) => {
@@ -568,8 +623,8 @@ export default {
     changeTag(el) {
       if (this.activeEl) {
         // console.log("item", el.value, this.activeEl.rectId);
-        let text = el.value;
-        let textID = el.id;
+        let text = el.value;            //value: "兽",
+        let textID = el.id;             //id: "1",
         this.editorCanvas.getObjects().forEach((item) => {
           // console.log("item", item);
           if (item.rectId == this.activeEl.rectId) {
@@ -583,6 +638,15 @@ export default {
               originY: "center",
               textAlign: "center",
             });
+            
+            /* if(this.fabricJson[this.activeIndex] == undefined){
+                this.fabricJson[this.activeIndex] = []
+                this.fabricJson[this.activeIndex].push(JSON.stringify(item))
+            }else{
+                this.fabricJson[this.activeIndex].push(JSON.stringify(item))
+            }
+            console.log(this.fabricJson); */
+            
           }
         });
         this.editorCanvas.requestRenderAll();
