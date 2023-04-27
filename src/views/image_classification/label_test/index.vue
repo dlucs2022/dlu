@@ -271,14 +271,14 @@ export default {
       // 监听鼠标右键的执行
       this.editorCanvas.on("mouse:down", this.canvasOnMouseDown);
       // 数据回显
-      if (str) {
+      /* if (str) {
         // this.editorCanvas.loadFromJSON(str)
         this.editorCanvas.loadFromJSON(
           str,
           this.editorCanvas.renderAll.bind(this.editorCanvas),
           function (o, object) {}
         );
-      }
+      } */
     },
     initD() {
       this.editorCanvas.on("mouse:down", (options) => {
