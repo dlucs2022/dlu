@@ -82,8 +82,8 @@
 </template>
 
 <script>
-import fabric from "fabric";
-import uuid from "vue-uuid";
+import { fabric } from "fabric";
+import { uuid } from "vue-uuid";
 import dao from "@/api/dao";
 export default {
   data() {
