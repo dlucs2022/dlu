@@ -53,14 +53,11 @@ const router = new VueRouter({
           path: 'image_classification',
           component: () => import('./views/image_classification')
         },
+
         {
-          path: 'canvas',
-          component: () => import('./views/image_classification/canvas')
-        },
-        {
-          name:'label_test',
-          path:'label_test',
-          component:() => import('./views/image_classification/label_test')
+          name: 'label_test',
+          path: 'label_test',
+          component: () => import('./views/image_classification/label_test')
         },
         {
           path: 'opinion',

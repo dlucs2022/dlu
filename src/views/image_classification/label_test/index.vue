@@ -47,9 +47,7 @@
       <div class="tagCon">
         <div class="tagTitle" v-show="!isAdd">
           <div>标签栏</div>
-          <el-button type="primary" size="small" @click="addTag"
-            >添加标签</el-button
-          >
+          <el-button type="primary" size="small" @click="addTag">添加标签</el-button>
         </div>
         <div class="tagDOM tagItem" v-show="isAdd">
           <el-input
@@ -57,12 +55,8 @@
             ref="addTask"
             @keyup.enter.native="addNewTag"
           ></el-input>
-          <el-button type="text" size="small" @click="addNewTag"
-            >确定</el-button
-          >
-          <el-button type="text" size="small" @click="cancelAdd"
-            >取消</el-button
-          >
+          <el-button type="text" size="small" @click="addNewTag">确定</el-button>
+          <el-button type="text" size="small" @click="cancelAdd">取消</el-button>
         </div>
         <!-- 搜索 -->
         <div style="margin-top: 10px">
@@ -82,10 +76,7 @@
                 </span>
               </el-tooltip>
               <div class="iconCon">
-                <i
-                  class="el-icon-edit editIcon"
-                  @click="changeEdit(item, index)"
-                ></i>
+                <i class="el-icon-edit editIcon" @click="changeEdit(item, index)"></i>
                 <i class="el-icon-delete delIcon" @click="delTag(item)"></i>
               </div>
             </div>
@@ -110,11 +101,10 @@
 </template>
 
 <script>
-import { fabric } from "fabric";
-import { uuid } from "vue-uuid";
-import dao from "@/api/dao"
+import fabric from "fabric";
+import uuid from "vue-uuid";
+import dao from "@/api/dao";
 export default {
-  name: "",
   data() {
     return {
         activeIndex:0,
@@ -163,9 +153,8 @@ export default {
     };
   },
   mounted() {
-    this.queryImgList()
+    this.queryImgList();
     // 后端返回：图片的长宽 2560 1200 ，用于等比例缩放图片
-    
 
     // 监听键盘时间，按下backspace进行删除
     document.onkeydown = (e) => {
@@ -411,7 +400,7 @@ export default {
         });
     },
     init() {
-      this.initeditorCanvas('init');
+      this.initeditorCanvas();
       this.initD();
     },
     // 初始化模板编辑画布
@@ -473,9 +462,7 @@ export default {
         this.editorCanvas.loadFromJSON(
           str,
           this.editorCanvas.renderAll.bind(this.editorCanvas),
-          function (o, object) {
-
-          }
+          function (o, object) {}
         );
       } */
     },
@@ -507,10 +494,7 @@ export default {
       this.editorCanvas.on("mouse:up", (options) => {
         this.isDrawing = false;
         // console.log("mouse:up", options);
-        if (
-          !this.editorCanvas.getActiveObject() &&
-          this.currentType == "rect"
-        ) {
+        if (!this.editorCanvas.getActiveObject() && this.currentType == "rect") {
           // 解决绘制的时候超出边界
           this.mouseTo.x =
             options.pointer.x > this.editorCanvas.width
@@ -549,10 +533,8 @@ export default {
         }
         // bot-right corner
         if (
-          obj.getBoundingRect().top + obj.getBoundingRect().height >
-            obj.canvas.height ||
-          obj.getBoundingRect().left + obj.getBoundingRect().width >
-            obj.canvas.width
+          obj.getBoundingRect().top + obj.getBoundingRect().height > obj.canvas.height ||
+          obj.getBoundingRect().left + obj.getBoundingRect().width > obj.canvas.width
         ) {
           obj.top = Math.min(
             obj.top,
@@ -713,8 +695,7 @@ export default {
         // 获取当前元素
         // 设置右键菜单位置
         // 右键菜单的位置
-        let pointX =
-          options.target.left + options.target.width * options.target.scaleX;
+        let pointX = options.target.left + options.target.width * options.target.scaleX;
         let pointY = options.target.top;
         // 设置右键菜单定位
         this.menuPosition = `
@@ -759,8 +740,8 @@ export default {
     changeTag(el) {
       if (this.activeEl) {
         // console.log("item", el.value, this.activeEl.rectId);
-        let text = el.value;            //value: "兽",
-        let textID = el.id;             //id: "1",
+        let text = el.value;
+        let textID = el.id;
         this.editorCanvas.getObjects().forEach((item) => {
           // console.log("item", item);
           if (item.rectId == this.activeEl.rectId) {
@@ -774,15 +755,6 @@ export default {
               originY: "center",
               textAlign: "center",
             });
-            
-            /* if(this.fabricJson[this.activeIndex] == undefined){
-                this.fabricJson[this.activeIndex] = []
-                this.fabricJson[this.activeIndex].push(JSON.stringify(item))
-            }else{
-                this.fabricJson[this.activeIndex].push(JSON.stringify(item))
-            }
-            console.log(this.fabricJson); */
-            
           }
         });
         this.editorCanvas.requestRenderAll();
@@ -815,9 +787,7 @@ export default {
       // rectId自定义属性
       localStorage.setItem(
         "canvasdata",
-        JSON.stringify(
-          this.editorCanvas.toJSON(["rectId", "textID", "lockScalingFlip"])
-        )
+        JSON.stringify(this.editorCanvas.toJSON(["rectId", "textID", "lockScalingFlip"]))
       );
       console.log("getObjects", this.editorCanvas.getObjects());
     },
