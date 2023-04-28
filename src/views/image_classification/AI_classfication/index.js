@@ -1,6 +1,6 @@
 
 import axios from 'axios'  // 安装axios后引入
-import config_json from '../../../config.json'  // 安装axios后引入
+import config_json from '../../../../config.json'  // 安装axios后引入
 import dao from "@/api/dao";
 import Papa from 'papaparse'
 import dataStatistics from '@/views/image_classification/components/dataStatistics.vue'
@@ -38,9 +38,7 @@ export default {
             dialogVisible_setting_bind: false,//设置 的对话框
             activeNames_f_and_c_labels: ['1', '2'],    //一二级标签得折叠面板的活跃索引
             activeNames_individual_attributes: ['1'],//个体行为得折叠面板的活跃索引
-            imgList: [{ file: "empty", src: require('../../assets/emptyImg.png') }],//    关键的文件数组
-            list: [],
-
+            imgList: [],//    关键的文件数组
             current: 1,//当前图片索引
             percentage: 0,//进度条
             keyUpValue: '',
@@ -77,7 +75,39 @@ export default {
     beforeDestroy() {
         this.keyDownReview()
     },
+    mounted() {
+        this.queryImgList();
+    },
     methods: {
+        //请求图片地址
+        async queryImgList() {
+            let path = this.$route.params.path;
+            this.imgURL_root_path = path;
+            let splitPath = path.split("/").slice(-2);
+            let ending = splitPath[0] + "/" + splitPath[1] + "/";
+            // console.log(splitPath);
+            await dao.queryImgList(path).then((res) => {
+                if (res.data.message == "success") {
+                    for (let i = 0; i < res.data.data.length; i++) {
+                        // +"?"+Date.parse(new Date())
+                        this.imgList.push({
+                            id: i,
+                            src:
+                                "http://192.168.46.150:8003/dlu/img/" +
+                                ending +
+                                res.data.data[i] +
+                                "?" +
+                                Date.parse(new Date()),
+                            file: { name: res.data.data[i] }
+                        });
+                    }
+                }
+            });
+            console.log(this.imgList);
+            let img = new Image();
+            img.src = this.imgList[0].path;
+
+        },
         handleOpen(key, keyPath) {
             console.log("handleOpen", key, keyPath);
         },
@@ -297,7 +327,7 @@ export default {
             console.log(this.empty_label_imgs);
             this.empty_label_imgs.filter(a => a.exist == true).map(a => a.imgName).forEach(empty => {
                 var a = {}
-                let img = this.imgList.find( a => a.file.name == empty)
+                let img = this.imgList.find(a => a.file.name == empty)
                 var dt = new Date(img.file.lastModifiedDate);
                 a.img_name = empty
                 a.year = dt.getFullYear();
@@ -440,7 +470,7 @@ export default {
                     //索引
                     var img_index = this.current - 1
                     //名字
-                    a.img_name = this.imgList[img_index].file.name
+                    a.img_name = this.imgList[img_index].name
                     //时间
                     var dt = new Date(this.imgList[img_index].file.lastModifiedDate);
                     a.year = dt.getFullYear();
@@ -845,41 +875,8 @@ export default {
                 this.label_c.push({ father: a.tag1, children: a.tag2, keyValue: '' })
             })
         },
-        // 初始化加载图片
-        selectPhoto(event) {
-            let fileList = event.target.files
-            var tempList = []
-            for (let i = 0; i < fileList.length; i++) {
-                if (fileList[i].type == 'image/gif' || fileList[i].type == 'image/png' || fileList[i].type == 'image/jpeg' || fileList[i].type == 'image/jpg' || fileList[i].type == 'image/bmp') {
-                    let fileUrl = URL.createObjectURL(fileList[i]);  // 获取文件url
-                    tempList.push({ file: fileList[i], src: fileUrl }) // data中显示的图片url 
-                }
-            }
-            this.imgList = tempList
-            event.target.value = "" // 解决不能选同一个文件
-            this.imgChange(0)
-            this.imgNameAndIndexList = []
-            //生成一个 [{imageName:oo1.jpg,index:1},{},{}]这样的数组
-            tempList.forEach((item, index) => {
-                this.imgNameAndIndexList.push({ imgName: item.file.name, 
-                    imgIndex: index + 1 })
-            })
-            //将空标签照片数组初始化
-            this.empty_label_imgs = []
-            this.no_empty_label_imgs = []
-            this.imgNameAndIndexList.forEach((item, index) => {
-                this.empty_label_imgs.push({ imgName: item.imgName, imgIndex: item.imgIndex, exist: true })
-                this.no_empty_label_imgs.push({ imgName: item.imgName, imgIndex: item.imgIndex, exist: false })
-            })
-            //清空csv数据列表
-            this.csv_list = []
-            this.csvId = 1
-            console.log(this.imgList);
-        },
-        // 点击了“上传文件”按钮
-        click_upload() {
-            this.$refs.upload_input.click()
-        },
+
+
         //点击了上传csv标题组的按钮
         click_upload_csv() {
             this.$refs.upload_csv_input.click()
@@ -1010,7 +1007,7 @@ export default {
                 var no_empty_img_set = new_val.map(a => a.img_name)
                 var no_empty_img_names = Array.from(new Set(no_empty_img_set))  //给csvlist里面的名字们去重 这里面都是非空的图片了
                 for (let [index1, item1] of no_empty_img_names.entries()) {
-                    for (let [index2, item2] of this.no_empty_label_imgs.entries()) { 
+                    for (let [index2, item2] of this.no_empty_label_imgs.entries()) {
                         if (item1 == item2.imgName) {
                             item2.exist = true
                             this.empty_label_imgs[index2].exist = false

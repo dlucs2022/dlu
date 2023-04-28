@@ -1,28 +1,43 @@
 <template>
   <div id="fabricCanvas">
     <el-dialog
-    title="正在识别，请稍后"
-    :visible.sync="pregress_dialogVisible"
-    width="40%"
+      title="正在识别，请稍后"
+      :visible.sync="pregress_dialogVisible"
+      width="40%"
     >
-    <div>
+      <div>
         <el-progress :percentage="percentage" :color="customColorMethod"></el-progress>
-    </div>
-    <span slot="footer" class="dialog-footer">
+      </div>
+      <span slot="footer" class="dialog-footer">
         <el-button @click="pregress_dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="pregress_dialogVisible = false">确 定</el-button>
-    </span>
+        <el-button type="primary" @click="pregress_dialogVisible = false"
+          >确 定</el-button
+        >
+      </span>
     </el-dialog>
     <div id="pic-label">
       <div class="canvasDraw">
         <el-button @click="getData">保存修改</el-button>
         <el-button @click="getAiByRootPath">智能标注</el-button>
-        <el-button-group style="float:right;width:50%">
-            <el-button style="width:50%" :disabled="activeIndex == 0" @click="changeimg('pre')" type="primary" icon="el-icon-arrow-left">上一张</el-button>
-            <el-button style="width:50%" :disabled="activeIndex == imgList.length-1" @click="changeimg('next')" type="primary">
-                下一张<i class="el-icon-arrow-right el-icon--right"></i></el-button>
+        <el-button-group style="float: right; width: 50%">
+          <el-button
+            style="width: 50%"
+            :disabled="activeIndex == 0"
+            @click="changeimg('pre')"
+            type="primary"
+            icon="el-icon-arrow-left"
+            >上一张</el-button
+          >
+          <el-button
+            style="width: 50%"
+            :disabled="activeIndex == imgList.length - 1"
+            @click="changeimg('next')"
+            type="primary"
+          >
+            下一张<i class="el-icon-arrow-right el-icon--right"></i
+          ></el-button>
         </el-button-group>
-        <div class="context__x" >
+        <div class="context__x">
           <canvas ref="canvas" id="labelCanvas"> </canvas>
           <!-- 编辑和删除弹窗 -->
           <div
@@ -107,49 +122,48 @@ import dao from "@/api/dao";
 export default {
   data() {
     return {
-        activeIndex:0,
-        imgList:[],
-        canvasInfo: {
-            width: "",
-            height: "",
+      activeIndex: 0,
+      imgList: [],
+      canvasInfo: {
+        width: "",
+        height: "",
+      },
+      editorCanvas: "",
+      fabricJson: [],
+      mouseFrom: {},
+      mouseTo: {},
+      showCon: false,
+      drawingObject: null,
+      currentTarget: null,
+      menuPosition: null,
+      rectId: "",
+      activeEl: "",
+      isDrawing: false,
+      currentType: "rect",
+      // 标签栏
+      isAdd: false,
+      tagCon: "",
+      tagData: [
+        {
+          value: "兽",
+          id: "1",
+          isEdit: false,
         },
-        editorCanvas: "",
-        fabricJson:[],
-        mouseFrom: {},
-        mouseTo: {},
-        showCon: false,
-        drawingObject: null,
-        currentTarget: null,
-        menuPosition: null,
-        rectId: "",
-        activeEl: "",
-        isDrawing: false,
-        currentType: "rect",
-        // 标签栏
-        isAdd: false,
-        tagCon: "",
-        tagData: [
-            {
-            value: "兽",
-            id: "1",
-            isEdit: false,
-            },
-            
-        ],
-        imgW:4000,
-        imgH:3000,
-        imgURL_root_path : '',
-        pageLoading:false,
-        customColors: [
-          {color: '#f56c6c', percentage: 20},
-          {color: '#e6a23c', percentage: 40},
-          {color: '#5cb87a', percentage: 60},
-          {color: '#1989fa', percentage: 80},
-          {color: '#6f7ad3', percentage: 100}
-        ],
-        pregress_dialogVisible:false,
-        percentage:0,
-        detections:[],
+      ],
+      imgW: 4000,
+      imgH: 3000,
+      imgURL_root_path: "",
+      pageLoading: false,
+      customColors: [
+        { color: "#f56c6c", percentage: 20 },
+        { color: "#e6a23c", percentage: 40 },
+        { color: "#5cb87a", percentage: 60 },
+        { color: "#1989fa", percentage: 80 },
+        { color: "#6f7ad3", percentage: 100 },
+      ],
+      pregress_dialogVisible: false,
+      percentage: 0,
+      detections: [],
     };
   },
   mounted() {
@@ -168,190 +182,199 @@ export default {
     };
   },
   methods: {
-    getAiByRootPath(){
-        dao.getAiByRootPath(this.imgURL_root_path).then(res => {
-            if(res.data.task_id){
-                this.intervalQuery(res.data.task_id)
-            }
-        })
+    getAiByRootPath() {
+      dao.getAiByRootPath(this.imgURL_root_path).then((res) => {
+        if (res.data.task_id) {
+          this.intervalQuery(res.data.task_id);
+        }
+      });
     },
-    intervalQuery(task_id){
-        this.pregress_dialogVisible = true
-        // this.pageLoading = true
-        // 设置整点定时发送请求
-        
-        var myVar = setInterval(() => {
-            if(this.percentage === 100 ){
-                this.pregress_dialogVisible = false 
-                this.$message({
-                    message:'识别完成！',
-                    type:"success",              
-                })
-                this.queryRes(task_id)
-                clearInterval(myVar)
-                return 
-            }else{
-                this.queryPregress(task_id)
-            }
-        }, 1000);
+    intervalQuery(task_id) {
+      this.pregress_dialogVisible = true;
+      // this.pageLoading = true
+      // 设置整点定时发送请求
 
+      var myVar = setInterval(() => {
+        if (this.percentage === 100) {
+          this.pregress_dialogVisible = false;
+          this.$message({
+            message: "识别完成！",
+            type: "success",
+          });
+          this.queryRes(task_id);
+          clearInterval(myVar);
+          return;
+        } else {
+          this.queryPregress(task_id);
+        }
+      }, 1000);
     },
-    async queryRes(task_id){
-        await dao.queryRes(task_id).then( res => {
-            console.log(res.data);
-            for(let k in res.data.detection){
-              this.detections.push(res.data.detection[k].detections)   
-            } 
-        })
-        this.createFabricByRes()
+    async queryRes(task_id) {
+      await dao.queryRes(task_id).then((res) => {
+        console.log(res.data);
+        for (let k in res.data.detection) {
+          this.detections.push(res.data.detection[k].detections);
+        }
+      });
+      this.createFabricByRes();
     },
-    createFabricByRes(){
-      for( let i=0 ; i<this.detections.length ; i++ ){    //每个i代表每个图像
-          this.initeditorCanvas(i)
-          for( let j=0 ; j<this.detections[i].length ; j++){    //代表每个图像的每个bbox
-            let rectId = uuid.v1();
-            this.drawingObject = null;
-            let left = this.detections[i][j].bbox[0] * this.canvasInfo.width
-            let top = this.detections[i][j].bbox[1] * this.canvasInfo.height 
-            let width = this.detections[i][j].bbox[2] * this.canvasInfo.width
-            let height = this.detections[i][j].bbox[3] * this.canvasInfo.height  
-            const drawingObject = new fabric.Rect({
+    createFabricByRes() {
+      for (let i = 0; i < this.detections.length; i++) {
+        //每个i代表每个图像
+        this.initeditorCanvas(i);
+        for (let j = 0; j < this.detections[i].length; j++) {
+          //代表每个图像的每个bbox
+          let rectId = uuid.v1();
+          this.drawingObject = null;
+          let left = this.detections[i][j].bbox[0] * this.canvasInfo.width;
+          let top = this.detections[i][j].bbox[1] * this.canvasInfo.height;
+          let width = this.detections[i][j].bbox[2] * this.canvasInfo.width;
+          let height = this.detections[i][j].bbox[3] * this.canvasInfo.height;
+          const drawingObject = new fabric.Rect({
+            width: width,
+            height: height,
+            fill: "#d70202",
+            lockRotation: true,
+            opacity: 0.2,
+            rectId,
+            lockScalingFlip: true, // 禁止负值反转
+            originX: "center",
+            originY: "center",
+          });
+          const text = new fabric.Textbox("", {
+            // width,
+            // height,
+            text: this.detections[i][j].category,
+            fontFamily: "Helvetica",
+            fill: "white", // 设置字体颜色
+            fontSize: 14,
+            textAlign: "center",
+            rectId,
+            lockScalingX: true,
+            lockScalingY: true,
+            lockScalingFlip: true, // 禁止负值反转
+            originX: "center",
+            originY: "center",
+          });
+          if (drawingObject) {
+            const group = new fabric.Group([drawingObject, text], {
+              rectId,
+              left: left,
+              top: top,
               width: width,
               height: height,
-              fill: "#d70202",
+              lockScalingFlip: true,
               lockRotation: true,
-              opacity: 0.2,
-              rectId,
-              lockScalingFlip: true, // 禁止负值反转
-              originX: "center",
-              originY: "center",
             });
-            const text = new fabric.Textbox("", {
-              // width,
-              // height,
-              text:this.detections[i][j].category,
-              fontFamily: "Helvetica",
-              fill: "white", // 设置字体颜色
-              fontSize: 14,
-              textAlign: "center",
-              rectId,
-              lockScalingX: true,
-              lockScalingY: true,
-              lockScalingFlip: true, // 禁止负值反转
-              originX: "center",
-              originY: "center",
-            });
-            if (drawingObject) {
-              const group = new fabric.Group([drawingObject, text], {
-                rectId,
-                left: left,
-                top: top,
-                width: width,
-                height: height,
-                lockScalingFlip: true,
-                lockRotation: true,
-              });
-              this.editorCanvas.add(group);
-              console.log("this.editorCanvasssssssssss", this.editorCanvas);
-              
-              this.drawingObject = drawingObject;
-            }
+            this.editorCanvas.add(group);
+            console.log("this.editorCanvasssssssssss", this.editorCanvas);
+
+            this.drawingObject = drawingObject;
           }
-          this.fabricJson[i] = 
-            this.editorCanvas.toJSON(["rectId", "textID", "lockScalingFlip"])
-          this.editorCanvas.clear().renderAll();
-      }  
+        }
+        this.fabricJson[i] = this.editorCanvas.toJSON([
+          "rectId",
+          "textID",
+          "lockScalingFlip",
+        ]);
+        this.editorCanvas.clear().renderAll();
+      }
     },
     customColorMethod(percentage) {
-        if (percentage < 30) {
-          return '#909399';
-        } else if (percentage < 70) {
-          return '#e6a23c';
-        } else {
-          return '#67c23a';
-        }
-      },
-    queryPregress(task_id){
-        dao.queryPregress(task_id).then( res => {
-            this.percentage = parseInt(res.data.progress * 100)
-            return parseInt(res.data.progress * 100)
-        })
+      if (percentage < 30) {
+        return "#909399";
+      } else if (percentage < 70) {
+        return "#e6a23c";
+      } else {
+        return "#67c23a";
+      }
     },
-    changeimg(change){
-        if(change === 'pre'){
-            this.fabricJson[this.activeIndex] = 
-                this.editorCanvas.toJSON(["rectId", "textID", "lockScalingFlip"])
-            
-            this.activeIndex -= 1;        
-            // this.fabricJson[i-1] = JSON.stringify(this.fabricObj);
-            this.editorCanvas.clear().renderAll();
-            this.initeditorCanvas(this.activeIndex)
-            let a = this.fabricJson
-            if (this.fabricJson[this.activeIndex] !== ''){
-                this.editorCanvas.loadFromJSON(
-                    this.fabricJson[this.activeIndex],
-                    this.editorCanvas.renderAll.bind(this.editorCanvas),
-                    function (o, object) {
+    queryPregress(task_id) {
+      dao.queryPregress(task_id).then((res) => {
+        this.percentage = parseInt(res.data.progress * 100);
+        return parseInt(res.data.progress * 100);
+      });
+    },
+    changeimg(change) {
+      if (change === "pre") {
+        this.fabricJson[this.activeIndex] = this.editorCanvas.toJSON([
+          "rectId",
+          "textID",
+          "lockScalingFlip",
+        ]);
 
-                     }
-                )
-            }
-        }else{
-            this.fabricJson[this.activeIndex] = JSON.stringify(
-                this.editorCanvas.toJSON(["rectId", "textID", "lockScalingFlip"])
-            )
-
-            // console.log(JSON.stringify(this.fabricJson));
-
-            this.activeIndex += 1;
-            
-            // this.fabricJson[i-1] = JSON.stringify(this.fabricObj);
-            this.editorCanvas.clear().renderAll();
-            this.initeditorCanvas(this.activeIndex)
-            let a = this.fabricJson
-            if (this.fabricJson[this.activeIndex] !== ''){
-                this.editorCanvas.loadFromJSON(
-                    this.fabricJson[this.activeIndex],
-                    this.editorCanvas.renderAll.bind(this.editorCanvas),
-                    function (o, object) {
-
-                     }
-                )
-            }
+        this.activeIndex -= 1;
+        // this.fabricJson[i-1] = JSON.stringify(this.fabricObj);
+        this.editorCanvas.clear().renderAll();
+        this.initeditorCanvas(this.activeIndex);
+        let a = this.fabricJson;
+        if (this.fabricJson[this.activeIndex] !== "") {
+          this.editorCanvas.loadFromJSON(
+            this.fabricJson[this.activeIndex],
+            this.editorCanvas.renderAll.bind(this.editorCanvas),
+            function (o, object) {}
+          );
         }
+      } else {
+        this.fabricJson[this.activeIndex] = JSON.stringify(
+          this.editorCanvas.toJSON(["rectId", "textID", "lockScalingFlip"])
+        );
+
+        // console.log(JSON.stringify(this.fabricJson));
+
+        this.activeIndex += 1;
+
+        // this.fabricJson[i-1] = JSON.stringify(this.fabricObj);
+        this.editorCanvas.clear().renderAll();
+        this.initeditorCanvas(this.activeIndex);
+        let a = this.fabricJson;
+        if (this.fabricJson[this.activeIndex] !== "") {
+          this.editorCanvas.loadFromJSON(
+            this.fabricJson[this.activeIndex],
+            this.editorCanvas.renderAll.bind(this.editorCanvas),
+            function (o, object) {}
+          );
+        }
+      }
     },
     //请求图片地址
-    async queryImgList(){
-        let path = this.$route.params.path;
-        this.imgURL_root_path = path
-        let splitPath = path.split('/').slice(-2);
-        let ending = splitPath[0]+'/'+splitPath[1]+'/'
-        // console.log(splitPath);
-        await dao.queryImgList(path).then( res => {
-            if(res.data.message == "success"){
-                for (let i = 0; i < res.data.data.length; i++) {
-                    // +"?"+Date.parse(new Date())
-                    this.imgList.push({id:i,path:"http://192.168.46.150:8003/dlu/img/"+ending+res.data.data[i]+"?"+Date.parse(new Date())})
-                }
-            }
-            
-        })
-        let img = new Image()
-        img.src = this.imgList[0].path
-        this.canvasInfo.width = 1000
-        this.canvasInfo.height =750;
-        // let that = this
-        // img.onload( res =>{
-        //     that.imgW = img.width
-        //     that.imgH = img.height
-        // } )
-        // 打印
-           
-            // alert('width:'+img.width+',height:'+img.height);
-        
-        // console.log(this.imgW);
-        this.init();
-        
+    async queryImgList() {
+      let path = this.$route.params.path;
+      this.imgURL_root_path = path;
+      let splitPath = path.split("/").slice(-2);
+      let ending = splitPath[0] + "/" + splitPath[1] + "/";
+      // console.log(splitPath);
+      await dao.queryImgList(path).then((res) => {
+        if (res.data.message == "success") {
+          for (let i = 0; i < res.data.data.length; i++) {
+            // +"?"+Date.parse(new Date())
+            this.imgList.push({
+              id: i,
+              path:
+                "http://192.168.46.150:8003/dlu/img/" +
+                ending +
+                res.data.data[i] +
+                "?" +
+                Date.parse(new Date()),
+            });
+          }
+        }
+      });
+      let img = new Image();
+      img.src = this.imgList[0].path;
+      this.canvasInfo.width = 1000;
+      this.canvasInfo.height = 750;
+      // let that = this
+      // img.onload( res =>{
+      //     that.imgW = img.width
+      //     that.imgH = img.height
+      // } )
+      // 打印
+
+      // alert('width:'+img.width+',height:'+img.height);
+
+      // console.log(this.imgW);
+      this.init();
     },
     // 按下backspace进行删除
     backSpaceDel() {
@@ -400,26 +423,25 @@ export default {
         });
     },
     init() {
-      this.initeditorCanvas();
+      this.initeditorCanvas("init");
       this.initD();
     },
     // 初始化模板编辑画布
     initeditorCanvas(i) {
       // 根据canvas绘制保存的内容
-    //   const str = JSON.parse(localStorage.getItem("canvasdata"));
-    //   console.log("str", str);
-      
-      
+      //   const str = JSON.parse(localStorage.getItem("canvasdata"));
+      //   console.log("str", str);
+
       // this.editorCanvas.preserveObjectStacking = true;
       // this.editorCanvas.selectable = false;
       // this.editorCanvas.selection = false;
       // this.editorCanvas.toJSON(['rectId'])
       // this.editorCanvas.skipTargetFind = true;
-    
-      let img = ''
-      if(i === 'init'){
-          // 初始化canvas
-          this.editorCanvas = new fabric.Canvas("labelCanvas", {
+
+      let img = "";
+      if (i === "init") {
+        // 初始化canvas
+        this.editorCanvas = new fabric.Canvas("labelCanvas", {
           // devicePixelRatio: true,
           width: this.canvasInfo.width, // canvas 宽
           height: this.canvasInfo.height,
@@ -427,35 +449,35 @@ export default {
           transparentCorners: false,
           fireRightClick: true, // 启用右键，button的数字为3
           stopContextMenu: true, // 禁止默认右键菜单
-        });   
-          img = this.imgList[0].path
-      }else{
-          img = this.imgList[i].path
+        });
+        img = this.imgList[0].path;
+      } else {
+        img = this.imgList[i].path;
       }
-        
-        // mounted内预设的比例(由于图片太大，展示不下，实际项目中可以根据后端返回的图片大小范围去设置缩放比例)
-        const scaleX = 1000 / this.imgW
-        const scaleY = 750 / this.imgH
-      
-        // 将图片设置成背景
-        this.editorCanvas.setBackgroundImage(
-          img,
-          this.editorCanvas.renderAll.bind(this.editorCanvas), // 刷新画布
-          {
-            scaleX,
-            scaleY,
-            originX: "left",
-            originY: "top",
-            left: 0,
-            top: 0,
-          }
-        );
+
+      // mounted内预设的比例(由于图片太大，展示不下，实际项目中可以根据后端返回的图片大小范围去设置缩放比例)
+      const scaleX = 1000 / this.imgW;
+      const scaleY = 750 / this.imgH;
+
+      // 将图片设置成背景
+      this.editorCanvas.setBackgroundImage(
+        img,
+        this.editorCanvas.renderAll.bind(this.editorCanvas), // 刷新画布
+        {
+          scaleX,
+          scaleY,
+          originX: "left",
+          originY: "top",
+          left: 0,
+          top: 0,
+        }
+      );
       /**
        * 模型返回的绘制：根据拿到的left、top, width, height去绘制新矩形(根据图片与canvas的比例)
          drawRect()
        */
       // 监听鼠标右键的执行
-    //   this.editorCanvas.on("mouse:down", this.canvasOnMouseDown);
+      //   this.editorCanvas.on("mouse:down", this.canvasOnMouseDown);
       // 数据回显
       /* if (str) {
         // this.editorCanvas.loadFromJSON(str)

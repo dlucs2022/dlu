@@ -180,13 +180,12 @@
         <div class="tool_left">
           <el-button
             class="tool_left_button"
-            @click="click_upload"
             style="
               background-color: rgb(64, 224, 208);
               border-color: rgb(64, 224, 208);
               color: #fff;
             "
-            ><i class="el-icon-folder-opened"></i>加载</el-button
+            ><i class="el-icon-folder-opened"></i>智能标注</el-button
           >
 
           <el-upload
@@ -211,16 +210,7 @@
             :disabled="this.imgList[0].file === 'empty'"
             ><i class="el-icon-s-order"></i>导出</el-button
           >
-          <input
-            id="upload"
-            webkitdirectory
-            type="file"
-            name="file"
-            ref="upload_input"
-            tabindex="-1"
-            style="display: none"
-            @change.stop="selectPhoto($event)"
-          />
+
           <el-button class="tool_left_button" type="info" @click="keyDown"
             ><i class="el-icon-video-play"></i> 键盘监听</el-button
           >
@@ -312,7 +302,7 @@
               <el-image
                 :v-if="index <= current && index >= current - 2"
                 :src="item.src"
-                style="width: 100%;"
+                style="width: 100%"
                 fit="contain"
               />
             </el-carousel-item>
@@ -720,10 +710,10 @@
 </template>
 
 <script>
-import index from "./index_js.js";
+import index from "./index.js";
 export default index;
 </script>
 
 <style>
-@import url("./index_css.css");
+@import url("./index.css");
 </style>
