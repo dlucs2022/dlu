@@ -15,7 +15,7 @@ axios.defaults.withCredentials = true;
 
 const request = axios.create({
   baseURL: 'http://192.168.46.150:8003/dlu',
-  timeout: 5000,
+  timeout: 50000,
   withCredentials: true, // 跨域请求时发送Cookie
   crossDomain: true,
 })

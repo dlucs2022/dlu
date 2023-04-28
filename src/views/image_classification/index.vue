@@ -528,7 +528,7 @@
                       <el-button
                         type="text"
                         size="medium"
-                        @click.stop.prevent="downCsv"
+                        @click.stop.prevent="downCsv()"
                         icon="el-icon-download"
                         class="el-collapse-item-button"
                       >
