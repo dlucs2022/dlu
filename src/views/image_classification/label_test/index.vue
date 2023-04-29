@@ -128,6 +128,7 @@ export default {
         width: "",
         height: "",
       },
+
       editorCanvas: "",
       fabricJson: [],
       mouseFrom: {},
@@ -356,6 +357,8 @@ export default {
                 res.data.data[i] +
                 "?" +
                 Date.parse(new Date()),
+              folder: ending,
+              name: res.data.data[i],
             });
           }
         }
@@ -799,19 +802,71 @@ export default {
     /**
      * 最终提交给后端要说明：scaleX,scaleY
      */
+    xml_obj({ name, xmin, ymin, xmax, ymax }) {
+      const xml = `
+          <object>
+            <name>${name}</name>
+            <pose>Unspecified</pose>
+            <truncated>0</truncated>
+            <difficult>0</difficult>
+            <bndbox>
+              <xmin>${xmin}</xmin>
+              <ymin>${ymin}</ymin>
+              <xmax>${xmax}</xmax>
+              <ymax>${ymax}</ymax>
+            </bndbox>
+          </object>    
+      `;
+      return xml;
+    },
+    //点击保存修改调用的方法
     getData() {
-      // console.log(JSON.parse(this.fabricJson));
-      /* console.log(
-        "this.editorCanvas",
-        this.editorCanvas,
-        this.editorCanvas.toJSON()
-      ); */
-      // rectId自定义属性
-      localStorage.setItem(
-        "canvasdata",
-        JSON.stringify(this.editorCanvas.toJSON(["rectId", "textID", "lockScalingFlip"]))
-      );
-      console.log("getObjects", this.editorCanvas.getObjects());
+      let self = this;
+      let xml = "";
+      this.fabricJson.forEach(function (str) {
+        // 解析文件
+        const data = JSON.parse(str);
+        console.log(data);
+        // 获取图片宽
+        const imgWidth = data.backgroundImage.width;
+        // 获取图片高
+        const imgHeight = data.backgroundImage.height;
+        // 获取图片路径
+        const src = data.backgroundImage.src;
+        // 获取图片文件夹信息
+        const folderName = src.split("/").slice(-2, -1)[0];
+        // 获取图片名
+        const fileName = src.split("/").slice(-1)[0].split("?")[0];
+        xml = `
+        <annotation>
+          <folder>${folderName}</folder>
+          <filename>${fileName}</filename>
+          <path>/${folderName}/${folderName}</path>
+          <source>
+            <database>Unspecified</database>
+          </source>
+          <size>
+            <width>${imgWidth}</width>
+            <height>${imgHeight}</height>
+            <depth>3</depth>
+          </size>`;
+        // 遍历矩形框信息
+        data.objects.forEach(function (obj) {
+          // 获取矩形框信息
+          const { left, top, width, height } = obj;
+          // 获取标签名
+          const name = obj.objects[1].text;
+          xml += self.xml_obj({
+            name: name,
+            xmin: left * 4,
+            ymin: top * 4,
+            xmax: (left + width) * 4,
+            ymax: (top + height) * 4,
+          });
+        });
+        xml += "</annotation>";
+      });
+      console.log(xml);
     },
   },
 };
