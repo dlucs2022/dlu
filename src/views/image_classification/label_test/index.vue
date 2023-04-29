@@ -821,7 +821,7 @@ export default {
     },
     //点击保存修改调用的方法
     getData() {
-      let self = this;
+      let that = this;
       let xml = "";
       this.fabricJson.forEach(function (str) {
         // 解析文件
@@ -856,7 +856,7 @@ export default {
           const { left, top, width, height } = obj;
           // 获取标签名
           const name = obj.objects[1].text;
-          xml += self.xml_obj({
+          xml += that.$options.methods.xml_obj({
             name: name,
             xmin: left * 4,
             ymin: top * 4,
