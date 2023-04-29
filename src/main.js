@@ -7,7 +7,7 @@ import router from "./router";
 import SlideVerify from 'vue-monoplasty-slide-verify'
 import uploader from 'vue-simple-uploader'
 import App from "./App.vue";
-import  fabric from "fabric"
+import fabric from "fabric"
 
 Vue.use(fabric)
 Vue.use(uploader)
