@@ -6,14 +6,18 @@
     width="40%"
     >
     <div>
-        <el-progress :percentage="percentage" :color="customColorMethod"></el-progress>
+        <el-progress :percentage="percentage" :text-inside="true" :stroke-width="30" 
+        :color="customColorMethod" :format="progress_format"></el-progress>
     </div>
     <span slot="footer" class="dialog-footer">
         <el-button @click="pregress_dialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="pregress_dialogVisible = false">确 定</el-button>
     </span>
     </el-dialog>
-    <div id="pic-label">
+    <div id="pic-label" v-loading="cardLoading" 
+    element-loading-text="拼命加载中"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 1)">
       <div class="canvasDraw">
         <el-button @click="getData">保存修改</el-button>
         <el-button @click="getAiByRootPath">智能标注</el-button>
@@ -101,8 +105,8 @@
 </template>
 
 <script>
-import fabric from "fabric";
-import uuid from "vue-uuid";
+import { fabric } from "fabric";
+import { uuid } from "vue-uuid";
 import dao from "@/api/dao";
 export default {
   data() {
@@ -150,6 +154,9 @@ export default {
         pregress_dialogVisible:false,
         percentage:0,
         detections:[],
+        cardLoading : false,
+        progress_total:0,
+        progress_over:0,
     };
   },
   mounted() {
@@ -169,13 +176,18 @@ export default {
   },
   methods: {
     getAiByRootPath(){
+        
         dao.getAiByRootPath(this.imgURL_root_path).then(res => {
             if(res.data.task_id){
                 this.intervalQuery(res.data.task_id)
             }
         })
     },
+    progress_format(percentage){
+      return `已处理：${this.progress_over}/${this.progress_total}张 , 进度：${percentage}%`
+    },
     intervalQuery(task_id){
+        this.cardLoading = true
         this.pregress_dialogVisible = true
         // this.pageLoading = true
         // 设置整点定时发送请求
@@ -203,10 +215,23 @@ export default {
               this.detections.push(res.data.detection[k].detections)   
             } 
         })
+        this.cardLoading = true
         this.createFabricByRes()
+        setTimeout(() => {
+          this.changeimg('next')
+          this.changeimg('pre')
+          this.cardLoading = false
+           console.log(this.fabricJson);
+        }, 5000);
+       
+        
     },
     createFabricByRes(){
+      
       for( let i=0 ; i<this.detections.length ; i++ ){    //每个i代表每个图像
+          if(i == 0 ){
+            this.editorCanvas.clear().renderAll();
+          }
           this.initeditorCanvas(i)
           for( let j=0 ; j<this.detections[i].length ; j++){    //代表每个图像的每个bbox
             let rectId = uuid.v1();
@@ -218,13 +243,16 @@ export default {
             const drawingObject = new fabric.Rect({
               width: width,
               height: height,
-              fill: "#d70202",
+              fill: "rgba(255,255,255,0.4)",
               lockRotation: true,
-              opacity: 0.2,
+              opacity: 1,
               rectId,
               lockScalingFlip: true, // 禁止负值反转
               originX: "center",
               originY: "center",
+              stroke: "#00fdf8",
+              strokeWidth: 1,
+              strokeLineJoin:"round"
             });
             const text = new fabric.Textbox("", {
               // width,
@@ -252,15 +280,27 @@ export default {
                 lockRotation: true,
               });
               this.editorCanvas.add(group);
-              console.log("this.editorCanvasssssssssss", this.editorCanvas);
+              // console.log("this.editorCanvasssssssssss", this.editorCanvas);
               
               this.drawingObject = drawingObject;
             }
           }
           this.fabricJson[i] = 
-            this.editorCanvas.toJSON(["rectId", "textID", "lockScalingFlip"])
+            this.editorCanvas.toJSON(["rectId", "textID", "lockScalingFlip","backgroundImage"])
           this.editorCanvas.clear().renderAll();
       }  
+      //都运行结束后，this.editorCanvas改为当前图片的
+      let self = this
+      // this.initeditorCanvas(this.activeIndex)
+      this.editorCanvas.loadFromJSON(
+          this.fabricJson[this.activeIndex],
+          this.editorCanvas.renderAll.bind(this.editorCanvas),
+          function (o, object) {
+            // self.cardLoading = false
+          }
+      )
+      
+      
     },
     customColorMethod(percentage) {
         if (percentage < 30) {
@@ -273,7 +313,11 @@ export default {
       },
     queryPregress(task_id){
         dao.queryPregress(task_id).then( res => {
+          /* {"status":true,"message":"successful",
+        "task_id":"dd22a337-e653-11ed-a6ce-2c335887f234","progress":0.8,"total":49,"processed":39} */
             this.percentage = parseInt(res.data.progress * 100)
+            this.progress_total = res.data.total,
+            this.progress_over = res.data.processed
             return parseInt(res.data.progress * 100)
         })
     },
@@ -400,7 +444,7 @@ export default {
         });
     },
     init() {
-      this.initeditorCanvas();
+      this.initeditorCanvas('init');
       this.initD();
     },
     // 初始化模板编辑画布
@@ -415,19 +459,19 @@ export default {
       // this.editorCanvas.selection = false;
       // this.editorCanvas.toJSON(['rectId'])
       // this.editorCanvas.skipTargetFind = true;
-    
       let img = ''
-      if(i === 'init'){
+
+      if(i === 'init' ){
           // 初始化canvas
           this.editorCanvas = new fabric.Canvas("labelCanvas", {
-          // devicePixelRatio: true,
-          width: this.canvasInfo.width, // canvas 宽
-          height: this.canvasInfo.height,
-          backgroundColor: "#ffffff",
-          transparentCorners: false,
-          fireRightClick: true, // 启用右键，button的数字为3
-          stopContextMenu: true, // 禁止默认右键菜单
-        });   
+            // devicePixelRatio: true,
+            width: this.canvasInfo.width, // canvas 宽
+            height: this.canvasInfo.height,
+            backgroundColor: "#ffffff",
+            transparentCorners: false,
+            fireRightClick: true, // 启用右键，button的数字为3
+            stopContextMenu: true, // 禁止默认右键菜单
+          });   
           img = this.imgList[0].path
       }else{
           img = this.imgList[i].path
@@ -589,13 +633,16 @@ export default {
       const drawingObject = new fabric.Rect({
         width: width,
         height: height,
-        fill: "#d70202",
+        fill: "rgba(255,255,255,0.4)",
         lockRotation: true,
-        opacity: 0.2,
+        opacity: 1,
         rectId,
         lockScalingFlip: true, // 禁止负值反转
         originX: "center",
         originY: "center",
+        stroke: "#00fdf8",
+        strokeWidth: 1,
+        strokeLineJoin:"round"
       });
       const text = new fabric.Textbox("", {
         // width,
@@ -785,11 +832,12 @@ export default {
         this.editorCanvas.toJSON()
       ); */
       // rectId自定义属性
-      localStorage.setItem(
-        "canvasdata",
-        JSON.stringify(this.editorCanvas.toJSON(["rectId", "textID", "lockScalingFlip"]))
-      );
-      console.log("getObjects", this.editorCanvas.getObjects());
+      // localStorage.setItem(
+      //   "canvasdata",
+      //   JSON.stringify(this.editorCanvas.toJSON(["rectId", "textID", "lockScalingFlip"]))
+      // );
+      // console.log("getObjects", this.editorCanvas.getObjects());
+      console.log(this.fabricJson);
     },
   },
 };
@@ -908,7 +956,7 @@ export default {
 .menu-x div {
   box-sizing: border-box;
   padding: 4px 8px;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid #cccccc;
   cursor: pointer;
 }
 

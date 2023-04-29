@@ -158,7 +158,7 @@ export default {
         return request({
             url:`http://127.0.0.1:80/detect_dir`,
             method:"post",
-            data: JSON.stringify({directory:path,conf:0.8}),
+            data: JSON.stringify({directory:path,conf:0.5}),
             headers: {
                 'Content-Type': 'application/json;charset=UTF-8'
             }
