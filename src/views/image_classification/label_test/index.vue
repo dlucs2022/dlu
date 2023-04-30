@@ -19,8 +19,18 @@
     <div id="pic-label" v-loading="cardLoading" 
     element-loading-text="拼命加载中"
     element-loading-spinner="el-icon-loading"
-    element-loading-background="rgba(0, 0, 0, 1)">
+    element-loading-background="rgba(255, 255, 255, 1)">
       <div class="canvasDraw">
+        <input
+            id="upload"
+            webkitdirectory
+            type="file"
+            name="file"
+            ref="upload_input"
+            tabindex="-1"
+            style="display: none"
+            @change.stop="selectPhoto($event)"
+        />
         <el-button @click="getData">保存修改</el-button>
         <el-button @click="getAiByRootPath">智能标注</el-button>
         <el-button-group style="float: right; width: 50%">
@@ -42,7 +52,7 @@
           ></el-button>
         </el-button-group>
         <div class="context__x">
-          <canvas ref="canvas" id="labelCanvas"> </canvas>
+          <canvas ref="canvas" id="labelCanvas" > </canvas>
           <!-- 编辑和删除弹窗 -->
           <div
             id="menu"
@@ -190,6 +200,9 @@ export default {
     };
   },
   methods: {
+    progress_format(percentage){
+        return `已处理：${this.progress_over}/${this.progress_total}张 ， 进度：${percentage}% `
+    },
     getAiByRootPath(){
         dao.getAiByRootPath(this.imgURL_root_path).then(res => {
             if(res.data.task_id){
@@ -219,6 +232,7 @@ export default {
 
     },
     async queryRes(task_id){
+      this.cardLoading = true 
         await dao.queryRes(task_id).then( res => {
             console.log(res.data);
             for(let k in res.data.detection){
@@ -226,62 +240,81 @@ export default {
             } 
         })
         this.createFabricByRes()
+        setTimeout(() => {
+          this.changeimg('next')
+          this.changeimg('pre')
+          this.cardLoading = false
+        }, 5000);
     },
     createFabricByRes(){
       for( let i=0 ; i<this.detections.length ; i++ ){    //每个i代表每个图像
-          this.initeditorCanvas(i)
-          for( let j=0 ; j<this.detections[i].length ; j++){    //代表每个图像的每个bbox
-            let rectId = uuid.v1();
-            this.drawingObject = null;
-            let left = this.detections[i][j].bbox[0] * this.canvasInfo.width
-            let top = this.detections[i][j].bbox[1] * this.canvasInfo.height 
-            let width = this.detections[i][j].bbox[2] * this.canvasInfo.width
-            let height = this.detections[i][j].bbox[3] * this.canvasInfo.height  
-            const drawingObject = new fabric.Rect({
+        if (i == 0 ) {
+          this.editorCanvas.clear().renderAll();
+        }
+        this.initeditorCanvas(i)
+        for( let j=0 ; j<this.detections[i].length ; j++){    //代表每个图像的每个bbox
+          let rectId = uuid.v1();
+          this.drawingObject = null;
+          let left = this.detections[i][j].bbox[0] * this.canvasInfo.width
+          let top = this.detections[i][j].bbox[1] * this.canvasInfo.height 
+          let width = this.detections[i][j].bbox[2] * this.canvasInfo.width
+          let height = this.detections[i][j].bbox[3] * this.canvasInfo.height  
+          const drawingObject = new fabric.Rect({
+            width: width,
+            height: height,
+            fill: "rgba(255,255,255,0.3)",
+            lockRotation: true,
+            opacity: 1,
+            rectId,
+            lockScalingFlip: true, // 禁止负值反转
+            originX: "center",
+            originY: "center",
+            stroke: "#00fdf8",
+            strokeWidth: 1,
+            strokeLineJoin:"round",
+            lockRotation: true,
+          });
+          const text = new fabric.Textbox("", {
+            // width,
+            // height,
+            text:this.detections[i][j].category,
+            fontFamily: "Helvetica",
+            fill: "white", // 设置字体颜色
+            fontSize: 14,
+            textAlign: "center",
+            rectId,
+            lockScalingX: true,
+            lockScalingY: true,
+            lockScalingFlip: true, // 禁止负值反转
+            originX: "center",
+            originY: "center",
+          });
+          if (drawingObject) {
+            const group = new fabric.Group([drawingObject, text], {
+              rectId,
+              left: left,
+              top: top,
               width: width,
               height: height,
-              fill: "#d70202",
+              lockScalingFlip: true,
               lockRotation: true,
-              opacity: 0.2,
-              rectId,
-              lockScalingFlip: true, // 禁止负值反转
-              originX: "center",
-              originY: "center",
             });
-            const text = new fabric.Textbox("", {
-              // width,
-              // height,
-              text:this.detections[i][j].category,
-              fontFamily: "Helvetica",
-              fill: "white", // 设置字体颜色
-              fontSize: 14,
-              textAlign: "center",
-              rectId,
-              lockScalingX: true,
-              lockScalingY: true,
-              lockScalingFlip: true, // 禁止负值反转
-              originX: "center",
-              originY: "center",
-            });
-            if (drawingObject) {
-              const group = new fabric.Group([drawingObject, text], {
-                rectId,
-                left: left,
-                top: top,
-                width: width,
-                height: height,
-                lockScalingFlip: true,
-                lockRotation: true,
-              });
-              this.editorCanvas.add(group);
-              console.log("this.editorCanvasssssssssss", this.editorCanvas);
-              
-              this.drawingObject = drawingObject;
-            }
+            this.editorCanvas.add(group);
+            console.log("this.editorCanvasssssssssss", this.editorCanvas);
+            
+            this.drawingObject = drawingObject;
           }
-          this.fabricJson[i] = 
-            this.editorCanvas.toJSON(["rectId", "textID", "lockScalingFlip"])
-          this.editorCanvas.clear().renderAll();
+        }
+        this.fabricJson[i] = 
+          this.editorCanvas.toJSON(["rectId", "textID", "lockScalingFlip"])
+        this.editorCanvas.clear().renderAll();
+      }
+      if (this.fabricJson[this.activeIndex] !== "") {
+        this.editorCanvas.loadFromJSON(
+          this.fabricJson[this.activeIndex],
+          this.editorCanvas.renderAll.bind(this.editorCanvas),
+          function (o, object) {}
+        );
       }  
     },
     customColorMethod(percentage) {
@@ -296,6 +329,8 @@ export default {
     queryPregress(task_id){
         dao.queryPregress(task_id).then( res => {
             this.percentage = parseInt(res.data.progress * 100)
+            this.progress_over = res.data.processed
+            this.progress_total = res.data.total
             return parseInt(res.data.progress * 100)
         })
     },
@@ -344,32 +379,52 @@ export default {
     //请求图片地址
     async queryImgList() {
       let path = this.$route.params.path;
-      this.imgURL_root_path = path;
-      let splitPath = path.split("/").slice(-2);
-      let ending = splitPath[0] + "/" + splitPath[1] + "/";
-      // console.log(splitPath);
-      await dao.queryImgList(path).then((res) => {
-        if (res.data.message == "success") {
-          for (let i = 0; i < res.data.data.length; i++) {
-            // +"?"+Date.parse(new Date())
-            this.imgList.push({
-              id: i,
-              path:
-                "http://192.168.46.150:8003/dlu/img/" +
-                ending +
-                res.data.data[i] +
-                "?" +
-                Date.parse(new Date()),
-              folder: ending,
-              name: res.data.data[i],
-            });
+      if( path == undefined ){
+        this.cardLoading = true
+        this.$alert(
+          '您进入的标注页面现只支持手动标注本地数据，若要使用智能标注，请从"云数据"页面通过上传文件夹后进行标注。', 
+          '注意！', {
+          confirmButtonText: '确定',
+          callback: action => {
+            this.$refs.upload_input.click()
+            /* this.$message({
+              type: 'info',
+              message: `action: ${ action }`
+            }); */
+            
           }
-        }
-      });
-      let img = new Image();
-      img.src = this.imgList[0].path;
-      this.canvasInfo.width = 1000;
-      this.canvasInfo.height = 750;
+        });
+
+      }else{
+        this.imgURL_root_path = path;
+        let splitPath = path.split("/").slice(-2);
+        let ending = splitPath[0] + "/" + splitPath[1] + "/";
+        // console.log(splitPath);
+        await dao.queryImgList(path).then((res) => {
+          if (res.data.message == "success") {
+            for (let i = 0; i < res.data.data.length; i++) {
+              // +"?"+Date.parse(new Date())
+              this.imgList.push({
+                id: i,
+                path:
+                  "http://192.168.46.150:8003/dlu/img/" +
+                  ending +
+                  res.data.data[i] +
+                  "?" +
+                  Date.parse(new Date()),
+                folder: ending,
+                name: res.data.data[i],
+              });
+            }
+          }
+        });
+        
+        this.canvasInfo.width = 1000;
+        this.canvasInfo.height = 750;
+        this.init();
+      }
+      
+      
       // let that = this
       // img.onload( res =>{
       //     that.imgW = img.width
@@ -380,7 +435,25 @@ export default {
       // alert('width:'+img.width+',height:'+img.height);
 
       // console.log(this.imgW);
-      this.init();
+      
+    },
+    // 初始化加载图片
+    selectPhoto(event) {
+        let fileList = event.target.files
+        var tempList = []
+        for (let i = 0; i < fileList.length; i++) {
+            if (fileList[i].type == 'image/gif' || fileList[i].type == 'image/png' || fileList[i].type == 'image/jpeg' || fileList[i].type == 'image/jpg' || fileList[i].type == 'image/bmp'|| fileList[i].type == 'image/png') {
+                let fileUrl = URL.createObjectURL(fileList[i]);  // 获取文件url
+                tempList.push({id:i, file: fileList[i], path: fileUrl }) // data中显示的图片url 
+            }
+        }
+        this.imgList = tempList
+        event.target.value = "" // 解决不能选同一个文件
+        
+        this.canvasInfo.width = 1000;
+        this.canvasInfo.height = 750;
+        this.init();
+        this.cardLoading = false
     },
     // 按下backspace进行删除
     backSpaceDel() {
@@ -617,7 +690,7 @@ export default {
       const drawingObject = new fabric.Rect({
         width: width,
         height: height,
-        fill: "rgba(255,255,255,0.4)",
+        fill: "rgba(255,255,255,0.3)",
         lockRotation: true,
         opacity: 1,
         rectId,
@@ -827,6 +900,11 @@ export default {
     },
     //点击保存修改调用的方法
     getData() {
+      this.fabricJson[this.activeIndex] = this.editorCanvas.toJSON([
+        "rectId",
+        "textID",
+        "lockScalingFlip",
+      ]);
       let that = this;
       let xml = "";
       this.fabricJson.forEach(function (str) {
@@ -894,10 +972,10 @@ export default {
     #labelCanvas {
       position: relative;
       box-shadow: 0 0 25px #cac6c6;
-      width: 100%;
+      width: 1000px;
       display: block;
       // margin: 15px auto;
-      height: 100%;
+      height: 750px;
 
       #editDel {
         position: absolute;
