@@ -175,6 +175,11 @@
         <el-button @click="dialogVisible_setting_del = false">取 消</el-button>
       </span>
     </el-dialog>
+    <!-- 云标签对话框 -->
+    <!-- cloud_label_dialog -->
+    <el-dialog title="云端标签空间" :visible.sync="cloud_label_dialog" width="40%">
+       <el-button @click="click_upload">ssssssss</el-button>
+    </el-dialog>
     <div class="image_classification">
       <div class="image_classification_left">
         <div class="tool_left">
