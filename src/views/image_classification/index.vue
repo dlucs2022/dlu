@@ -178,7 +178,25 @@
     <!-- 云标签对话框 -->
     <!-- cloud_label_dialog -->
     <el-dialog title="云端标签空间" :visible.sync="cloud_label_dialog" width="40%">
-       <el-button @click="click_upload">ssssssss</el-button>
+      <el-button @click="cloud_label">获取标签列表</el-button>
+      <el-collapse v-model="activeNames" @change="handleChange">
+        <el-collapse-item :title="item.labels_name" name="1" v-for="item in cloudLabel">
+          <el-scrollbar style="width: 600px">
+            <el-descriptions
+              direction="vertical"
+              :column="item.lebels_data.length"
+              border
+            >
+              <el-descriptions-item
+                :label="label.father"
+                v-for="label in item.lebels_data"
+                contentStyle="width:100px"
+                >{{ label.children }}</el-descriptions-item
+              >
+            </el-descriptions>
+          </el-scrollbar>
+        </el-collapse-item>
+      </el-collapse>
     </el-dialog>
     <div class="image_classification">
       <div class="image_classification_left">

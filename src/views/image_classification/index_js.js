@@ -30,7 +30,7 @@ export default {
             explain_dialogVisible: false,//操作说明的对话框
             feedback_dialogVisible: false,//反馈的对话框
             data_statistics_dialogVisible: false,//统计数据的对话框
-            cloud_label_dialog:false, //云端标签的对话框
+            cloud_label_dialog: false, //云端标签的对话框
             dataStatistics: {        //统计数据中：加载和其中的数据
                 flag: false,
                 datas: [],
@@ -52,6 +52,7 @@ export default {
             { index: 6, val: false }, { index: 7, val: false }, { index: 8, val: false }, { index: 9, val: false }],
             keyArray: [false, false, false, false, false, false, false, false, false, false],        // 表示从0-9的按键是否已被占用
 
+            cloudLabel: [],
             label_f: [],
             label_c: [],     // 格式：[{father:‘鸟类’,children:‘小小鸟’,keyValue:''},{},{}...]
             label_age: ['未知', '幼年', '青年', '成年'],
@@ -69,6 +70,7 @@ export default {
             imgNameAndIndexList: [],//图片名加索引数组[{imageName:oo1.jpg,index:1},{},{}]这样的数组
             empty_label_imgs: [],    //  空标签的照片们
             no_empty_label_imgs: [], //  有标签的照片们  {imgName:item.imgName,imgIndex:item.imgIndex,deleted:true}
+            activeNames: []  //// 折叠面板
 
         }
     },
@@ -79,6 +81,10 @@ export default {
         this.keyDownReview()
     },
     methods: {
+        // 折叠面板
+        handleChange(val) {
+            // console.log(val);
+        },
         handleOpen(key, keyPath) {
             console.log("handleOpen", key, keyPath);
         },
@@ -735,13 +741,17 @@ export default {
             }
 
         },
-
+        cloud_label() {
+            this.cloudLabel = dao.cloudLabel()
+            // console.log(this.cloudLabel);
+        }
+        ,
         //上传LabelCSV文件时的方法
         select_LabelCsv(event) {
             //先选择时清空现有的还是新增
             const that = this
             let fileList = event.target.files
-            // console.log(fileList);
+            // console.log("fileList", fileList);
             //var input = document.getElementById("fileOutput");
             // var input = document.querySelector('input[type = "file"]')
             var file = fileList[0];
