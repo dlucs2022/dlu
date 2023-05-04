@@ -184,6 +184,20 @@ export default {
                 'Content-Type': 'application/json;charset=UTF-8'
             }
         })
+    },
+
+    upload_now_lebels(name,labels_name,labels){
+        // console.log(name);
+        return request({
+            url:`/file/upload_now_lebels?name=${name}&labels_name=${labels_name}`,
+            method:"post",
+            data:{
+                labels:labels
+            },
+            headers: {
+                'Content-Type': 'application/json;charset=UTF-8'
+            }
+        })
     }
 
 };

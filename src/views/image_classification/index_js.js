@@ -79,6 +79,51 @@ export default {
         this.keyDownReview()
     },
     methods: {
+        //上传现有的标签组
+        upload_now_lebels(){
+            let islogin = sessionStorage.getItem("user");
+            islogin = JSON.parse(islogin);
+            if (!islogin) {
+                this.$confirm("请先登录", "提示", {
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                type: "warning",
+                })
+                .then(() => {
+                    this.$router.push("/login");
+                })
+                .catch(() => {
+                    // vm.$router.push("/home");
+                });
+            }else{
+                // console.log(islogin.name);
+                this.$prompt('标题组命名', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                }).then(({ value }) => {
+                    if (value == '' || value == 'null' || value == null) {
+                        this.$message({
+                            type: 'danger',
+                            message: '命名失败'
+                        });
+                    } else {
+                        this.$message({
+                            type: 'success',
+                            message: '标题组名为: ' + value + '，已上传！'
+                        });
+                        dao.upload_now_lebels(islogin.name,value,JSON.stringify(this.label_c)).then(res => {
+                            console.log(res);
+                        })
+                    }
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '取消输入'
+                    });
+                });
+                
+            }
+        },
         handleOpen(key, keyPath) {
             console.log("handleOpen", key, keyPath);
         },
