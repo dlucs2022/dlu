@@ -17,9 +17,8 @@
       </div>
       <div class="top-image">
         <el-carousel height="50vh" :interval="3000">
-          <el-carousel-item v-for="(item, index) in imgs" :key="index" >
-            <el-image :src="item.src" style="width: 100%"
-                fit="fill" />
+          <el-carousel-item v-for="(item, index) in imgs" :key="index">
+            <el-image :src="item.src" style="width: 100%" fit="fill" />
           </el-carousel-item>
         </el-carousel>
       </div>
@@ -314,14 +313,7 @@ export default {
   computed: {},
   watch: {},
   mounted() {},
-  methods: {
-    logss() {
-      console.log("sssssssss");
-    },
-    handleSelect(key, keyPath) {
-      console.log(key, keyPath);
-    },
-  },
+  methods: {},
 };
 </script>
 <style lang="scss">
@@ -368,7 +360,9 @@ export default {
     padding: 5px;
     display: flex;
     width: 420px;
-    margin-left: 20%;
+    // margin-left: 20%;
+    right: 50%;
+    // left: 30%;
     margin-top: 50vh;
     box-shadow: 12px 12px 2px 1px rgba(0, 0, 255, 0.2);
     .box-card {

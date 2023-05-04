@@ -32,6 +32,11 @@
     padding-bottom: 0;
 }
 
+.el-menu-item-group {
+    display: flex;
+    overflow-x: auto;
+}
+
 .input-new-tag {
     width: 90px;
     margin-left: 10px;
@@ -79,7 +84,6 @@
     margin-left: 0px;
     margin-top: 8px;
 }
-
 
 .image_classification_left {
     margin-left: 4px;

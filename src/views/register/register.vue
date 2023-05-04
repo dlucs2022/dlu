@@ -232,7 +232,7 @@ export default {
     verifyDialogVisible(newValue, oldValue) {
       if (newValue) {
         //newValue==true 也就是打开了对话框的时候
-        console.log(newValue);
+        // console.log(newValue);
         this.getIsVerify(false);
       }
     },
