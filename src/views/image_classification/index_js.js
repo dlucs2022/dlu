@@ -30,6 +30,7 @@ export default {
             explain_dialogVisible: false,//操作说明的对话框
             feedback_dialogVisible: false,//反馈的对话框
             data_statistics_dialogVisible: false,//统计数据的对话框
+            cloud_label_dialog:false, //云端标签的对话框
             dataStatistics: {        //统计数据中：加载和其中的数据
                 flag: false,
                 datas: [],
@@ -639,10 +640,7 @@ export default {
             console.log('点击了设置按钮');
         },
         downLoad_Sec_Label() {
-            this.$message({
-                message: '云端导入功能将在后续版本开放，敬请期待！',
-                type: 'warning'
-            })
+            this.cloud_label_dialog = true
         },
         // 关闭设置的对话框的事件
         handleClose(done) {
