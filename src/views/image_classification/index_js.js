@@ -214,7 +214,7 @@ export default {
                 const jsonDataArray = Papa.parse(result, { header: true }).data;
                 for (let i = 0; i < jsonDataArray.length - 1; i++) {
                     const jsonData = jsonDataArray[i];
-                    console.log(jsonData);
+                    console.log("jsonData", jsonData);
                     if (
                         jsonData.Y === "\t" &&
                         jsonData.M === "\t" &&
@@ -249,7 +249,7 @@ export default {
                 }
             };
             reader.readAsText(file);
-            console.log(this.csv_list);
+            // console.log(this.csv_list);
         },
         //点击导出按钮后
         export_csv() {
@@ -273,7 +273,7 @@ export default {
                     });
                     this.create_csv(this.csv_list, value)
                 }
-                console.log(this.csv_list);
+                // console.log(this.csv_list);
 
             }).catch(() => {
                 this.$message({
@@ -297,7 +297,7 @@ export default {
             console.log(this.empty_label_imgs);
             this.empty_label_imgs.filter(a => a.exist == true).map(a => a.imgName).forEach(empty => {
                 var a = {}
-                let img = this.imgList.find( a => a.file.name == empty)
+                let img = this.imgList.find(a => a.file.name == empty)
                 var dt = new Date(img.file.lastModifiedDate);
                 a.img_name = empty
                 a.year = dt.getFullYear();
@@ -419,7 +419,7 @@ export default {
 
         //生成一条记录  OR   修改一条记录
         add_data() {
-            console.log(this.csv_list);
+            // console.log(this.csv_list);
             if (this.imgList.length == 1) {
                 this.$alert('生成记录前请先上传照片', '警告', {
                     confirmButtonText: '确定',
@@ -743,7 +743,7 @@ export default {
             //先选择时清空现有的还是新增
             const that = this
             let fileList = event.target.files
-            console.log(fileList);
+            // console.log(fileList);
             //var input = document.getElementById("fileOutput");
             // var input = document.querySelector('input[type = "file"]')
             var file = fileList[0];
@@ -752,7 +752,7 @@ export default {
             reader.onload = function (e) {
                 var csvToText = e.target.result;
                 output = that.csvToJSON(csvToText);
-                console.log(output);
+                // console.log(output);
             };
             reader.readAsText(file);
             event.preventDefault();
@@ -861,8 +861,10 @@ export default {
             this.imgNameAndIndexList = []
             //生成一个 [{imageName:oo1.jpg,index:1},{},{}]这样的数组
             tempList.forEach((item, index) => {
-                this.imgNameAndIndexList.push({ imgName: item.file.name, 
-                    imgIndex: index + 1 })
+                this.imgNameAndIndexList.push({
+                    imgName: item.file.name,
+                    imgIndex: index + 1
+                })
             })
             //将空标签照片数组初始化
             this.empty_label_imgs = []
@@ -874,7 +876,7 @@ export default {
             //清空csv数据列表
             this.csv_list = []
             this.csvId = 1
-            console.log(this.imgList);
+            // console.log(this.imgList);
         },
         // 点击了“上传文件”按钮
         click_upload() {
@@ -1010,7 +1012,7 @@ export default {
                 var no_empty_img_set = new_val.map(a => a.img_name)
                 var no_empty_img_names = Array.from(new Set(no_empty_img_set))  //给csvlist里面的名字们去重 这里面都是非空的图片了
                 for (let [index1, item1] of no_empty_img_names.entries()) {
-                    for (let [index2, item2] of this.no_empty_label_imgs.entries()) { 
+                    for (let [index2, item2] of this.no_empty_label_imgs.entries()) {
                         if (item1 == item2.imgName) {
                             item2.exist = true
                             this.empty_label_imgs[index2].exist = false

@@ -34,9 +34,11 @@
             ><i class="el-icon-picture-outline"></i>照片分拣</template
           >
           <el-menu-item index="/layout/image_classification">人工分拣</el-menu-item>
-          <el-menu-item index="/layout/AI_classfication">智能分拣</el-menu-item>
+          <el-menu-item index="/layout/AI_classfication" :disabled="true"
+            >智能分拣</el-menu-item
+          >
 
-          <el-menu-item index="/layout/label_test">标注 </el-menu-item>
+          <el-menu-item index="/layout/label_test">标注</el-menu-item>
         </el-submenu>
 
         <el-menu-item index="/layout/person_center/"

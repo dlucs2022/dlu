@@ -81,7 +81,7 @@ export default {
     } else {
       this.user = "";
     }
-    console.log("user", this.user);
+    // console.log("user", this.user);
 
     this.getTableData();
   },
@@ -108,7 +108,7 @@ export default {
           this.tableData = res.data.data.rows;
           this.total = res.data.data.total;
         });
-      console.log("tableData", this.tableData);
+      // console.log("tableData", this.tableData);
     },
 
     checkAllSelected() {

@@ -312,7 +312,7 @@
               <el-image
                 :v-if="index <= current && index >= current - 2"
                 :src="item.src"
-                style="width: 100%;"
+                style="width: 100%"
                 fit="contain"
               />
             </el-carousel-item>

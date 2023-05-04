@@ -63,7 +63,7 @@ export default {
     },
     /* 获取待审核列表 */
     checkList(invite_code, pageNumber, pageSize) {
-        console.log(invite_code);
+        // console.log(invite_code);
         return request({
             url: `/user/checkList`,
             params: {
@@ -90,75 +90,75 @@ export default {
         });
     },
 
-    folderComplete(userName,invite_code,folderName,file_number,size,){
+    folderComplete(userName, invite_code, folderName, file_number, size,) {
         return request({
-            url:`/file/folderComplete`,
-            method:"post",
-            params:{
-                userName:userName,
-                invite_code:invite_code,
-                file_name:folderName,
-                file_number:file_number,
-                size:size,
+            url: `/file/folderComplete`,
+            method: "post",
+            params: {
+                userName: userName,
+                invite_code: invite_code,
+                file_name: folderName,
+                file_number: file_number,
+                size: size,
             }
         })
     },
 
-    queryFolderByInviteCode(invite_code){
+    queryFolderByInviteCode(invite_code) {
         return request({
-            url:`/file/queryFolderByInviteCode`,
-            method:"post",
-            params:{
-                invite_code : invite_code
+            url: `/file/queryFolderByInviteCode`,
+            method: "post",
+            params: {
+                invite_code: invite_code
             }
         })
     },
 
-    queryFolderByFileName(invite_code,file_name){
+    queryFolderByFileName(invite_code, file_name) {
         return request({
-            url:`/file/queryFolderByFileName`,
-            method:"post",
-            params:{
-                invite_code:invite_code,
-                file_name:file_name,
+            url: `/file/queryFolderByFileName`,
+            method: "post",
+            params: {
+                invite_code: invite_code,
+                file_name: file_name,
             }
         })
     },
-    fileRename(path,reName){
+    fileRename(path, reName) {
         return request({
-            url:`/file/fileRename`,
-            method:"post",
-            params:{
-                path:path,
-                reName:reName
+            url: `/file/fileRename`,
+            method: "post",
+            params: {
+                path: path,
+                reName: reName
             }
         })
     },
-    deleteFileByPath(path){
+    deleteFileByPath(path) {
         return request({
-            url:`/file/deleteFileByPath`,
-            method:"post",
-            params:{
-                path:path
-            }
-        })
-    },
-
-    queryImgList(path){
-        return request({
-            url:'/file/queryImgList',
-            method:"post",
-            params:{
-                path:path
+            url: `/file/deleteFileByPath`,
+            method: "post",
+            params: {
+                path: path
             }
         })
     },
 
-    getAiByRootPath(path){
+    queryImgList(path) {
         return request({
-            url:`http://127.0.0.1:80/detect_dir`,
-            method:"post",
-            data: JSON.stringify({directory:path,conf:0.5}),
+            url: '/file/queryImgList',
+            method: "post",
+            params: {
+                path: path
+            }
+        })
+    },
+
+    getAiByRootPath(path) {
+        return request({
+            url: `http://127.0.0.1:80/detect_dir`,
+            method: "post",
+            data: JSON.stringify({ directory: path, conf: 0.5 }),
             headers: {
                 'Content-Type': 'application/json;charset=UTF-8'
             }
@@ -166,20 +166,20 @@ export default {
     },
 
 
-    queryPregress(task_id){
+    queryPregress(task_id) {
         return request({
-            url:`http://127.0.0.1:80/progress/${task_id}`,
-            method:"get",
+            url: `http://127.0.0.1:80/progress/${task_id}`,
+            method: "get",
             headers: {
                 'Content-Type': 'application/json;charset=UTF-8'
             }
         })
     },
 
-    queryRes(task_id){
+    queryRes(task_id) {
         return request({
-            url:`http://127.0.0.1:80/result/${task_id}`,
-            method:"get",
+            url: `http://127.0.0.1:80/result/${task_id}`,
+            method: "get",
             headers: {
                 'Content-Type': 'application/json;charset=UTF-8'
             }
