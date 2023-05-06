@@ -61,7 +61,7 @@ const router = new VueRouter({
         {
           name: 'AI_classfication',
           path: 'AI_classfication',
-          component: () => import('./views/image_classification/AI_classfication')
+          component: () => import('./views/image_classification/AI_classfication/index.vue')
         },
 
         {

@@ -318,13 +318,13 @@
             <el-descriptions-item label="图片名">{{
               imgList[current - 1].file.name
             }}</el-descriptions-item>
-            <el-descriptions-item label="大小">{{
+            <!-- <el-descriptions-item label="大小">{{
               Math.round(imgList[current - 1].file.size / 1024) + "K"
             }}</el-descriptions-item>
             <el-descriptions-item label="最后修改时间">{{
               imgList[current - 1].file.lastModifiedDate
                 | formatDate("yyyy-MM-dd HH:mm:ss")
-            }}</el-descriptions-item>
+            }}</el-descriptions-item> -->
             <el-descriptions-item label="多目标">
               <div class="descriptions-div">
                 <el-radio-group v-model="current_data_model">
@@ -714,6 +714,6 @@ import index from "./index.js";
 export default index;
 </script>
 
-<style>
+<style scoped>
 @import url("./index.css");
 </style>

@@ -747,6 +747,6 @@ import index from "./index_js.js";
 export default index;
 </script>
 
-<style>
+<style scoped>
 @import url("./index_css.css");
 </style>
