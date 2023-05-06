@@ -178,8 +178,8 @@
     <!-- 云标签对话框 -->
     <!-- cloud_label_dialog -->
     <el-dialog title="云端标签空间" :visible.sync="cloud_label_dialog" width="40%">
-      <el-button @click="cloud_label">获取标签列表</el-button>
-      <el-collapse v-model="activeNames" @change="handleChange">
+      <el-button @click="upload_now_lebels">上传现有标签组</el-button>
+      <el-collapse :v-if="cloudLabel.length>0" >
         <el-collapse-item :title="item.labels_name" name="1" v-for="item in cloudLabel">
           <el-scrollbar style="width: 600px">
             <el-descriptions
