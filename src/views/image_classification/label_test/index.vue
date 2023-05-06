@@ -905,6 +905,7 @@ export default {
         "textID",
         "lockScalingFlip",
       ]);
+      console.log(this.fabricJson);
       let that = this;
       let xml = "";
       this.fabricJson.forEach(function (str) {

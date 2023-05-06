@@ -31,6 +31,7 @@ export default {
             feedback_dialogVisible: false,//反馈的对话框
             data_statistics_dialogVisible: false,//统计数据的对话框
             cloud_label_dialog: false, //云端标签的对话框
+            cloudLabel: [],
             dataStatistics: {        //统计数据中：加载和其中的数据
                 flag: false,
                 datas: [],
@@ -52,7 +53,7 @@ export default {
             { index: 6, val: false }, { index: 7, val: false }, { index: 8, val: false }, { index: 9, val: false }],
             keyArray: [false, false, false, false, false, false, false, false, false, false],        // 表示从0-9的按键是否已被占用
 
-            cloudLabel: [],
+            
             label_f: [],
             label_c: [],     // 格式：[{father:‘鸟类’,children:‘小小鸟’,keyValue:''},{},{}...]
             label_age: ['未知', '幼年', '青年', '成年'],
@@ -81,6 +82,20 @@ export default {
         this.keyDownReview()
     },
     methods: {
+        //点击云端标签组事件
+        async downLoad_Sec_Label() {
+            this.cloudLabel = dao.cloudLabel()
+            await dao.queryCloudLabels(JSON.parse(sessionStorage.getItem("user")).name).then(res => {
+                this.cloudLabel = res.data.data
+                this.cloudLabel.forEach( a => {
+                    a.labels_name = a.labels_name.split("_-")[1]
+                    a.labels_data = JSON.parse(a.labels_data)
+                })
+            })
+            
+            console.log(this.cloudLabel);
+            this.cloud_label_dialog = true
+        },
         //上传现有的标签组
         upload_now_lebels(){
             let islogin = sessionStorage.getItem("user");
@@ -252,6 +267,7 @@ export default {
                 message: '已无非空图片！'
             });
         },
+        //加载本地csv 续标注
         handle(event) {
             let file = event.raw;
             if (!file) return;
@@ -686,9 +702,7 @@ export default {
         setting_Sec_Label() {
             console.log('点击了设置按钮');
         },
-        downLoad_Sec_Label() {
-            this.cloud_label_dialog = true
-        },
+        
         // 关闭设置的对话框的事件
         handleClose(done) {
             // this.$confirm('确认关闭？').then(_ => {done();}).catch(_ => {});
@@ -782,11 +796,8 @@ export default {
             }
 
         },
-        cloud_label() {
-            this.cloudLabel = dao.cloudLabel()
-            // console.log(this.cloudLabel);
-        }
-        ,
+        
+        
         //上传LabelCSV文件时的方法
         select_LabelCsv(event) {
             //先选择时清空现有的还是新增

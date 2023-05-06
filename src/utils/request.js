@@ -9,7 +9,6 @@
 // export default request
 
 import axios from 'axios'
-import router from "../router"
 // axios.defaults.baseURL = '/api'
 axios.defaults.withCredentials = true;
 

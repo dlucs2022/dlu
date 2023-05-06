@@ -179,8 +179,7 @@ export default {
         const cloudList = [
             {
                 labels_name: "LSM数据专用",
-                lebels_data:
-                    [
+                lebels_data:[
                         {
                             father: "鸟",
                             children: "星鸦",
@@ -313,9 +312,18 @@ export default {
                         },
                     ]
             }
+        ]
+        return cloudList;
+    },
+
+    queryCloudLabels(name){
+        return request({
+            url: `/file/queryCloudLabels?name=${name}`,
+            method:"post",
         })
     },
 
+        
     upload_now_lebels(name,labels_name,labels){
         // console.log(name);
         return request({
@@ -329,8 +337,4 @@ export default {
             }
         })
     }
-
-        ];
-        return cloudList;
-    },
 };

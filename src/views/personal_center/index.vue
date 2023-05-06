@@ -1,12 +1,5 @@
 <template>
-  <div style="background-color: white">
-    <el-container style="height: 800px; border: 1px solid #eee">
-      <el-aside width="200px" style="margin-top: 1%">
-        <div style="width: 190px; background-color: white; padding: 5px; margin: auto">
-          <!-- <p style="margin: 0 auto; text-align: center">
-            {{ user.name }}
-          </p> -->
-        </div>
+  <div style="background-color: white ; display:flex ;" >
 
         <el-menu :default-openeds="['1', '2']">
           <el-submenu index="1">
@@ -37,14 +30,12 @@
             </el-menu-item-group>
           </el-submenu>
         </el-menu>
-      </el-aside>
 
       <el-container style="background-color: white">
         <el-main>
           <router-view />
         </el-main>
       </el-container>
-    </el-container>
   </div>
 </template>
 
