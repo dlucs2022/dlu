@@ -118,7 +118,7 @@
         <div class="add-folder-2" @click="openFileList">
           {{ type == 0 ? "标注此数据" : "下载文件" }}
         </div>
-        <div class="add-folder-2" @click="openAIClassfication">
+        <div class="add-folder-2" @click="openAIClassfication" v-show="this.type == 0">
           {{ type == 0 ? "分拣此数据" : "下载文件" }}
         </div>
         <div style="border: 2px solid rgba(18, 17, 42, 0.07)"></div>
