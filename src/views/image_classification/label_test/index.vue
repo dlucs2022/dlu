@@ -133,7 +133,6 @@
               </div>
             </li>
           </el-scrollbar>
-          
         </ul>
       </div>
     </div>
@@ -148,74 +147,150 @@ import dao from "@/api/dao";
 export default {
   data() {
     return {
-        activeIndex:0,
-        imgList:[],
-        canvasInfo: {
-            width: "",
-            height: "",
+      activeIndex: 0,
+      imgList: [],
+      canvasInfo: {
+        width: "",
+        height: "",
+      },
+      editorCanvas: "",
+      fabricJson: [],
+      mouseFrom: {},
+      mouseTo: {},
+      showCon: false,
+      drawingObject: null,
+      currentTarget: null,
+      menuPosition: null,
+      rectId: "",
+      activeEl: "",
+      isDrawing: false,
+      currentType: "rect",
+      // 标签栏
+      isAdd: false,
+      tagCon: "",
+      tagData: [
+        {
+          value: "兽",
+          id: 1,
+          isEdit: false,
         },
-        editorCanvas: "",
-        fabricJson:[],
-        mouseFrom: {},
-        mouseTo: {},
-        showCon: false,
-        drawingObject: null,
-        currentTarget: null,
-        menuPosition: null,
-        rectId: "",
-        activeEl: "",
-        isDrawing: false,
-        currentType: "rect",
-        // 标签栏
-        isAdd: false,
-        tagCon: "",
-        tagData: [
-            {
-            value: "兽",
-            id: 1,
-            isEdit: false,
-            },
-            
-        ],
-        imgW:4000,
-        imgH:3000,
-        imgWidth :0,
-        imgHeight:0,
-        xml:[],
-        zip:'',
-        imgURL_root_path : '',
-        pageLoading:false,
-        customColors: [
-          {color: '#f56c6c', percentage: 20},
-          {color: '#e6a23c', percentage: 40},
-          {color: '#5cb87a', percentage: 60},
-          {color: '#1989fa', percentage: 80},
-          {color: '#6f7ad3', percentage: 100}
-        ],
-        pregress_dialogVisible:false,
-        percentage:0,
-        detections:[],
-        cardLoading : false,
-        progress_total:0,
-        progress_over:0,
-        LSM_label:[{'en': 'cow', 'cn': '牛'}, {'en': 'Goat', 'cn': '山羊'}, {'en': 'Human', 'cn': '人'}, {'en': 'Black snub+AC0-nosed monkey',
-         'cn': '滇金丝猴'}, {'en': 'Horse', 'cn': '马'}, {'en': "Pallas's squirrel", 'cn': '赤腹松鼠'}, {'en': 'Indian muntjac', 'cn': '赤麂 '},
-          {'en': 'Yak', 'cn': '牦牛'}, {'en': 'Tufted deer', 'cn': '毛冠鹿'}, {'en': 'tree shrew', 'cn': '树鼩'}, {'en': 'Chestnut thrush', 'cn': '灰头鹅 '},
-           {'en': 'Sheep', 'cn': '绵羊'}, {'en': 'Black+AC0-faced laughingthrush', 'cn': '黑顶噪鹛'}, {'en': 'Asian black bear', 'cn': '亚州黑熊 '}, 
-           {'en': 'Yellow+AC0-throated marten', 'cn': '黄喉貂'}, {'en': 'Yunnan Hare', 'cn': '西南兔(云南兔)'}, {'en': 'Dog', 'cn': '狗'}, {'en': "Perny's long+AC0-nosed squirrel", 'cn': '珀氏长吻松鼠'},
-            {'en': "Lady Amherst's pheasant", 'cn': '白腹锦鸡'}, {'en': "Elliot's laughingthrush", 'cn': '橙翅噪鹛'}, {'en': 'Koklass pheasant', 'cn': '勺鸡 '}, {'en': 'Leopard cat', 'cn': '豹猫'}, 
-            {'en': 'Giant laughingthrush', 'cn': '大噪鹛'}, {'en': 'Masked palm civet', 'cn': '果子狸'}, {'en': 'Crimson+//0Aof/9AKo-bellied Tragopan', 'cn': '红腹角雉'}, {'en': 'Spotted nutcracker', 'cn': '星鸦'}, {'en': 'Chestnut+AC0-crowned laughingthrush', 'cn': '红头噪鹛'},
-             {'en': 'Squirrel', 'cn': '松鼠'}, {'en': 'White+AC0-browed bush robin', 'cn': '白眉林鸲'}, {'en': 'Alpine thrush', 'cn': '黄嘴山鸦'}, {'en': 'Long+AC0-tailed thrush', 'cn': '长尾地鸫'}, {'en': 'Maroon+AC0-backed accentor', 'cn': '栗背岩鹨'}, {'en': 'Himalayan bluetail', 'cn': '蓝眉林鸲'},
-              {'en': "Temminck's tragopan", 'cn': '红腹角雉'}, {'en': 'Hill partridge', 'cn': '环颈山鹧鸪 '}, {'en': 'Red+AC0-billed chough', 'cn': '红嘴山鸦'}, {'en': 'Darjeeling woodpecker', 'cn': '黄颈啄木鸟'}, {'en': 'Rufous+AC0-bellied niltava', 'cn': '棕腹仙鹟'}, {'en': 'Forest musk deer', 'cn': '林麝'}, {'en': 'Grey+AC0-headed woodpecker', 'cn': '灰头绿啄木鸟'},
-               {'en': 'Siberian weasel', 'cn': '黄鼠狼'}, {'en': "Mrs. Hume's pheasant", 'cn': '黑颈长尾雉'}, {'en': 'White+AC0-throated redstart', 'cn': '白喉红尾鸲'}, {'en': 'Cat', 'cn': '猫'}, {'en': 'Chestnut+AC0-bellied rock thrush', 'cn': '栗腹矶鸫'}, {'en': 'Great parrotbill', 'cn': '红嘴鸦雀'}, {'en': 'Yellow+AC0-billed blue magpie', 'cn': '黄嘴蓝喜鹊'}, 
-               {'en': 'Blue+AC0-fronted redstart', 'cn': '蓝额红尾鸲'}, {'en': 'Great spotted woodpecker', 'cn': '大斑啄木鸟'}, {'en': 'spotted giant flying squirrel+ADw-U+00D//QA+-', 'cn': '小鼯鼠'}, {'en': "Swinhoe's striped squirrel", 'cn': '隐纹花松鼠'}, {'en': 'Grey+AC0-winged Blackbird', 'cn': '灰翅鸫'}, {'en': 'Alpine chough', 'cn': '黄嘴山鸦'}, 
-               {'en': 'Red+AC0-billed leiothrix', 'cn': '红嘴相思鸟'}, {'en': 'Collared grosbeak', 'cn': '黄颈拟蜡嘴雀'}, {'en': 'Bear', 'cn': '熊'}, {'en': 'White+AC0-browed fulvetta', 'cn': '白眉雀鹛'}, {'en': 'Grey+AC0-sided laughingthrush', 'cn': '灰胁噪鹛'}, {'en': 'Golden bush robin', 'cn': '金色林鸲'}, {'en': 'Plumbeous water redstart', 'cn': '红尾水鸲'}, 
-               {'en': 'Yellow+AC0-billed Blue Magpie', 'cn': '黄嘴蓝鹊'}, {'en': "Naumann's thrush", 'cn': '红尾鸫'}, {'en': 'Orange+AC0-bellied Himalayan squirrel', 'cn': '橙腹长吻松鼠'}, {'en': 'Bianchi+//0Aof/9AK8-s warbler', 'cn': '比氏鹟莺'}, {'en': 'Streak+AC0-breasted scimitar babbler', 'cn': '棕颈钩嘴鹛'}, {'en': 'Indian giant flying squirrel', 'cn': '霜背大鼯鼠'}, {'en': 'Yellow+AC0-browed tit', 'cn': '黄屑林雀'}, 
-               {'en': 'Ashy drongo', 'cn': '灰卷尾'}, {'en': 'Grey+AC0-hooded fulvetta', 'cn': '褐头雀鹛'}, {'en': 'Yellow+AC0-bellied weasel', 'cn': '黄腹鼬'}, {'en': 'Rhesus macaque', 'cn': '猕猴'}, {'en': 'White+AC0-bellied woodpecker', 'cn': '白腹黑啄木鸟'}, {'en': 'Besra', 'cn': '松雀鹰'}, {'en': 'Common cuckoo', 'cn': '大杜鹃'}, {'en': 'Mountain bamboo partridge', 'cn': '棕胸竹鸡'}, {'en': 'White+AC0-throated laughingthrush', 'cn': '白喉噪鹛'},
-                {'en': 'Red+AC0-billed blue magpie', 'cn': '红嘴蓝鹊'}, {'en': 'Snowy+AC0-browed flycatcher', 'cn': '棕胸蓝鹟'}, {'en': 'White+AC0-speckled laughingthrush', 'cn': '白点鹛'}, {'en': 'Eyebrowed thrush', 'cn': '白眉鸫'}, {'en': 'Small Indian Civet', 'cn': '小灵猫'}, {'en': 'Blood pheasant', 'cn': '血雉'}, {'en': 'Black+AC0-necklaced scimitar babbler', 'cn': '斑胸钩嘴鹛'},
-                 {'en': 'Large+AC0-billed crow', 'cn': '大嘴乌鸦'}, {'en': 'Chinese babax', 'cn': '矛纹草鹛'}, 
-                {'en': 'Spotted laughingthrush', 'cn': '眼纹噪鹛'}, {'en': 'Small niltava', 'cn': '小仙鹟'}, {'en': 'Chinese thrush', 'cn': '宝兴歌鸫 '}, {'en': 'Assam macaque', 'cn': '熊猴'}, 
-        {'en': 'Daurian redstart', 'cn': '北红尾鸲'}, {'en': 'Dark+AC0-backed sibia', 'cn': '黑背奇鹛'}, {'en': 'Red panda', 'cn': '小熊猫'}]
+      ],
+      imgW: 4000,
+      imgH: 3000,
+      imgWidth: 0,
+      imgHeight: 0,
+      xml: [],
+      zip: "",
+      imgURL_root_path: "",
+      pageLoading: false,
+      customColors: [
+        { color: "#f56c6c", percentage: 20 },
+        { color: "#e6a23c", percentage: 40 },
+        { color: "#5cb87a", percentage: 60 },
+        { color: "#1989fa", percentage: 80 },
+        { color: "#6f7ad3", percentage: 100 },
+      ],
+      pregress_dialogVisible: false,
+      percentage: 0,
+      detections: [],
+      cardLoading: false,
+      progress_total: 0,
+      progress_over: 0,
+      path: "",
+      LSM_label: [
+        { en: "cow", cn: "牛" },
+        { en: "Goat", cn: "山羊" },
+        { en: "Human", cn: "人" },
+        { en: "Black snub+AC0-nosed monkey", cn: "滇金丝猴" },
+        { en: "Horse", cn: "马" },
+        { en: "Pallas's squirrel", cn: "赤腹松鼠" },
+        { en: "Indian muntjac", cn: "赤麂 " },
+        { en: "Yak", cn: "牦牛" },
+        { en: "Tufted deer", cn: "毛冠鹿" },
+        { en: "tree shrew", cn: "树鼩" },
+        { en: "Chestnut thrush", cn: "灰头鹅 " },
+        { en: "Sheep", cn: "绵羊" },
+        { en: "Black+AC0-faced laughingthrush", cn: "黑顶噪鹛" },
+        { en: "Asian black bear", cn: "亚州黑熊 " },
+        { en: "Yellow+AC0-throated marten", cn: "黄喉貂" },
+        { en: "Yunnan Hare", cn: "西南兔(云南兔)" },
+        { en: "Dog", cn: "狗" },
+        { en: "Perny's long+AC0-nosed squirrel", cn: "珀氏长吻松鼠" },
+        { en: "Lady Amherst's pheasant", cn: "白腹锦鸡" },
+        { en: "Elliot's laughingthrush", cn: "橙翅噪鹛" },
+        { en: "Koklass pheasant", cn: "勺鸡 " },
+        { en: "Leopard cat", cn: "豹猫" },
+        { en: "Giant laughingthrush", cn: "大噪鹛" },
+        { en: "Masked palm civet", cn: "果子狸" },
+        { en: "Crimson+//0Aof/9AKo-bellied Tragopan", cn: "红腹角雉" },
+        { en: "Spotted nutcracker", cn: "星鸦" },
+        { en: "Chestnut+AC0-crowned laughingthrush", cn: "红头噪鹛" },
+        { en: "Squirrel", cn: "松鼠" },
+        { en: "White+AC0-browed bush robin", cn: "白眉林鸲" },
+        { en: "Alpine thrush", cn: "黄嘴山鸦" },
+        { en: "Long+AC0-tailed thrush", cn: "长尾地鸫" },
+        { en: "Maroon+AC0-backed accentor", cn: "栗背岩鹨" },
+        { en: "Himalayan bluetail", cn: "蓝眉林鸲" },
+        { en: "Temminck's tragopan", cn: "红腹角雉" },
+        { en: "Hill partridge", cn: "环颈山鹧鸪 " },
+        { en: "Red+AC0-billed chough", cn: "红嘴山鸦" },
+        { en: "Darjeeling woodpecker", cn: "黄颈啄木鸟" },
+        { en: "Rufous+AC0-bellied niltava", cn: "棕腹仙鹟" },
+        { en: "Forest musk deer", cn: "林麝" },
+        { en: "Grey+AC0-headed woodpecker", cn: "灰头绿啄木鸟" },
+        { en: "Siberian weasel", cn: "黄鼠狼" },
+        { en: "Mrs. Hume's pheasant", cn: "黑颈长尾雉" },
+        { en: "White+AC0-throated redstart", cn: "白喉红尾鸲" },
+        { en: "Cat", cn: "猫" },
+        { en: "Chestnut+AC0-bellied rock thrush", cn: "栗腹矶鸫" },
+        { en: "Great parrotbill", cn: "红嘴鸦雀" },
+        { en: "Yellow+AC0-billed blue magpie", cn: "黄嘴蓝喜鹊" },
+        { en: "Blue+AC0-fronted redstart", cn: "蓝额红尾鸲" },
+        { en: "Great spotted woodpecker", cn: "大斑啄木鸟" },
+        { en: "spotted giant flying squirrel+ADw-U+00D//QA+-", cn: "小鼯鼠" },
+        { en: "Swinhoe's striped squirrel", cn: "隐纹花松鼠" },
+        { en: "Grey+AC0-winged Blackbird", cn: "灰翅鸫" },
+        { en: "Alpine chough", cn: "黄嘴山鸦" },
+        { en: "Red+AC0-billed leiothrix", cn: "红嘴相思鸟" },
+        { en: "Collared grosbeak", cn: "黄颈拟蜡嘴雀" },
+        { en: "Bear", cn: "熊" },
+        { en: "White+AC0-browed fulvetta", cn: "白眉雀鹛" },
+        { en: "Grey+AC0-sided laughingthrush", cn: "灰胁噪鹛" },
+        { en: "Golden bush robin", cn: "金色林鸲" },
+        { en: "Plumbeous water redstart", cn: "红尾水鸲" },
+        { en: "Yellow+AC0-billed Blue Magpie", cn: "黄嘴蓝鹊" },
+        { en: "Naumann's thrush", cn: "红尾鸫" },
+        { en: "Orange+AC0-bellied Himalayan squirrel", cn: "橙腹长吻松鼠" },
+        { en: "Bianchi+//0Aof/9AK8-s warbler", cn: "比氏鹟莺" },
+        { en: "Streak+AC0-breasted scimitar babbler", cn: "棕颈钩嘴鹛" },
+        { en: "Indian giant flying squirrel", cn: "霜背大鼯鼠" },
+        { en: "Yellow+AC0-browed tit", cn: "黄屑林雀" },
+        { en: "Ashy drongo", cn: "灰卷尾" },
+        { en: "Grey+AC0-hooded fulvetta", cn: "褐头雀鹛" },
+        { en: "Yellow+AC0-bellied weasel", cn: "黄腹鼬" },
+        { en: "Rhesus macaque", cn: "猕猴" },
+        { en: "White+AC0-bellied woodpecker", cn: "白腹黑啄木鸟" },
+        { en: "Besra", cn: "松雀鹰" },
+        { en: "Common cuckoo", cn: "大杜鹃" },
+        { en: "Mountain bamboo partridge", cn: "棕胸竹鸡" },
+        { en: "White+AC0-throated laughingthrush", cn: "白喉噪鹛" },
+        { en: "Red+AC0-billed blue magpie", cn: "红嘴蓝鹊" },
+        { en: "Snowy+AC0-browed flycatcher", cn: "棕胸蓝鹟" },
+        { en: "White+AC0-speckled laughingthrush", cn: "白点鹛" },
+        { en: "Eyebrowed thrush", cn: "白眉鸫" },
+        { en: "Small Indian Civet", cn: "小灵猫" },
+        { en: "Blood pheasant", cn: "血雉" },
+        { en: "Black+AC0-necklaced scimitar babbler", cn: "斑胸钩嘴鹛" },
+        { en: "Large+AC0-billed crow", cn: "大嘴乌鸦" },
+        { en: "Chinese babax", cn: "矛纹草鹛" },
+        { en: "Spotted laughingthrush", cn: "眼纹噪鹛" },
+        { en: "Small niltava", cn: "小仙鹟" },
+        { en: "Chinese thrush", cn: "宝兴歌鸫 " },
+        { en: "Assam macaque", cn: "熊猴" },
+        { en: "Daurian redstart", cn: "北红尾鸲" },
+        { en: "Dark+AC0-backed sibia", cn: "黑背奇鹛" },
+        { en: "Red panda", cn: "小熊猫" },
+      ],
     };
   },
   mounted() {
@@ -227,7 +302,7 @@ export default {
       let key = window.event.keyCode;
       // console.log("key", key);
       const isEdit = this.tagData.every((item) => item.isEdit == false);
-      console.log("isEdit", isEdit);
+      // console.log("isEdit", isEdit);
       if (key == 8 && isEdit) {
         this.backSpaceDel();
       }
@@ -264,37 +339,38 @@ export default {
         }
       }, 1000);
     },
-    async queryRes(task_id){
-      this.cardLoading = true 
-        await dao.queryRes(task_id).then( res => {
-            console.log(res.data);
-            for(let k in res.data.detection){
-              this.detections.push(res.data.detection[k].detections)   
-            } 
-        })
-        this.createFabricByRes()
-        setTimeout(() => {
-          this.changeimg('next')
-          this.changeimg('pre')
-          this.cardLoading = false
-        }, 6000);
+    async queryRes(task_id) {
+      this.cardLoading = true;
+      await dao.queryRes(task_id).then((res) => {
+        console.log(res.data);
+        for (let k in res.data.detection) {
+          this.detections.push(res.data.detection[k].detections);
+        }
+      });
+      this.createFabricByRes();
+      setTimeout(() => {
+        this.changeimg("next");
+        this.changeimg("pre");
+        this.cardLoading = false;
+      }, 6000);
     },
     //用于在标签对照表中从英文转为中文
-    convertEn(en){
-      let obj = this.LSM_label.find( a => a.en==en)
+    convertEn(en) {
+      let obj = this.LSM_label.find((a) => a.en == en);
       //转换一个，就在右侧标签组里加一个
-      this.addLabel(obj.cn)
-      return obj.cn
+      this.addLabel(obj.cn);
+      return obj.cn;
     },
     //右侧标签组里添加标签
-    addLabel(cn){
-      let endId = this.tagData[this.tagData.length - 1 ].id
-      if (this.tagData.filter( o => o.value==cn).length == 0 ) {   //如果现有的父标签数组里不含有这个父标签 则添加
-        this.tagData.push( {
+    addLabel(cn) {
+      let endId = this.tagData[this.tagData.length - 1].id;
+      if (this.tagData.filter((o) => o.value == cn).length == 0) {
+        //如果现有的父标签数组里不含有这个父标签 则添加
+        this.tagData.push({
           value: cn,
-          id: endId+1,
+          id: endId + 1,
           isEdit: false,
-        })
+        });
       }
     },
     createFabricByRes() {
@@ -330,7 +406,7 @@ export default {
           const text = new fabric.Textbox("", {
             // width,
             // height,
-            text:this.convertEn(this.detections[i][j].category),
+            text: this.convertEn(this.detections[i][j].category),
             fontFamily: "Helvetica",
             fill: "white", // 设置字体颜色
             fontSize: 14,
@@ -354,12 +430,11 @@ export default {
             });
             this.editorCanvas.add(group);
             // console.log("this.editorCanvasssssssssss", this.editorCanvas);
-            
+
             this.drawingObject = drawingObject;
           }
         }
-        this.fabricJson[i] = 
-          JSON.stringify(
+        this.fabricJson[i] = JSON.stringify(
           this.editorCanvas.toJSON(["rectId", "textID", "lockScalingFlip"])
         );
         this.editorCanvas.clear().renderAll();
@@ -370,11 +445,10 @@ export default {
           this.editorCanvas.renderAll.bind(this.editorCanvas),
           function (o, object) {}
         );
-      }  
-      this.fabricJson.forEach( a => {
+      }
+      this.fabricJson.forEach((a) => {
         console.log(JSON.parse(a));
-      })
-      
+      });
     },
     customColorMethod(percentage) {
       if (percentage < 30) {
@@ -435,8 +509,9 @@ export default {
     },
     //请求图片地址
     async queryImgList() {
-      let path = this.$route.params.path;
-      if (path == undefined) {
+      this.path = this.$route.params.path;
+      // 本地
+      if (this.path == undefined) {
         this.cardLoading = true;
         this.$alert(
           '您进入的标注页面现只支持手动标注本地数据，若要使用智能标注，请从"云数据"页面通过上传文件夹后进行标注。',
@@ -452,12 +527,14 @@ export default {
             },
           }
         );
-      } else {
-        this.imgURL_root_path = path;
-        let splitPath = path.split("/").slice(-2);
+      }
+      // 云端
+      else {
+        this.imgURL_root_path = this.path;
+        let splitPath = this.path.split("/").slice(-2);
         let ending = splitPath[0] + "/" + splitPath[1] + "/";
         // console.log(splitPath);
-        await dao.queryImgList(path).then((res) => {
+        await dao.queryImgList(this.path).then((res) => {
           if (res.data.message == "success") {
             for (let i = 0; i < res.data.data.length; i++) {
               // +"?"+Date.parse(new Date())
@@ -643,7 +720,7 @@ export default {
       this.editorCanvas.on("mouse:move", (options) => {
         // console.log("move", options);
         if (!this.editorCanvas.getActiveObject() && this.isDrawing) {
-          console.log("move");
+          // console.log("move");
           this.mouseTo.x =
             options.pointer.x > this.editorCanvas.width
               ? this.editorCanvas.width
@@ -734,7 +811,7 @@ export default {
      * 绘制的原理：矩形+文字的组合
      */
     drawRect() {
-      console.log("绘图啦11111", this.mouseFrom, this.mouseTo);
+      // console.log("绘图啦11111", this.mouseFrom, this.mouseTo);
       // 通过UUID拿到唯一的ID
       let rectId = uuid.v1();
       /**
@@ -944,8 +1021,7 @@ export default {
      * 最终提交给后端要说明：scaleX,scaleY
      */
     xml_obj({ name, xmin, ymin, xmax, ymax }) {
-      const xml = 
-`
+      const xml = `
   <object>
     <name>${name}</name>
     <pose>Unspecified</pose>
@@ -962,107 +1038,97 @@ export default {
       return xml;
     },
     //点击保存修改调用的方法
-    async getData() {
-      
-      this.fabricJson[this.activeIndex] = JSON.stringify(this.editorCanvas.toJSON([
-          "rectId",
-          "textID",
-          "lockScalingFlip",
-        ])
+    getData() {
+      this.fabricJson[this.activeIndex] = JSON.stringify(
+        this.editorCanvas.toJSON({
+          exclude: [
+            "_controlsVisibility",
+            "lockMovementX",
+            "lockMovementY",
+            "lockScalingX",
+            "lockScalingY",
+            "hasBorders",
+            "hasControls",
+            "lockRotation",
+            "lockObject",
+            "cornerSize",
+          ],
+        })
       );
-      // var img = new Image();
-      
-      // 改变图片的src
-      // img.src = this.imgList[2].path;
-      // console.log(img);
-      var that = this;
       const JSZip = require("jszip");
-      that.zip = new JSZip();
-      
+      // 创建一个JSZip实例
+      const zip = new JSZip();
+      let that = this;
+      let xml = "";
+      // console.log(this.fabricJson);
       for (let index = 0; index < this.fabricJson.length; index++) {
-        that.xml[index] = ''
+        // this.fabricJson.forEach(function (str) {
         // 解析文件
-        let data = JSON.parse(this.fabricJson[index]);
-        // console.log(data);
-        let img = new Image()
-        img.src = this.imgList[index].path
+        // const data = JSON.parse(str);
+        const data = JSON.parse(this.fabricJson[index]);
+
+        console.log(data);
         // 获取图片宽
-        // let imgWidth = data.backgroundImage.width;
-        let imgWidth = 0
+        const imgWidth = data.backgroundImage.width;
         // 获取图片高
-        // let imgHeight = data.backgroundImage.height;
-        let imgHeight = 0
-        
-        img.onload = await function a() {
-          // 打印
-          // that.imgWidth = img.width
-          // that.imgHeight = img.height
-          /* console.log(img.width); */
-          /* console.log(img.height); */
-          ssss(img.width,img.height)
-        };
-        function ssss(w,h){
-          // console.log("xxxxxxxxx"+w+h);
-            // that.imgWidth = w
-            // that.imgHeight = h
-            // 获取图片路径
-          // let src = data.backgroundImage.src;
-          var src = img.src
-          
-          // 获取图片文件夹信息
-          var folderName = src.split("/").slice(-2, -1)[0];
-          // 获取图片名
-          var fileName = src.split("/").slice(-1)[0].split("?")[0];
-          // console.log("aaaaa"+that.imgWidth+that.imgHeight+folderName+"ssss"+fileName); 
-          that.xml[index] = 
-`<annotation>
-  <folder>${folderName}</folder>
-  <filename>${fileName}</filename>
-  <path>/${folderName}/${fileName}</path>
-  <source>
-    <database>Unspecified</database>
-  </source>
-  <size>
-    <width>${w}</width>
-    <height>${h}</height>
-    <depth>3</depth>
-  </size>`;
-            // 遍历矩形框信息
-          data.objects.forEach(function (obj) {
-            // 获取矩形框信息
-            let { left, top, width, height } = obj;
-            // 获取标签名
-            let name = obj.objects[1].text;
-            that.xml[index] += that.$options.methods.xml_obj({
-              name: name,
-              xmin: Math.floor(left * 4*100)/100,
-              ymin: Math.floor(top * 4*100)/100,
-              xmax: Math.floor((left + width) * 4*100)/100,
-              ymax: Math.floor((top + height) * 4*100)/100,
-            });
-          });
-          that.xml[index] += "</annotation>";
-          that.zip.file(fileName + ".xml", that.xml[index]);
-          if(index == that.fabricJson.length-1){
-            that.zip.generateAsync({ type: "blob" }).then(function (content) {
-              const downloadUrl = URL.createObjectURL(content);
-              const a = document.createElement("a");
-              a.href = downloadUrl;
-              a.download = "annotations.zip";
-              a.click();
-            });
-          }
+        const imgHeight = data.backgroundImage.height;
+
+        const folderName = "";
+        const fileName = "";
+
+        // 本地读取方法
+        if (this.path == undefined) {
+          fileName = this.imgList[index].file.name;
+          folderName = this.imgList[index].file.webkitRelativePath.split("/")[0];
         }
-        
-        
-        
+        // 云端读取方法
+        else {
+          // 获取图片路径
+          const src = data.backgroundImage.src;
+          // 获取图片文件夹信息
+          folderName = src.split("/").slice(-2, -1)[0];
+          // 获取图片名
+          fileName = src.split("/").slice(-1)[0].split("?")[0];
+        }
+
+        xml = `
+    <annotation>
+    <folder>${folderName}</folder>
+    <filename>${fileName}</filename>
+    <path>/${folderName}/${fileName}</path>
+    <source>
+      <database>Unspecified</database>
+    </source>
+    <size>
+      <width>${imgWidth}</width>
+      <height>${imgHeight}</height>
+      <depth>3</depth>
+    </size>`;
+        // 遍历矩形框信息
+        data.objects.forEach(function (obj) {
+          // 获取矩形框信息
+          const { left, top, width, height } = obj;
+          // 获取标签名
+          const name = obj.objects[1].text;
+          xml += that.$options.methods.xml_obj({
+            name: name,
+            xmin: left * 4,
+            ymin: top * 4,
+            xmax: (left + width) * 4,
+            ymax: (top + height) * 4,
+          });
+        });
+        xml += "</annotation>";
+        if (data.objects.length > 0) zip.file(fileName + ".xml", xml);
       }
       // 生成zip并下载
-      
-      /* this.fabricJson.forEach(function (str) {
-        
-      }); */
-      // console.log(xml);
+      zip.generateAsync({ type: "blob" }).then(function (content) {
+        const downloadUrl = URL.createObjectURL(content);
+        const a = document.createElement("a");
+        a.href = downloadUrl;
+        a.download = "annotations.zip";
+        a.click();
+      });
     },
   },
 };
