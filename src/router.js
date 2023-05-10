@@ -50,6 +50,10 @@ const router = new VueRouter({
           component: () => import('./views/system_introduce')
         },
         {
+          path: 'species_recognition',
+          component: () => import('./views/species_recognition')
+        },
+        {
           path: 'image_classification',
           component: () => import('./views/image_classification')
         },

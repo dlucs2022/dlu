@@ -106,7 +106,7 @@
         </div>
         <div style="border: 2px solid rgba(18, 17, 42, 0.07)"></div>
         <div class="add-folder-2" @click="addFile" style="margin-bottom: 5px">
-          上传文件
+          上传文件夹
         </div>
         <div style="border: 2px solid rgba(18, 17, 42, 0.07)"></div>
         <div class="add-folder-2" @click="list">刷 新</div>

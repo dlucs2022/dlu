@@ -178,19 +178,48 @@
     <!-- 云标签对话框 -->
     <!-- cloud_label_dialog -->
     <el-dialog title="云端标签空间" :visible.sync="cloud_label_dialog" width="40%">
-      <el-button @click="upload_now_lebels">上传现有标签组</el-button>
-      <el-collapse :v-if="cloudLabel.length>0" >
-        <el-collapse-item :title="item.labels_name" name="1" v-for="item in cloudLabel">
-          <el-scrollbar style="width: 600px">
+      <el-button @click="upload_now_lebels" type="success">上传现有标签组</el-button>
+      <el-collapse :v-if="cloudLabel.length>0" style="margin-top:20px">
+        <el-collapse-item :name="index" v-for="(item,index) in cloudLabel">
+          <template slot="title">
+            {{item.labels_name}}
+            <el-tag effect="light" size="mini" style="margin-left:5px">云端标签组</el-tag>
+
+            <div class="el-collapse-item-buttons_f">
+              <el-tooltip content="应用该标签组" placement="top">
+                <el-button
+                  type="primary"
+                  size="small"
+                  @click.stop.prevent="use_cloud_labels(index)"
+                  icon="el-icon-check"
+                  circle
+                >
+                </el-button>
+              </el-tooltip>
+              <el-tooltip content="删除该标签组" placement="top">
+                <el-button
+                  type="danger"
+                  size="small"
+                  @click.stop.prevent="delete_cloud_labels(index)"
+                  icon="el-icon-delete"
+                  circle
+                >
+                </el-button>
+              </el-tooltip>
+            </div>
+          </template>
+          <el-scrollbar style="width: 100%;padding-bottom:5px">
             <el-descriptions
               direction="vertical"
-              :column="item.lebels_data.length"
+              :column="item.labels_data.length"
               border
+              
             >
               <el-descriptions-item
                 :label="label.father"
-                v-for="label in item.lebels_data"
-                contentStyle="width:100px"
+                v-for="label in item.labels_data" 
+                :labelStyle="{'text-align': 'center'}"
+                :contentStyle="{'text-align': 'center'}"
                 >{{ label.children }}</el-descriptions-item
               >
             </el-descriptions>
@@ -368,8 +397,9 @@
                     @click.native.prevent="
                       handleRadioClick_current_data_model(item.csvId)
                     "
+                    :v-if="current_data != '' "
                   >
-                    {{ item.label_c }} <el-tag size="mini">{{ item.label_f }}</el-tag>
+                    {{ item.label_c }} <el-tag size="mini" >{{ item.label_f }}</el-tag>
                   </el-radio-button>
                 </el-radio-group>
               </div>

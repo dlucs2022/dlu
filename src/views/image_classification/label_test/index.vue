@@ -92,37 +92,40 @@
           <el-input placeholder="请输入"></el-input>
         </div>
         <ul style="margin-top: 15px">
-          <li v-for="(item, index) in tagData" class="tagItem">
-            <div v-show="!item.isEdit" class="tagDOM">
-              <el-tooltip
-                class="item"
-                effect="dark"
-                :content="item.value"
-                placement="right-end"
-              >
-                <span @click="changeTag(item)" class="tagName">
-                  {{ item.value }}
-                </span>
-              </el-tooltip>
-              <div class="iconCon">
-                <i class="el-icon-edit editIcon" @click="changeEdit(item, index)"></i>
-                <i class="el-icon-delete delIcon" @click="delTag(item)"></i>
+          <el-scrollbar style="height: 70vh">
+            <li v-for="(item, index) in tagData" class="tagItem">
+              <div v-show="!item.isEdit" class="tagDOM">
+                <el-tooltip
+                  class="item"
+                  effect="dark"
+                  :content="item.value"
+                  placement="right-end"
+                >
+                  <span @click="changeTag(item)" class="tagName">
+                    {{ item.value }}
+                  </span>
+                </el-tooltip>
+                <div class="iconCon">
+                  <i class="el-icon-edit editIcon" @click="changeEdit(item, index)"></i>
+                  <i class="el-icon-delete delIcon" @click="delTag(item)"></i>
+                </div>
               </div>
-            </div>
-            <div class="tagDOM" v-show="item.isEdit">
-              <el-input
-                v-model="item.value"
-                ref="editTask"
-                @keyup.enter.native="changeText(item)"
-              ></el-input>
-              <el-button type="text" size="small" @click="changeText(item)"
-                >确定</el-button
-              >
-              <el-button type="text" size="small" @click="cancelChange(item)"
-                >取消</el-button
-              >
-            </div>
-          </li>
+              <div class="tagDOM" v-show="item.isEdit">
+                <el-input
+                  v-model="item.value"
+                  ref="editTask"
+                  @keyup.enter.native="changeText(item)"
+                ></el-input>
+                <el-button type="text" size="small" @click="changeText(item)"
+                  >确定</el-button
+                >
+                <el-button type="text" size="small" @click="cancelChange(item)"
+                  >取消</el-button
+                >
+              </div>
+            </li>
+          </el-scrollbar>
+          
         </ul>
       </div>
     </div>
@@ -133,6 +136,7 @@
 import { fabric } from "fabric";
 import { uuid } from "vue-uuid";
 import dao from "@/api/dao";
+
 export default {
   data() {
     return {
@@ -160,13 +164,17 @@ export default {
         tagData: [
             {
             value: "兽",
-            id: "1",
+            id: 1,
             isEdit: false,
             },
             
         ],
         imgW:4000,
         imgH:3000,
+        imgWidth :0,
+        imgHeight:0,
+        xml:[],
+        zip:'',
         imgURL_root_path : '',
         pageLoading:false,
         customColors: [
@@ -182,6 +190,24 @@ export default {
         cardLoading : false,
         progress_total:0,
         progress_over:0,
+        LSM_label:[{'en': 'cow', 'cn': '牛'}, {'en': 'Goat', 'cn': '山羊'}, {'en': 'Human', 'cn': '人'}, {'en': 'Black snub+AC0-nosed monkey',
+         'cn': '滇金丝猴'}, {'en': 'Horse', 'cn': '马'}, {'en': "Pallas's squirrel", 'cn': '赤腹松鼠'}, {'en': 'Indian muntjac', 'cn': '赤麂 '},
+          {'en': 'Yak', 'cn': '牦牛'}, {'en': 'Tufted deer', 'cn': '毛冠鹿'}, {'en': 'tree shrew', 'cn': '树鼩'}, {'en': 'Chestnut thrush', 'cn': '灰头鹅 '},
+           {'en': 'Sheep', 'cn': '绵羊'}, {'en': 'Black+AC0-faced laughingthrush', 'cn': '黑顶噪鹛'}, {'en': 'Asian black bear', 'cn': '亚州黑熊 '}, 
+           {'en': 'Yellow+AC0-throated marten', 'cn': '黄喉貂'}, {'en': 'Yunnan Hare', 'cn': '西南兔(云南兔)'}, {'en': 'Dog', 'cn': '狗'}, {'en': "Perny's long+AC0-nosed squirrel", 'cn': '珀氏长吻松鼠'},
+            {'en': "Lady Amherst's pheasant", 'cn': '白腹锦鸡'}, {'en': "Elliot's laughingthrush", 'cn': '橙翅噪鹛'}, {'en': 'Koklass pheasant', 'cn': '勺鸡 '}, {'en': 'Leopard cat', 'cn': '豹猫'}, 
+            {'en': 'Giant laughingthrush', 'cn': '大噪鹛'}, {'en': 'Masked palm civet', 'cn': '果子狸'}, {'en': 'Crimson+//0Aof/9AKo-bellied Tragopan', 'cn': '红腹角雉'}, {'en': 'Spotted nutcracker', 'cn': '星鸦'}, {'en': 'Chestnut+AC0-crowned laughingthrush', 'cn': '红头噪鹛'},
+             {'en': 'Squirrel', 'cn': '松鼠'}, {'en': 'White+AC0-browed bush robin', 'cn': '白眉林鸲'}, {'en': 'Alpine thrush', 'cn': '黄嘴山鸦'}, {'en': 'Long+AC0-tailed thrush', 'cn': '长尾地鸫'}, {'en': 'Maroon+AC0-backed accentor', 'cn': '栗背岩鹨'}, {'en': 'Himalayan bluetail', 'cn': '蓝眉林鸲'},
+              {'en': "Temminck's tragopan", 'cn': '红腹角雉'}, {'en': 'Hill partridge', 'cn': '环颈山鹧鸪 '}, {'en': 'Red+AC0-billed chough', 'cn': '红嘴山鸦'}, {'en': 'Darjeeling woodpecker', 'cn': '黄颈啄木鸟'}, {'en': 'Rufous+AC0-bellied niltava', 'cn': '棕腹仙鹟'}, {'en': 'Forest musk deer', 'cn': '林麝'}, {'en': 'Grey+AC0-headed woodpecker', 'cn': '灰头绿啄木鸟'},
+               {'en': 'Siberian weasel', 'cn': '黄鼠狼'}, {'en': "Mrs. Hume's pheasant", 'cn': '黑颈长尾雉'}, {'en': 'White+AC0-throated redstart', 'cn': '白喉红尾鸲'}, {'en': 'Cat', 'cn': '猫'}, {'en': 'Chestnut+AC0-bellied rock thrush', 'cn': '栗腹矶鸫'}, {'en': 'Great parrotbill', 'cn': '红嘴鸦雀'}, {'en': 'Yellow+AC0-billed blue magpie', 'cn': '黄嘴蓝喜鹊'}, 
+               {'en': 'Blue+AC0-fronted redstart', 'cn': '蓝额红尾鸲'}, {'en': 'Great spotted woodpecker', 'cn': '大斑啄木鸟'}, {'en': 'spotted giant flying squirrel+ADw-U+00D//QA+-', 'cn': '小鼯鼠'}, {'en': "Swinhoe's striped squirrel", 'cn': '隐纹花松鼠'}, {'en': 'Grey+AC0-winged Blackbird', 'cn': '灰翅鸫'}, {'en': 'Alpine chough', 'cn': '黄嘴山鸦'}, 
+               {'en': 'Red+AC0-billed leiothrix', 'cn': '红嘴相思鸟'}, {'en': 'Collared grosbeak', 'cn': '黄颈拟蜡嘴雀'}, {'en': 'Bear', 'cn': '熊'}, {'en': 'White+AC0-browed fulvetta', 'cn': '白眉雀鹛'}, {'en': 'Grey+AC0-sided laughingthrush', 'cn': '灰胁噪鹛'}, {'en': 'Golden bush robin', 'cn': '金色林鸲'}, {'en': 'Plumbeous water redstart', 'cn': '红尾水鸲'}, 
+               {'en': 'Yellow+AC0-billed Blue Magpie', 'cn': '黄嘴蓝鹊'}, {'en': "Naumann's thrush", 'cn': '红尾鸫'}, {'en': 'Orange+AC0-bellied Himalayan squirrel', 'cn': '橙腹长吻松鼠'}, {'en': 'Bianchi+//0Aof/9AK8-s warbler', 'cn': '比氏鹟莺'}, {'en': 'Streak+AC0-breasted scimitar babbler', 'cn': '棕颈钩嘴鹛'}, {'en': 'Indian giant flying squirrel', 'cn': '霜背大鼯鼠'}, {'en': 'Yellow+AC0-browed tit', 'cn': '黄屑林雀'}, 
+               {'en': 'Ashy drongo', 'cn': '灰卷尾'}, {'en': 'Grey+AC0-hooded fulvetta', 'cn': '褐头雀鹛'}, {'en': 'Yellow+AC0-bellied weasel', 'cn': '黄腹鼬'}, {'en': 'Rhesus macaque', 'cn': '猕猴'}, {'en': 'White+AC0-bellied woodpecker', 'cn': '白腹黑啄木鸟'}, {'en': 'Besra', 'cn': '松雀鹰'}, {'en': 'Common cuckoo', 'cn': '大杜鹃'}, {'en': 'Mountain bamboo partridge', 'cn': '棕胸竹鸡'}, {'en': 'White+AC0-throated laughingthrush', 'cn': '白喉噪鹛'},
+                {'en': 'Red+AC0-billed blue magpie', 'cn': '红嘴蓝鹊'}, {'en': 'Snowy+AC0-browed flycatcher', 'cn': '棕胸蓝鹟'}, {'en': 'White+AC0-speckled laughingthrush', 'cn': '白点鹛'}, {'en': 'Eyebrowed thrush', 'cn': '白眉鸫'}, {'en': 'Small Indian Civet', 'cn': '小灵猫'}, {'en': 'Blood pheasant', 'cn': '血雉'}, {'en': 'Black+AC0-necklaced scimitar babbler', 'cn': '斑胸钩嘴鹛'},
+                 {'en': 'Large+AC0-billed crow', 'cn': '大嘴乌鸦'}, {'en': 'Chinese babax', 'cn': '矛纹草鹛'}, 
+                {'en': 'Spotted laughingthrush', 'cn': '眼纹噪鹛'}, {'en': 'Small niltava', 'cn': '小仙鹟'}, {'en': 'Chinese thrush', 'cn': '宝兴歌鸫 '}, {'en': 'Assam macaque', 'cn': '熊猴'}, 
+        {'en': 'Daurian redstart', 'cn': '北红尾鸲'}, {'en': 'Dark+AC0-backed sibia', 'cn': '黑背奇鹛'}, {'en': 'Red panda', 'cn': '小熊猫'}]
     };
   },
   mounted() {
@@ -244,7 +270,25 @@ export default {
           this.changeimg('next')
           this.changeimg('pre')
           this.cardLoading = false
-        }, 5000);
+        }, 6000);
+    },
+    //用于在标签对照表中从英文转为中文
+    convertEn(en){
+      let obj = this.LSM_label.find( a => a.en==en)
+      //转换一个，就在右侧标签组里加一个
+      this.addLabel(obj.cn)
+      return obj.cn
+    },
+    //右侧标签组里添加标签
+    addLabel(cn){
+      let endId = this.tagData[this.tagData.length - 1 ].id
+      if (this.tagData.filter( o => o.value==cn).length == 0 ) {   //如果现有的父标签数组里不含有这个父标签 则添加
+        this.tagData.push( {
+          value: cn,
+          id: endId+1,
+          isEdit: false,
+        })
+      }
     },
     createFabricByRes(){
       for( let i=0 ; i<this.detections.length ; i++ ){    //每个i代表每个图像
@@ -277,7 +321,7 @@ export default {
           const text = new fabric.Textbox("", {
             // width,
             // height,
-            text:this.detections[i][j].category,
+            text:this.convertEn(this.detections[i][j].category),
             fontFamily: "Helvetica",
             fill: "white", // 设置字体颜色
             fontSize: 14,
@@ -300,13 +344,15 @@ export default {
               lockRotation: true,
             });
             this.editorCanvas.add(group);
-            console.log("this.editorCanvasssssssssss", this.editorCanvas);
+            // console.log("this.editorCanvasssssssssss", this.editorCanvas);
             
             this.drawingObject = drawingObject;
           }
         }
         this.fabricJson[i] = 
+          JSON.stringify(
           this.editorCanvas.toJSON(["rectId", "textID", "lockScalingFlip"])
+        );
         this.editorCanvas.clear().renderAll();
       }
       if (this.fabricJson[this.activeIndex] !== "") {
@@ -316,6 +362,10 @@ export default {
           function (o, object) {}
         );
       }  
+      this.fabricJson.forEach( a => {
+        console.log(JSON.parse(a));
+      })
+      
     },
     customColorMethod(percentage) {
         if (percentage < 30) {
@@ -336,11 +386,9 @@ export default {
     },
     changeimg(change) {
       if (change === "pre") {
-        this.fabricJson[this.activeIndex] = this.editorCanvas.toJSON([
-          "rectId",
-          "textID",
-          "lockScalingFlip",
-        ]);
+        this.fabricJson[this.activeIndex] = JSON.stringify(
+          this.editorCanvas.toJSON(["rectId", "textID", "lockScalingFlip"])
+        );
 
         this.activeIndex -= 1;
         // this.fabricJson[i-1] = JSON.stringify(this.fabricObj);
@@ -407,7 +455,7 @@ export default {
               this.imgList.push({
                 id: i,
                 path:
-                  "http://192.168.46.150:8003/dlu/img/" +
+                  "http://192.168.46.143:8003/dlu/img/" +
                   ending +
                   res.data.data[i] +
                   "?" +
@@ -488,7 +536,7 @@ export default {
           });
           // 删除标签
           this.tagData = this.tagData.filter((el) => el.id != item.id);
-          console.log("tagData", this.tagData);
+
           this.$message({
             type: "success",
             message: "删除成功!",
@@ -882,76 +930,125 @@ export default {
      * 最终提交给后端要说明：scaleX,scaleY
      */
     xml_obj({ name, xmin, ymin, xmax, ymax }) {
-      const xml = `
-          <object>
-            <name>${name}</name>
-            <pose>Unspecified</pose>
-            <truncated>0</truncated>
-            <difficult>0</difficult>
-            <bndbox>
-              <xmin>${xmin}</xmin>
-              <ymin>${ymin}</ymin>
-              <xmax>${xmax}</xmax>
-              <ymax>${ymax}</ymax>
-            </bndbox>
-          </object>    
-      `;
+      const xml = 
+`
+  <object>
+    <name>${name}</name>
+    <pose>Unspecified</pose>
+    <truncated>0</truncated>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>${xmin}</xmin>
+      <ymin>${ymin}</ymin>
+      <xmax>${xmax}</xmax>
+      <ymax>${ymax}</ymax>
+    </bndbox>
+  </object>
+`;
       return xml;
     },
     //点击保存修改调用的方法
-    getData() {
-      this.fabricJson[this.activeIndex] = this.editorCanvas.toJSON([
-        "rectId",
-        "textID",
-        "lockScalingFlip",
-      ]);
-      console.log(this.fabricJson);
-      let that = this;
-      let xml = "";
-      this.fabricJson.forEach(function (str) {
+    async getData() {
+      
+      this.fabricJson[this.activeIndex] = JSON.stringify(this.editorCanvas.toJSON([
+          "rectId",
+          "textID",
+          "lockScalingFlip",
+        ])
+      );
+      // var img = new Image();
+      
+      // 改变图片的src
+      // img.src = this.imgList[2].path;
+      // console.log(img);
+      var that = this;
+      const JSZip = require("jszip");
+      that.zip = new JSZip();
+      
+      for (let index = 0; index < this.fabricJson.length; index++) {
+        that.xml[index] = ''
         // 解析文件
-        const data = JSON.parse(str);
-        console.log(data);
+        let data = JSON.parse(this.fabricJson[index]);
+        // console.log(data);
+        let img = new Image()
+        img.src = this.imgList[index].path
         // 获取图片宽
-        const imgWidth = data.backgroundImage.width;
+        // let imgWidth = data.backgroundImage.width;
+        let imgWidth = 0
         // 获取图片高
-        const imgHeight = data.backgroundImage.height;
-        // 获取图片路径
-        const src = data.backgroundImage.src;
-        // 获取图片文件夹信息
-        const folderName = src.split("/").slice(-2, -1)[0];
-        // 获取图片名
-        const fileName = src.split("/").slice(-1)[0].split("?")[0];
-        xml = `
-        <annotation>
-          <folder>${folderName}</folder>
-          <filename>${fileName}</filename>
-          <path>/${folderName}/${folderName}</path>
-          <source>
-            <database>Unspecified</database>
-          </source>
-          <size>
-            <width>${imgWidth}</width>
-            <height>${imgHeight}</height>
-            <depth>3</depth>
-          </size>`;
-        // 遍历矩形框信息
-        data.objects.forEach(function (obj) {
-          // 获取矩形框信息
-          const { left, top, width, height } = obj;
-          // 获取标签名
-          const name = obj.objects[1].text;
-          xml += that.$options.methods.xml_obj({
-            name: name,
-            xmin: left * 4,
-            ymin: top * 4,
-            xmax: (left + width) * 4,
-            ymax: (top + height) * 4,
+        // let imgHeight = data.backgroundImage.height;
+        let imgHeight = 0
+        
+        img.onload = await function a() {
+          // 打印
+          // that.imgWidth = img.width
+          // that.imgHeight = img.height
+          /* console.log(img.width); */
+          /* console.log(img.height); */
+          ssss(img.width,img.height)
+        };
+        function ssss(w,h){
+          // console.log("xxxxxxxxx"+w+h);
+            // that.imgWidth = w
+            // that.imgHeight = h
+            // 获取图片路径
+          // let src = data.backgroundImage.src;
+          var src = img.src
+          
+          // 获取图片文件夹信息
+          var folderName = src.split("/").slice(-2, -1)[0];
+          // 获取图片名
+          var fileName = src.split("/").slice(-1)[0].split("?")[0];
+          // console.log("aaaaa"+that.imgWidth+that.imgHeight+folderName+"ssss"+fileName); 
+          that.xml[index] = 
+`<annotation>
+  <folder>${folderName}</folder>
+  <filename>${fileName}</filename>
+  <path>/${folderName}/${fileName}</path>
+  <source>
+    <database>Unspecified</database>
+  </source>
+  <size>
+    <width>${w}</width>
+    <height>${h}</height>
+    <depth>3</depth>
+  </size>`;
+            // 遍历矩形框信息
+          data.objects.forEach(function (obj) {
+            // 获取矩形框信息
+            let { left, top, width, height } = obj;
+            // 获取标签名
+            let name = obj.objects[1].text;
+            that.xml[index] += that.$options.methods.xml_obj({
+              name: name,
+              xmin: Math.floor(left * 4*100)/100,
+              ymin: Math.floor(top * 4*100)/100,
+              xmax: Math.floor((left + width) * 4*100)/100,
+              ymax: Math.floor((top + height) * 4*100)/100,
+            });
           });
-        });
-        xml += "</annotation>";
-      });
-      console.log(xml);
+          that.xml[index] += "</annotation>";
+          that.zip.file(fileName + ".xml", that.xml[index]);
+          if(index == that.fabricJson.length-1){
+            that.zip.generateAsync({ type: "blob" }).then(function (content) {
+              const downloadUrl = URL.createObjectURL(content);
+              const a = document.createElement("a");
+              a.href = downloadUrl;
+              a.download = "annotations.zip";
+              a.click();
+            });
+          }
+        }
+        
+        
+        
+      }
+      // 生成zip并下载
+      
+      /* this.fabricJson.forEach(function (str) {
+        
+      }); */
+      // console.log(xml);
     },
   },
 };

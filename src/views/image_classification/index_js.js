@@ -82,9 +82,33 @@ export default {
         this.keyDownReview()
     },
     methods: {
+        //删除哪个云端标签组
+        async delete_cloud_labels(index){
+            await dao.delete_cloud_labels(JSON.parse(sessionStorage.getItem("user")).name+"_-"+this.cloudLabel[index].labels_name).then( res => {
+                console.log(res);
+                if(res.data.data == 'success'){
+                    this.$message({
+                        type: 'success',
+                        message: '删除成功！'
+                    });
+                    this.downLoad_Sec_Label()
+                }
+            })
+            
+        },
+        //点击使用哪个云端标签组
+        use_cloud_labels(index){
+            this.label_c = this.cloudLabel[index].labels_data
+            // this.label_f = this.cloudLabel[index].labels_data
+            this.label_c.forEach(a => {
+                if (this.label_f.indexOf(a.father) == -1) {   //如果现有的父标签数组里不含有这个父标签 则添加
+                    this.label_f.push(a.father)
+                }
+            })
+            
+        },
         //点击云端标签组事件
         async downLoad_Sec_Label() {
-            this.cloudLabel = dao.cloudLabel()
             await dao.queryCloudLabels(JSON.parse(sessionStorage.getItem("user")).name).then(res => {
                 this.cloudLabel = res.data.data
                 this.cloudLabel.forEach( a => {
@@ -93,11 +117,10 @@ export default {
                 })
             })
             
-            console.log(this.cloudLabel);
             this.cloud_label_dialog = true
         },
         //上传现有的标签组
-        upload_now_lebels(){
+        async upload_now_lebels(){
             let islogin = sessionStorage.getItem("user");
             islogin = JSON.parse(islogin);
             if (!islogin) {
@@ -117,7 +140,7 @@ export default {
                 this.$prompt('标题组命名', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
-                }).then(({ value }) => {
+                }).then(async ({ value }) => {
                     if (value == '' || value == 'null' || value == null) {
                         this.$message({
                             type: 'danger',
@@ -128,8 +151,8 @@ export default {
                             type: 'success',
                             message: '标题组名为: ' + value + '，已上传！'
                         });
-                        dao.upload_now_lebels(islogin.name,value,JSON.stringify(this.label_c)).then(res => {
-                            console.log(res);
+                        await dao.upload_now_lebels(islogin.name,value,JSON.stringify(this.label_c)).then(res => {
+                            this.downLoad_Sec_Label()
                         })
                     }
                 }).catch(() => {
@@ -140,6 +163,7 @@ export default {
                 });
                 
             }
+            
         },
         handleOpen(key, keyPath) {
             console.log("handleOpen", key, keyPath);
@@ -309,7 +333,10 @@ export default {
                         num: parseInt(jsonData.num),
                         csvId: this.csv_list.length + 1
                     };
-                    this.csv_list.push(newCsv);
+                    if(newCsv.label_f != ''){
+                        this.csv_list.push(newCsv);
+                    }
+                    
                 }
             };
             reader.readAsText(file);

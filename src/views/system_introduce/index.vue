@@ -36,7 +36,7 @@
           ></i>
           <count-to
             :start-val="0"
-            :end-val="336969"
+            :end-val="34696"
             :duration="2000"
             class="card-panel-num"
           />
@@ -46,7 +46,7 @@
           <i class="el-icon-user" style="font-size: 20px; margin-right: 10px"></i>
           <count-to
             :start-val="0"
-            :end-val="2041"
+            :end-val="204"
             :duration="2000"
             class="card-panel-num"
           />
@@ -154,7 +154,7 @@
         <img src="@/assets/imgs/introduce/icon/sharpicons_Cow.png" alt="" />
         牛
         <br />
-        识别率：98.0%
+        识别率：98.2%
       </div>
       <div
         class="show_card"
@@ -171,7 +171,7 @@
         <img src="@/assets/imgs/introduce/icon/sharpicons_Bird.png" alt="" />
         鸟
         <br />
-        识别率：97.3%
+        识别率：93.8%
       </div>
       <div
         class="show_card"
@@ -188,7 +188,7 @@
         <img src="@/assets/imgs/introduce/icon/sharpicons_Horse.png" alt="" />
         马
         <br />
-        识别率：97.3%
+        识别率：95.3%
       </div>
       <div
         class="show_card"
@@ -205,7 +205,7 @@
         <img src="@/assets/imgs/introduce/icon/sharpicons_Monkey.png" alt="" />
         猴
         <br />
-        识别率：97.3%
+        识别率：93.4%
       </div>
       <div
         class="show_card"
@@ -222,7 +222,7 @@
         <img src="@/assets/imgs/introduce/icon/sharpicons_Deer.png" alt="" />
         鹿
         <br />
-        识别率：97.3%
+        识别率：92.7%
       </div>
       <div
         class="show_card"
@@ -239,7 +239,7 @@
         <img src="@/assets/imgs/introduce/icon/sharpicons_Sheep.png" alt="" />
         羊
         <br />
-        识别率：97.3%
+        识别率：94.3%
       </div>
       <div
         class="show_card"
@@ -256,7 +256,7 @@
         <img src="@/assets/imgs/introduce/icon/sharpicons_Cat.png" alt="" />
         猫
         <br />
-        识别率：97.3%
+        识别率：92.2%
       </div>
     </div>
   </div>

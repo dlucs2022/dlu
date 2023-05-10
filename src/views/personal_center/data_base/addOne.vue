@@ -6,7 +6,7 @@
     title="上传文件"
     :visible.sync="dialogVisible"
     :show-close="false"
-    width="40%"
+    width="60%"
   >
     <div class="hello">
       <uploader
@@ -23,11 +23,15 @@
       >
         <uploader-unsupport></uploader-unsupport>
         <uploader-drop>
-          <p>注意：仅支持上传单层目录</p>
-          <p>如上传多级目录，子目录下的文件将会移动至一级目录下。</p>
+          <p>点击上传按钮，或者将文件夹拖拽至此处</p>
+          <p>注意：仅支持上传单层目录（如上传多级目录，子目录下的文件将会移动至一级目录下。）</p>
+          <p></p>
           <uploader-btn :single="true" :directory="true">选择文件/文件夹</uploader-btn>
         </uploader-drop>
-        <uploader-list></uploader-list>
+        <uploader-list>
+
+
+        </uploader-list>
       </uploader>
     </div>
     <el-button @click="dialogVisible = false" style="margin-top: 20px">取 消</el-button>
@@ -52,24 +56,24 @@ export default {
       },
       folderName: "",
       options: {
-        target: "http://192.168.46.150:8003/dlu/file/uploadCategory", //SpringBoot后台接收文件夹数据的接口
+        target: "http://192.168.46.143:8003/dlu/file/uploadCategory", //SpringBoot后台接收文件夹数据的接口
         testChunks: false, //是否分片-不分片,
+        // chunkSize: 1024 * 1024 * 10,
         withCredentials: true, //携带跨域信息
         simultaneousUploads: 1,
+        parseTimeRemaining: function(timeRemaining, parsedTimeRemaining) {
+            return parsedTimeRemaining
+                .replace(/\syears?/, "年")
+                .replace(/\days?/, "天")
+                .replace(/\shours?/, "小时")
+                .replace(/\sminutes?/, "分钟")
+                .replace(/\sseconds?/, "秒");
+        },
         query: function (file, res, status) {
-          // that.folderName = file.getRoot().name
-          // console.log(that.folderName);
           return {
             userName: JSON.parse(sessionStorage.getItem("user")).name,
-            // "invite_code":JSON.parse(sessionStorage.getItem("user")).invite_code,
-            // "fileType": file.getType(),
-            // file_size:"",
           };
         },
-        //form data里的参数 根据实际需要
-
-        // file_size:"",
-        // sub_file_count:'',
       },
       //这个用来刷新组件--解决不刷新页面连续上传的缓存上传数据（注：每次上传时，强制这个值进行更改---根据自己的实际情况重新赋值）
       uploader_key: new Date().getTime(),
@@ -178,6 +182,7 @@ export default {
     filesAdded(file, event) {
       // console.log(file);
       this.computeMD5(file);
+
     },
     open() {
       this.dialogVisible = true;
@@ -203,12 +208,15 @@ export default {
   margin-right: 4px;
 }
 
+
 .uploader-example .uploader-list {
   max-height: 440px;
   overflow: auto;
   overflow-x: hidden;
   overflow-y: auto;
 }
+
+
 
 /* #uploader-upload-btn{
         color: #FFF;

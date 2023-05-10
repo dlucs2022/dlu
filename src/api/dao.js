@@ -175,146 +175,7 @@ export default {
             },
         });
     },
-    cloudLabel() {
-        const cloudList = [
-            {
-                labels_name: "LSM数据专用",
-                lebels_data:[
-                        {
-                            father: "鸟",
-                            children: "星鸦",
-                            keyValue: "",
-                        },
-                        {
-                            father: "兽",
-                            children: "掩面果狸",
-                            keyValue: "",
-                        },
-                        {
-                            father: "鸟",
-                            children: "阿萨姆噪鹛",
-                            keyValue: "",
-                        },
-                        {
-                            father: "鸟",
-                            children: "深红色玫瑰鹦鹉",
-                            keyValue: "",
-                        },
-                        {
-                            father: "鸟",
-                            children: "巨笑鹛",
-                            keyValue: "",
-                        },
-                        {
-                            father: "兽",
-                            children: "豹猫",
-                            keyValue: "",
-                        },
-                        {
-                            father: "鸟",
-                            children: "克拉斯雉鸡",
-                            keyValue: "",
-                        },
-                        {
-                            father: "鸟",
-                            children: "艾略特噪鹛",
-                            keyValue: "",
-                        },
-                        {
-                            father: "鸟",
-                            children: "安氏雉",
-                            keyValue: "",
-                        },
-                        {
-                            father: "狗",
-                            children: "狗",
-                            keyValue: "",
-                        },
-                        {
-                            father: "兽",
-                            children: "黄喉貂",
-                            keyValue: "",
-                        },
-                        {
-                            father: "兽",
-                            children: "亚洲黑熊",
-                            keyValue: "",
-                        },
-                        {
-                            father: "兽",
-                            children: "云南兔",
-                            keyValue: "",
-                        },
-                        {
-                            father: "鸟",
-                            children: "黑脸噪鹛",
-                            keyValue: "",
-                        },
-                        {
-                            father: "羊",
-                            children: "绵羊",
-                            keyValue: "",
-                        },
-                        {
-                            father: "鸟",
-                            children: "栗背鸫",
-                            keyValue: "",
-                        },
-                        {
-                            father: "兽",
-                            children: "树鼩",
-                            keyValue: "",
-                        },
-                        {
-                            father: "兽",
-                            children: "白鹿",
-                            keyValue: "",
-                        },
-                        {
-                            father: "兽",
-                            children: "牦牛",
-                            keyValue: "",
-                        },
-                        {
-                            father: "兽",
-                            children: "马鹿",
-                            keyValue: "",
-                        },
-                        {
-                            father: "兽",
-                            children: "松鼠",
-                            keyValue: "",
-                        },
-                        {
-                            father: "马",
-                            children: "马",
-                            keyValue: "",
-                        },
-                        {
-                            father: "兽",
-                            children: "黑鼻短吻猴",
-                            keyValue: "",
-                        },
-                        {
-                            father: "人",
-                            children: "人类",
-                            keyValue: "",
-                        },
-                        {
-                            father: "羊",
-                            children: "山羊",
-                            keyValue: "",
-                        },
-                        {
-                            father: "羊",
-                            children: "奶牛",
-                            keyValue: "",
-                        },
-                    ]
-            }
-        ]
-        return cloudList;
-    },
+
 
     queryCloudLabels(name){
         return request({
@@ -335,6 +196,12 @@ export default {
             headers: {
                 'Content-Type': 'application/json;charset=UTF-8'
             }
+        })
+    },
+    delete_cloud_labels(labels_name){
+        return request({
+            url: `/file/delete_cloud_labels?labels_name=${labels_name}`,
+            method:'post'
         })
     }
 };

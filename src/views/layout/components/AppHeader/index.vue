@@ -29,6 +29,7 @@
                       </el-submenu>git config --global http.proxy http://127.0.0.1:1080
                   </el-submenu> -->
         <el-menu-item index="/layout/system_introduce">主页</el-menu-item>
+        <el-menu-item index="/layout/species_recognition">物种识别</el-menu-item>
         <el-submenu index="2">
           <template slot="title"
             ><i class="el-icon-picture-outline"></i>照片分拣</template

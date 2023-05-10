@@ -93,7 +93,7 @@ export default {
                         this.imgList.push({
                             id: i,
                             src:
-                                "http://192.168.46.150:8003/dlu/img/" +
+                                "http://192.168.46.143:8003/dlu/img/" +
                                 ending +
                                 res.data.data[i] +
                                 "?" +
