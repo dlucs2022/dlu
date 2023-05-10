@@ -1073,8 +1073,8 @@ export default {
         // 获取图片高
         const imgHeight = data.backgroundImage.height;
 
-        const folderName = "";
-        const fileName = "";
+        let folderName = "";
+        let fileName = "";
 
         // 本地读取方法
         if (this.path == undefined) {
