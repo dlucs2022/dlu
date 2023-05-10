@@ -41,7 +41,6 @@
 
 <script>
 export default {
-  components: {},
   beforeRouteEnter(to, from, next) {
     next((vm) => {
       let islogin = sessionStorage.getItem("user");
@@ -65,16 +64,6 @@ export default {
       user: JSON.parse(sessionStorage.getItem("user")),
     };
   },
-  // mounted() {
-  //   if (!this.user) {
-  //     this.$alert("请先登录", "提示", {
-  //       confirmButtonText: "确定",
-  //       callback: () => {
-  //         this.$router.push("/login");
-  //       },
-  //     });
-  //   }
-  // },
 };
 </script>
 
@@ -84,7 +73,9 @@ export default {
   color: #333;
   line-height: 60px;
 }
-
+.el-menu-item-group__title {
+  display: none;
+}
 .el-aside {
   color: #333;
 }

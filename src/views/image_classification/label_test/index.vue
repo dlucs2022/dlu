@@ -5,31 +5,39 @@
       :visible.sync="pregress_dialogVisible"
       width="40%"
     >
-    <div>
-        <el-progress :percentage="percentage" :text-inside="true" :stroke-width="30" 
-        :color="customColorMethod" :format="progress_format"></el-progress>
-    </div>
-    <span slot="footer" class="dialog-footer">
+      <div>
+        <el-progress
+          :percentage="percentage"
+          :text-inside="true"
+          :stroke-width="30"
+          :color="customColorMethod"
+          :format="progress_format"
+        ></el-progress>
+      </div>
+      <span slot="footer" class="dialog-footer">
         <el-button @click="pregress_dialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="pregress_dialogVisible = false"
           >确 定</el-button
         >
       </span>
     </el-dialog>
-    <div id="pic-label" v-loading="cardLoading" 
-    element-loading-text="拼命加载中"
-    element-loading-spinner="el-icon-loading"
-    element-loading-background="rgba(255, 255, 255, 1)">
+    <div
+      id="pic-label"
+      v-loading="cardLoading"
+      element-loading-text="拼命加载中"
+      element-loading-spinner="el-icon-loading"
+      element-loading-background="rgba(255, 255, 255, 1)"
+    >
       <div class="canvasDraw">
         <input
-            id="upload"
-            webkitdirectory
-            type="file"
-            name="file"
-            ref="upload_input"
-            tabindex="-1"
-            style="display: none"
-            @change.stop="selectPhoto($event)"
+          id="upload"
+          webkitdirectory
+          type="file"
+          name="file"
+          ref="upload_input"
+          tabindex="-1"
+          style="display: none"
+          @change.stop="selectPhoto($event)"
         />
         <el-button @click="getData">保存修改</el-button>
         <el-button @click="getAiByRootPath">智能标注</el-button>
@@ -52,7 +60,7 @@
           ></el-button>
         </el-button-group>
         <div class="context__x">
-          <canvas ref="canvas" id="labelCanvas" > </canvas>
+          <canvas ref="canvas" id="labelCanvas"> </canvas>
           <!-- 编辑和删除弹窗 -->
           <div
             id="menu"
@@ -226,36 +234,35 @@ export default {
     };
   },
   methods: {
-    progress_format(percentage){
-        return `已处理：${this.progress_over}/${this.progress_total}张 ， 进度：${percentage}% `
+    progress_format(percentage) {
+      return `已处理：${this.progress_over}/${this.progress_total}张 ， 进度：${percentage}% `;
     },
-    getAiByRootPath(){
-        dao.getAiByRootPath(this.imgURL_root_path).then(res => {
-            if(res.data.task_id){
-                this.intervalQuery(res.data.task_id)
-            }
-        })
+    getAiByRootPath() {
+      dao.getAiByRootPath(this.imgURL_root_path).then((res) => {
+        if (res.data.task_id) {
+          this.intervalQuery(res.data.task_id);
+        }
+      });
     },
-    intervalQuery(task_id){
-        this.pregress_dialogVisible = true
-        // this.pageLoading = true
-        // 设置整点定时发送请求
-        
-        var myVar = setInterval(() => {
-            if(this.percentage === 100 ){
-                this.pregress_dialogVisible = false 
-                this.$message({
-                    message:'识别完成！',
-                    type:"success",              
-                })
-                this.queryRes(task_id)
-                clearInterval(myVar)
-                return 
-            }else{
-                this.queryPregress(task_id)
-            }
-        }, 1000);
+    intervalQuery(task_id) {
+      this.pregress_dialogVisible = true;
+      // this.pageLoading = true
+      // 设置整点定时发送请求
 
+      var myVar = setInterval(() => {
+        if (this.percentage === 100) {
+          this.pregress_dialogVisible = false;
+          this.$message({
+            message: "识别完成！",
+            type: "success",
+          });
+          this.queryRes(task_id);
+          clearInterval(myVar);
+          return;
+        } else {
+          this.queryPregress(task_id);
+        }
+      }, 1000);
     },
     async queryRes(task_id){
       this.cardLoading = true 
@@ -290,19 +297,21 @@ export default {
         })
       }
     },
-    createFabricByRes(){
-      for( let i=0 ; i<this.detections.length ; i++ ){    //每个i代表每个图像
-        if (i == 0 ) {
+    createFabricByRes() {
+      for (let i = 0; i < this.detections.length; i++) {
+        //每个i代表每个图像
+        if (i == 0) {
           this.editorCanvas.clear().renderAll();
         }
-        this.initeditorCanvas(i)
-        for( let j=0 ; j<this.detections[i].length ; j++){    //代表每个图像的每个bbox
+        this.initeditorCanvas(i);
+        for (let j = 0; j < this.detections[i].length; j++) {
+          //代表每个图像的每个bbox
           let rectId = uuid.v1();
           this.drawingObject = null;
-          let left = this.detections[i][j].bbox[0] * this.canvasInfo.width
-          let top = this.detections[i][j].bbox[1] * this.canvasInfo.height 
-          let width = this.detections[i][j].bbox[2] * this.canvasInfo.width
-          let height = this.detections[i][j].bbox[3] * this.canvasInfo.height  
+          let left = this.detections[i][j].bbox[0] * this.canvasInfo.width;
+          let top = this.detections[i][j].bbox[1] * this.canvasInfo.height;
+          let width = this.detections[i][j].bbox[2] * this.canvasInfo.width;
+          let height = this.detections[i][j].bbox[3] * this.canvasInfo.height;
           const drawingObject = new fabric.Rect({
             width: width,
             height: height,
@@ -315,7 +324,7 @@ export default {
             originY: "center",
             stroke: "#00fdf8",
             strokeWidth: 1,
-            strokeLineJoin:"round",
+            strokeLineJoin: "round",
             lockRotation: true,
           });
           const text = new fabric.Textbox("", {
@@ -368,21 +377,21 @@ export default {
       
     },
     customColorMethod(percentage) {
-        if (percentage < 30) {
-          return '#909399';
-        } else if (percentage < 70) {
-          return '#e6a23c';
-        } else {
-          return '#67c23a';
-        }
-      },
-    queryPregress(task_id){
-        dao.queryPregress(task_id).then( res => {
-            this.percentage = parseInt(res.data.progress * 100)
-            this.progress_over = res.data.processed
-            this.progress_total = res.data.total
-            return parseInt(res.data.progress * 100)
-        })
+      if (percentage < 30) {
+        return "#909399";
+      } else if (percentage < 70) {
+        return "#e6a23c";
+      } else {
+        return "#67c23a";
+      }
+    },
+    queryPregress(task_id) {
+      dao.queryPregress(task_id).then((res) => {
+        this.percentage = parseInt(res.data.progress * 100);
+        this.progress_over = res.data.processed;
+        this.progress_total = res.data.total;
+        return parseInt(res.data.progress * 100);
+      });
     },
     changeimg(change) {
       if (change === "pre") {
@@ -427,23 +436,23 @@ export default {
     //请求图片地址
     async queryImgList() {
       let path = this.$route.params.path;
-      if( path == undefined ){
-        this.cardLoading = true
+      if (path == undefined) {
+        this.cardLoading = true;
         this.$alert(
-          '您进入的标注页面现只支持手动标注本地数据，若要使用智能标注，请从"云数据"页面通过上传文件夹后进行标注。', 
-          '注意！', {
-          confirmButtonText: '确定',
-          callback: action => {
-            this.$refs.upload_input.click()
-            /* this.$message({
+          '您进入的标注页面现只支持手动标注本地数据，若要使用智能标注，请从"云数据"页面通过上传文件夹后进行标注。',
+          "注意！",
+          {
+            confirmButtonText: "确定",
+            callback: (action) => {
+              this.$refs.upload_input.click();
+              /* this.$message({
               type: 'info',
               message: `action: ${ action }`
             }); */
-            
+            },
           }
-        });
-
-      }else{
+        );
+      } else {
         this.imgURL_root_path = path;
         let splitPath = path.split("/").slice(-2);
         let ending = splitPath[0] + "/" + splitPath[1] + "/";
@@ -466,13 +475,12 @@ export default {
             }
           }
         });
-        
+
         this.canvasInfo.width = 1000;
         this.canvasInfo.height = 750;
         this.init();
       }
-      
-      
+
       // let that = this
       // img.onload( res =>{
       //     that.imgW = img.width
@@ -483,25 +491,31 @@ export default {
       // alert('width:'+img.width+',height:'+img.height);
 
       // console.log(this.imgW);
-      
     },
     // 初始化加载图片
     selectPhoto(event) {
-        let fileList = event.target.files
-        var tempList = []
-        for (let i = 0; i < fileList.length; i++) {
-            if (fileList[i].type == 'image/gif' || fileList[i].type == 'image/png' || fileList[i].type == 'image/jpeg' || fileList[i].type == 'image/jpg' || fileList[i].type == 'image/bmp'|| fileList[i].type == 'image/png') {
-                let fileUrl = URL.createObjectURL(fileList[i]);  // 获取文件url
-                tempList.push({id:i, file: fileList[i], path: fileUrl }) // data中显示的图片url 
-            }
+      let fileList = event.target.files;
+      var tempList = [];
+      for (let i = 0; i < fileList.length; i++) {
+        if (
+          fileList[i].type == "image/gif" ||
+          fileList[i].type == "image/png" ||
+          fileList[i].type == "image/jpeg" ||
+          fileList[i].type == "image/jpg" ||
+          fileList[i].type == "image/bmp" ||
+          fileList[i].type == "image/png"
+        ) {
+          let fileUrl = URL.createObjectURL(fileList[i]); // 获取文件url
+          tempList.push({ id: i, file: fileList[i], path: fileUrl }); // data中显示的图片url
         }
-        this.imgList = tempList
-        event.target.value = "" // 解决不能选同一个文件
-        
-        this.canvasInfo.width = 1000;
-        this.canvasInfo.height = 750;
-        this.init();
-        this.cardLoading = false
+      }
+      this.imgList = tempList;
+      event.target.value = ""; // 解决不能选同一个文件
+
+      this.canvasInfo.width = 1000;
+      this.canvasInfo.height = 750;
+      this.init();
+      this.cardLoading = false;
     },
     // 按下backspace进行删除
     backSpaceDel() {
@@ -550,7 +564,7 @@ export default {
         });
     },
     init() {
-      this.initeditorCanvas('init');
+      this.initeditorCanvas("init");
       this.initD();
     },
     // 初始化模板编辑画布
@@ -564,11 +578,11 @@ export default {
       // this.editorCanvas.selection = false;
       // this.editorCanvas.toJSON(['rectId'])
       // this.editorCanvas.skipTargetFind = true;
-    
-      let img = ''
-      if(i === 'init'){
-          // 初始化canvas
-          this.editorCanvas = new fabric.Canvas("labelCanvas", {
+
+      let img = "";
+      if (i === "init") {
+        // 初始化canvas
+        this.editorCanvas = new fabric.Canvas("labelCanvas", {
           // devicePixelRatio: true,
           width: this.canvasInfo.width, // canvas 宽
           height: this.canvasInfo.height,
@@ -576,10 +590,10 @@ export default {
           transparentCorners: false,
           fireRightClick: true, // 启用右键，button的数字为3
           stopContextMenu: true, // 禁止默认右键菜单
-        });   
-          img = this.imgList[0].path
-      }else{
-          img = this.imgList[i].path
+        });
+        img = this.imgList[0].path;
+      } else {
+        img = this.imgList[i].path;
       }
 
       // mounted内预设的比例(由于图片太大，展示不下，实际项目中可以根据后端返回的图片大小范围去设置缩放比例)
@@ -747,7 +761,7 @@ export default {
         originY: "center",
         stroke: "#00fdf8",
         strokeWidth: 1,
-        strokeLineJoin:"round"
+        strokeLineJoin: "round",
       });
       const text = new fabric.Textbox("", {
         // width,
