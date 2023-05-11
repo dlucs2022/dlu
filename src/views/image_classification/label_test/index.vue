@@ -39,26 +39,15 @@
           style="display: none"
           @change.stop="selectPhoto($event)"
         />
-        <el-button @click="getData">保存修改</el-button>
-        <el-button @click="getAiByRootPath">智能标注</el-button>
-        <el-button-group style="float: right; width: 50%">
-          <el-button
-            style="width: 50%"
-            :disabled="activeIndex == 0"
-            @click="changeimg('pre')"
-            type="primary"
-            icon="el-icon-arrow-left"
-            >上一张</el-button
-          >
-          <el-button
-            style="width: 50%"
-            :disabled="activeIndex == imgList.length - 1"
-            @click="changeimg('next')"
-            type="primary"
-          >
-            下一张<i class="el-icon-arrow-right el-icon--right"></i
-          ></el-button>
-        </el-button-group>
+        <div
+          class="top"
+          style="display: flex; justify-content: space-between; align-items: center"
+        >
+          <el-button @click="getData" style="float: left">导出文件</el-button>
+          <i v-if="this.imgList.length != 0">{{ img_name() }}</i>
+          <el-button @click="getAiByRootPath" style="float: right">智能标注</el-button>
+        </div>
+
         <div class="context__x">
           <canvas ref="canvas" id="labelCanvas"> </canvas>
           <!-- 编辑和删除弹窗 -->
@@ -79,6 +68,48 @@
             </div>
             <div class="del" @click="delEl">删除</div>
           </div>
+        </div>
+        <div
+          class="button"
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+          "
+        >
+          <el-button
+            style="float: left; width: 20%"
+            :disabled="activeIndex == 0"
+            @click="changeimg('pre')"
+            type="primary"
+            icon="el-icon-arrow-left"
+            >上一张</el-button
+          >
+
+          <el-progress
+            :percentage="percentage_img"
+            :stroke-width="20"
+            v-if="this.imgList.length != 0"
+            :format="setItemText()"
+            :text-inside="true"
+            :color="customColorMethod"
+            style="
+              display: inline-block;
+              width: 500px;
+              margin-left: 1vh;
+              border-radius: inherit;
+              fontsize: 2px;
+            "
+          ></el-progress>
+          <el-button
+            style="float: right; width: 20%"
+            :disabled="activeIndex == imgList.length - 1"
+            @click="changeimg('next')"
+            type="primary"
+          >
+            下一张<i class="el-icon-arrow-right el-icon--right"></i
+          ></el-button>
         </div>
       </div>
       <div class="tagCon">
@@ -183,13 +214,6 @@ export default {
       zip: "",
       imgURL_root_path: "",
       pageLoading: false,
-      customColors: [
-        { color: "#f56c6c", percentage: 20 },
-        { color: "#e6a23c", percentage: 40 },
-        { color: "#5cb87a", percentage: 60 },
-        { color: "#1989fa", percentage: 80 },
-        { color: "#6f7ad3", percentage: 100 },
-      ],
       pregress_dialogVisible: false,
       percentage: 0,
       detections: [],
@@ -308,9 +332,26 @@ export default {
       }
     };
   },
+  computed: {
+    percentage_img() {
+      return Math.floor(((this.activeIndex + 1) / this.imgList.length) * 100);
+    },
+  },
   methods: {
+    img_name() {
+      if (this.path == undefined) {
+        return this.imgList[this.activeIndex].file.name;
+      } else {
+        return this.imgList[this.activeIndex].name;
+      }
+    },
+    setItemText(row) {
+      return () => {
+        return this.activeIndex + 1 + "/" + this.imgList.length;
+      };
+    },
     progress_format(percentage) {
-      return `已处理：${this.progress_over}/${this.progress_total}张 ， 进度：${percentage}% `;
+      return `已处理：${this.progress_over}/${this.progress_total}张 , 进度：${percentage}% `;
     },
     getAiByRootPath() {
       dao.getAiByRootPath(this.imgURL_root_path).then((res) => {
@@ -718,7 +759,6 @@ export default {
       });
       // 监听鼠标移动
       this.editorCanvas.on("mouse:move", (options) => {
-        // console.log("move", options);
         if (!this.editorCanvas.getActiveObject() && this.isDrawing) {
           // console.log("move");
           this.mouseTo.x =
@@ -731,6 +771,7 @@ export default {
               : options.pointer.y;
         }
       });
+
       this.editorCanvas.on("mouse:up", (options) => {
         this.isDrawing = false;
         // console.log("mouse:up", options);
@@ -1039,6 +1080,7 @@ export default {
     },
     //点击保存修改调用的方法
     getData() {
+      console.log(this.imgList);
       this.fabricJson[this.activeIndex] = JSON.stringify(
         this.editorCanvas.toJSON({
           exclude: [

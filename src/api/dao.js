@@ -149,7 +149,7 @@ export default {
     },
     getAiByRootPath(path) {
         return request({
-            url: `http://127.0.0.1:80/detect_dir`,
+            url: `http://192.168.46.143:80/detect_dir`,
             method: "post",
             data: JSON.stringify({ directory: path, conf: 0.5 }),
             headers: {
@@ -159,7 +159,7 @@ export default {
     },
     queryPregress(task_id) {
         return request({
-            url: `http://127.0.0.1:80/progress/${task_id}`,
+            url: `http://192.168.46.143:80/progress/${task_id}`,
             method: "get",
             headers: {
                 "Content-Type": "application/json;charset=UTF-8",
@@ -168,7 +168,7 @@ export default {
     },
     queryRes(task_id) {
         return request({
-            url: `http://127.0.0.1:80/result/${task_id}`,
+            url: `http://192.168.46.143:80/result/${task_id}`,
             method: "get",
             headers: {
                 "Content-Type": "application/json;charset=UTF-8",
@@ -177,31 +177,31 @@ export default {
     },
 
 
-    queryCloudLabels(name){
+    queryCloudLabels(name) {
         return request({
             url: `/file/queryCloudLabels?name=${name}`,
-            method:"post",
+            method: "post",
         })
     },
 
-        
-    upload_now_lebels(name,labels_name,labels){
+
+    upload_now_lebels(name, labels_name, labels) {
         // console.log(name);
         return request({
-            url:`/file/upload_now_lebels?name=${name}&labels_name=${labels_name}`,
-            method:"post",
-            data:{
-                labels:labels
+            url: `/file/upload_now_lebels?name=${name}&labels_name=${labels_name}`,
+            method: "post",
+            data: {
+                labels: labels
             },
             headers: {
                 'Content-Type': 'application/json;charset=UTF-8'
             }
         })
     },
-    delete_cloud_labels(labels_name){
+    delete_cloud_labels(labels_name) {
         return request({
             url: `/file/delete_cloud_labels?labels_name=${labels_name}`,
-            method:'post'
+            method: 'post'
         })
     }
 };
