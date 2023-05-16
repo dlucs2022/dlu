@@ -16,7 +16,7 @@
         </div>
       </div>
       <div class="top-image">
-        <el-carousel height="50vh" :interval="3000">
+        <el-carousel height="350px" :interval="3000">
           <el-carousel-item v-for="(item, index) in imgs" :key="index">
             <el-image :src="item.src" style="width: 100%" fit="fill" />
           </el-carousel-item>
@@ -138,125 +138,127 @@
       </div>
     </div>
 
-    <div class="show_card_f">
-      <div
-        class="show_card"
-        :style="{ backgroundColor: bgColor1, color: textColor1 }"
-        @mouseenter="
-          bgColor1 = '#fff';
-          textColor1 = '#409EFF';
-        "
-        @mouseleave="
-          bgColor1 = '#409EFF';
-          textColor1 = '#fff';
-        "
-      >
-        <img src="@/assets/imgs/introduce/icon/sharpicons_Cow.png" alt="" />
-        牛
-        <br />
-        识别率：98.2%
-      </div>
-      <div
-        class="show_card"
-        :style="{ backgroundColor: bgColor2, color: textColor2 }"
-        @mouseenter="
-          bgColor2 = '#fff';
-          textColor2 = '#409EFF';
-        "
-        @mouseleave="
-          bgColor2 = '#409EFF';
-          textColor2 = '#fff';
-        "
-      >
-        <img src="@/assets/imgs/introduce/icon/sharpicons_Bird.png" alt="" />
-        鸟
-        <br />
-        识别率：93.8%
-      </div>
-      <div
-        class="show_card"
-        :style="{ backgroundColor: bgColor3, color: textColor3 }"
-        @mouseenter="
-          bgColor3 = '#fff';
-          textColor3 = '#409EFF';
-        "
-        @mouseleave="
-          bgColor3 = '#409EFF';
-          textColor3 = '#fff';
-        "
-      >
-        <img src="@/assets/imgs/introduce/icon/sharpicons_Horse.png" alt="" />
-        马
-        <br />
-        识别率：95.3%
-      </div>
-      <div
-        class="show_card"
-        :style="{ backgroundColor: bgColor4, color: textColor4 }"
-        @mouseenter="
-          bgColor4 = '#fff';
-          textColor4 = '#409EFF';
-        "
-        @mouseleave="
-          bgColor4 = '#409EFF';
-          textColor4 = '#fff';
-        "
-      >
-        <img src="@/assets/imgs/introduce/icon/sharpicons_Monkey.png" alt="" />
-        猴
-        <br />
-        识别率：93.4%
-      </div>
-      <div
-        class="show_card"
-        :style="{ backgroundColor: bgColor5, color: textColor5 }"
-        @mouseenter="
-          bgColor5 = '#fff';
-          textColor5 = '#409EFF';
-        "
-        @mouseleave="
-          bgColor5 = '#409EFF';
-          textColor5 = '#fff';
-        "
-      >
-        <img src="@/assets/imgs/introduce/icon/sharpicons_Deer.png" alt="" />
-        鹿
-        <br />
-        识别率：92.7%
-      </div>
-      <div
-        class="show_card"
-        :style="{ backgroundColor: bgColor6, color: textColor6 }"
-        @mouseenter="
-          bgColor6 = '#fff';
-          textColor6 = '#409EFF';
-        "
-        @mouseleave="
-          bgColor6 = '#409EFF';
-          textColor6 = '#fff';
-        "
-      >
-        <img src="@/assets/imgs/introduce/icon/sharpicons_Sheep.png" alt="" />
-        羊
-        <br />
-        识别率：94.3%
-      </div>
-      <div
-        class="show_card"
-        :style="{ backgroundColor: bgColor7, color: textColor7 }"
-        @mouseenter="
-          bgColor7 = '#fff';
-          textColor7 = '#409EFF';
-        "
-        @mouseleave="
-          bgColor7 = '#409EFF';
-          textColor7 = '#fff';
-        "
-      >
-        <img src="@/assets/imgs/introduce/icon/sharpicons_Cat.png" alt="" />
-        猫
-        <br />
-        识别率：92.2%
+    <div style="width: 100%; background-color: #d3d3d3">
+      <div class="show_card_f">
+        <div
+          class="show_card"
+          :style="{ backgroundColor: bgColor1, color: textColor1 }"
+          @mouseenter="
+            bgColor1 = '#fff';
+            textColor1 = '#409EFF';
+          "
+          @mouseleave="
+            bgColor1 = '#409EFF';
+            textColor1 = '#fff';
+          "
+        >
+          <img src="@/assets/imgs/introduce/icon/sharpicons_Cow.png" alt="" />
+          牛
+          <br />
+          识别率：98.2%
+        </div>
+        <div
+          class="show_card"
+          :style="{ backgroundColor: bgColor2, color: textColor2 }"
+          @mouseenter="
+            bgColor2 = '#fff';
+            textColor2 = '#409EFF';
+          "
+          @mouseleave="
+            bgColor2 = '#409EFF';
+            textColor2 = '#fff';
+          "
+        >
+          <img src="@/assets/imgs/introduce/icon/sharpicons_Bird.png" alt="" />
+          鸟
+          <br />
+          识别率：93.8%
+        </div>
+        <div
+          class="show_card"
+          :style="{ backgroundColor: bgColor3, color: textColor3 }"
+          @mouseenter="
+            bgColor3 = '#fff';
+            textColor3 = '#409EFF';
+          "
+          @mouseleave="
+            bgColor3 = '#409EFF';
+            textColor3 = '#fff';
+          "
+        >
+          <img src="@/assets/imgs/introduce/icon/sharpicons_Horse.png" alt="" />
+          马
+          <br />
+          识别率：95.3%
+        </div>
+        <div
+          class="show_card"
+          :style="{ backgroundColor: bgColor4, color: textColor4 }"
+          @mouseenter="
+            bgColor4 = '#fff';
+            textColor4 = '#409EFF';
+          "
+          @mouseleave="
+            bgColor4 = '#409EFF';
+            textColor4 = '#fff';
+          "
+        >
+          <img src="@/assets/imgs/introduce/icon/sharpicons_Monkey.png" alt="" />
+          猴
+          <br />
+          识别率：93.4%
+        </div>
+        <div
+          class="show_card"
+          :style="{ backgroundColor: bgColor5, color: textColor5 }"
+          @mouseenter="
+            bgColor5 = '#fff';
+            textColor5 = '#409EFF';
+          "
+          @mouseleave="
+            bgColor5 = '#409EFF';
+            textColor5 = '#fff';
+          "
+        >
+          <img src="@/assets/imgs/introduce/icon/sharpicons_Deer.png" alt="" />
+          鹿
+          <br />
+          识别率：92.7%
+        </div>
+        <div
+          class="show_card"
+          :style="{ backgroundColor: bgColor6, color: textColor6 }"
+          @mouseenter="
+            bgColor6 = '#fff';
+            textColor6 = '#409EFF';
+          "
+          @mouseleave="
+            bgColor6 = '#409EFF';
+            textColor6 = '#fff';
+          "
+        >
+          <img src="@/assets/imgs/introduce/icon/sharpicons_Sheep.png" alt="" />
+          羊
+          <br />
+          识别率：94.3%
+        </div>
+        <div
+          class="show_card"
+          :style="{ backgroundColor: bgColor7, color: textColor7 }"
+          @mouseenter="
+            bgColor7 = '#fff';
+            textColor7 = '#409EFF';
+          "
+          @mouseleave="
+            bgColor7 = '#409EFF';
+            textColor7 = '#fff';
+          "
+        >
+          <img src="@/assets/imgs/introduce/icon/sharpicons_Cat.png" alt="" />
+          猫
+          <br />
+          识别率：92.2%
+        </div>
       </div>
     </div>
   </div>
@@ -318,35 +320,37 @@ export default {
 </script>
 <style lang="scss">
 .index {
+  width: 1400px;
+  margin: 0 auto;
   .demo-image__placeholder {
-    // width: 100%;
-    height: 55vh;
+    width: 100%;
+    height: 400px;
     background-color: #9370db;
-    // display: flex;
+    margin: 0 auto;
     .text {
       display: flex;
       flex-wrap: wrap;
       flex-direction: column;
       justify-content: center;
       position: absolute;
-      margin-left: 10%;
+      margin-left: 100px;
       margin-right: 50%;
       color: white;
       .title {
-        margin-top: 5vh;
+        margin-top: 30px;
         text-align: left;
-        font-size: 2.5vw;
+        font-size: 40px;
       }
       .content {
         text-align: left;
-        font-size: 1.2vw;
-        line-height: 1.7vw;
+        font-size: 20px;
+        line-height: 30px;
         flex: 1;
       }
     }
     .top-image {
-      margin-top: 2vh;
-      margin-right: 7vh;
+      margin-top: 30px;
+      margin-right: 40px;
       height: 100%;
       width: 40%;
       float: right;
@@ -360,10 +364,8 @@ export default {
     padding: 5px;
     display: flex;
     width: 420px;
-    // margin-left: 20%;
-    right: 50%;
-    // left: 30%;
-    margin-top: 50vh;
+    margin-left: 200px;
+    margin-top: 370px;
     box-shadow: 12px 12px 2px 1px rgba(0, 0, 255, 0.2);
     .box-card {
       background-color: white;
@@ -377,30 +379,18 @@ export default {
     }
   }
   .show {
-    margin-top: 50px;
     width: 100%;
     height: 700px;
     background-color: #d3d3d3;
     .title {
       position: relative;
       text-align: right;
-      margin-right: 15%;
+      margin-right: 100px;
       top: 50px;
-      font-size: 2.5vw;
+      font-size: 50px;
     }
-    /* .image_holder {
-      display: flex;
-      flex-direction: row;
-      position: relative;
-      justify-content: space-around;
-      width: 85%;
-      margin-top: 5%;
-      height: 350px;
-      margin-left: 20%;
-      right: 200px;
-    } */
     .cards {
-      width: 1000px;
+      width: 1200px;
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
@@ -481,10 +471,9 @@ export default {
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
-    width: 100%;
+    width: 1400px;
     margin: 0px auto;
     padding-bottom: 20px;
-    background-color: #d3d3d3;
 
     .show_card {
       height: 180px;
