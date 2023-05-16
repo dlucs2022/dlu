@@ -1,56 +1,53 @@
 <template>
   <div class="index">
     <div class="demo-image__placeholder">
-      <div class="text">
-        <div class="title">
-          <span>智拣AI</span>
+      <div class="center">
+        <div class="text">
+          <div class="title">
+            <span>智拣AI</span>
+          </div>
+          <el-divider></el-divider>
+          <div class="content">
+            <span>
+              智拣AI红外照片分拣平台，它可以帮助图像识别研究人员快速、准确、高效地对红外照片进行标注。
+              我们的系统利用了最先进的深度学习技术，可以通过预训练好的模型对照片进行预标注，从而节省用户的时间和精力。
+              如果预标注不满足研究人员需要，研究人员可以对标注进行微调，以达到最佳效果。同时，该系统也支持上传自己的模型，
+              以适应不同的场景和需求。我们的系统可以极大减少人工标注成本，提高标注质量和效率，为用户提供更好的体验和价值。
+            </span>
+          </div>
         </div>
-        <el-divider></el-divider>
-        <div class="content">
-          <span>
-            智拣AI红外照片分拣平台，它可以帮助图像识别研究人员快速、准确、高效地对红外照片进行标注。
-            我们的系统利用了最先进的深度学习技术，可以通过预训练好的模型对照片进行预标注，从而节省用户的时间和精力。
-            如果预标注不满足研究人员需要，研究人员可以对标注进行微调，以达到最佳效果。同时，该系统也支持上传自己的模型，
-            以适应不同的场景和需求。我们的系统可以极大减少人工标注成本，提高标注质量和效率，为用户提供更好的体验和价值。
-          </span>
+        <div class="top-image">
+          <el-carousel height="350px" :interval="3000">
+            <el-carousel-item v-for="(item, index) in imgs" :key="index">
+              <el-image :src="item.src" style="width: 100%" fit="fill" />
+            </el-carousel-item>
+          </el-carousel>
         </div>
-      </div>
-      <div class="top-image">
-        <el-carousel height="350px" :interval="3000">
-          <el-carousel-item v-for="(item, index) in imgs" :key="index">
-            <el-image :src="item.src" style="width: 100%" fit="fill" />
-          </el-carousel-item>
-        </el-carousel>
-      </div>
-      <!-- <el-image :src="src">
-        <div slot="placeholder" class="image-slot">
-          加载中<span class="dot">...</span>
+        <div class="statistic">
+          <el-card class="box-card" shadow="hover">
+            <span style="display: block">处理图片数</span>
+            <i
+              class="el-icon-picture"
+              style="color: #9370db; font-size: 20px; margin-right: 10px"
+            ></i>
+            <count-to
+              :start-val="0"
+              :end-val="34696"
+              :duration="2000"
+              class="card-panel-num"
+            />
+          </el-card>
+          <el-card class="box-card" shadow="hover">
+            <span style="display: block">使用人数</span>
+            <i class="el-icon-user" style="font-size: 20px; margin-right: 10px"></i>
+            <count-to
+              :start-val="0"
+              :end-val="204"
+              :duration="2000"
+              class="card-panel-num"
+            />
+          </el-card>
         </div>
-      </el-image> -->
-      <div class="statistic">
-        <el-card class="box-card" shadow="hover">
-          <span style="display: block">处理图片数</span>
-          <i
-            class="el-icon-picture"
-            style="color: #9370db; font-size: 20px; margin-right: 10px"
-          ></i>
-          <count-to
-            :start-val="0"
-            :end-val="34696"
-            :duration="2000"
-            class="card-panel-num"
-          />
-        </el-card>
-        <el-card class="box-card" shadow="hover">
-          <span style="display: block">使用人数</span>
-          <i class="el-icon-user" style="font-size: 20px; margin-right: 10px"></i>
-          <count-to
-            :start-val="0"
-            :end-val="204"
-            :duration="2000"
-            class="card-panel-num"
-          />
-        </el-card>
       </div>
     </div>
 
@@ -320,40 +317,47 @@ export default {
 </script>
 <style lang="scss">
 .index {
-  width: 1400px;
+  width: 100%;
   margin: 0 auto;
   .demo-image__placeholder {
-    width: 100%;
+    // width: 1400px;
     height: 400px;
     background-color: #9370db;
     margin: 0 auto;
-    .text {
-      display: flex;
-      flex-wrap: wrap;
-      flex-direction: column;
-      justify-content: center;
-      position: absolute;
-      margin-left: 100px;
-      margin-right: 50%;
-      color: white;
-      .title {
+    .center {
+      width: 1500px;
+      margin: 0 auto;
+      .text {
+        width: 700px;
+        height: 350px;
+        flex-wrap: wrap;
+        flex-direction: column;
+        justify-content: center;
+        position: absolute;
+        // margin-left: 100px;
+        margin-left: 100px;
+        margin-right: 50%;
+        color: white;
+        // background-color: #00a6bc;
+        .title {
+          margin-top: 30px;
+          text-align: left;
+          font-size: 40px;
+        }
+        .content {
+          text-align: left;
+          font-size: 20px;
+          line-height: 30px;
+          flex: 1;
+        }
+      }
+      .top-image {
         margin-top: 30px;
-        text-align: left;
-        font-size: 40px;
+        margin-right: 40px;
+        height: 100%;
+        width: 40%;
+        float: right;
       }
-      .content {
-        text-align: left;
-        font-size: 20px;
-        line-height: 30px;
-        flex: 1;
-      }
-    }
-    .top-image {
-      margin-top: 30px;
-      margin-right: 40px;
-      height: 100%;
-      width: 40%;
-      float: right;
     }
   }
   .statistic {
@@ -364,7 +368,7 @@ export default {
     padding: 5px;
     display: flex;
     width: 420px;
-    margin-left: 200px;
+    margin-left: 230px;
     margin-top: 370px;
     box-shadow: 12px 12px 2px 1px rgba(0, 0, 255, 0.2);
     .box-card {
@@ -390,11 +394,11 @@ export default {
       font-size: 50px;
     }
     .cards {
-      width: 1200px;
+      // width: 1200px;
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
-      margin: 100px auto;
+      margin: 100px 200px;
     }
     .box {
       position: relative;
@@ -431,7 +435,6 @@ export default {
       background: #fafafa;
       transition: 0.5s;
       overflow: hidden;
-
       padding: 15px;
       box-sizing: border-box;
     }
@@ -471,7 +474,7 @@ export default {
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
-    width: 1400px;
+    // width: 1400px;
     margin: 0px auto;
     padding-bottom: 20px;
 

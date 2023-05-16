@@ -105,12 +105,11 @@ export default {
 .img_holder {
   position: relative;
   margin: 0 auto;
-  width: 1200px;
-  height: 600px;
+  width: 100%;
   .text {
     position: absolute;
-    top: 230px;
-    left: 480px;
+    top: 45vh;
+    left: 43vw;
     font-size: 2rem;
     color: #fff;
   }
